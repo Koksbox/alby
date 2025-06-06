@@ -1,0 +1,140 @@
+{% extends 'users/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор задачи</title>
+</head>
+<body>
+{% block content %}
+<div class="main">
+    <div class="form-container">
+        <h2 class="fade-in-item">Выбор задачи</h2>
+        <form method="post" class="fade-in-item">
+            {% csrf_token %}
+            <label for="task" class="task fade-in-item">Выберите задачу:</label>
+            <select name="task_id" id="task" required class="fade-in-item">
+                {% for task in tasks %}
+                    <option value="{{ task.id }}">{{ task }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="fade-in-item">Выбрать задачу</button>
+        </form>
+    </div>
+</div>
+
+<style>
+body {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #1e1e1e;
+}
+
+.main {
+    width: 100%;
+    max-width: 400px; /* Ограничиваем максимальную ширину */
+    margin: 20px; /* Отступы для мобильных устройств */
+    text-align: center;
+    color: white;
+}
+
+.form-container {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border-radius: 15px;
+    padding: 20px; /* Внутренние отступы */
+}
+
+label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.task {
+    color: white;
+}
+
+select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    border: 1px solid white;
+    background-color: rgba(0, 0, 0, 0.0);
+    color: white;
+    font-size: 1rem;
+}
+
+button {
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 20px;
+    padding: 10px 0;
+    font-size: 16px;
+    color: black;
+    cursor: pointer;
+    text-decoration: none;
+    width: 100%;
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+/* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-in-item:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-item:nth-child(2) { animation-delay: 0.3s; }
+.fade-in-item:nth-child(3) { animation-delay: 0.5s; }
+.fade-in-item:nth-child(4) { animation-delay: 0.7s; }
+.fade-in-item:nth-child(5) { animation-delay: 0.9s; }
+
+/* Адаптация для смартфонов */
+@media (max-width: 380px) {
+    .main {
+        margin: 10px;
+    }
+
+    .form-container {
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+
+    select, button {
+        font-size: 14px;
+    }
+}
+</style>
+{% endblock %}
+</body>
+</html>

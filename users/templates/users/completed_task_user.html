@@ -1,0 +1,103 @@
+{% extends 'users/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    <title>Завершенные задачи</title>
+    {% load static %}
+    {% load custom_filters %}
+</head>
+<body>
+{% block content %}
+<div class="main">
+    <h1>Завершенные задачи</h1>
+    <h2>Рейтинг - {{ user.average_rating }}</h2>
+    {% if tasks %}
+    <table>
+        <thead>
+            <tr>
+                <th>Название задачи</th>
+                <th>Описание</th>
+                <th>Менеджер</th>
+                <th>Дата завершения</th>
+                <th>Оценка</th>
+                <th>Время - бабки</th>
+                <th>Коментарий от менеджера</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td>{{ task.title }}</td>
+                <td>{{ task.description }}</td>
+                <td>{{ task.created_by.full_name }}</td>
+                <td>{% if task.task_reviews.exists %}{{ task.task_reviews.last.reviewed_at|date:"Y-m-d H:i:s" }}{% endif %}</td>
+                <td>
+                    {% if task.task_reviews.exists %}
+                        {{ task.task_reviews.last.rating }}
+                    {% else %}
+                        Нет оценки
+                    {% endif %}
+                </td>
+                <td><p>Потрачено времени: {{ task.time_spent|format_time }}</p>
+                    <p>Заработано: {{ task.earnings|floatformat:2 }} Р</p></td>
+                <td>{{ task.task_reviews.last.comments }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="no-tasks">Завершенных задач нет. <br> {{ message }}</p>
+    {% endif %}
+</div>
+<style>
+html, body {
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    margin: 0;
+    color: white;
+}
+
+.main {
+    text-align: center;
+    width: 438px;
+    color: white;
+    position: relative; /* Добавляем относительное позиционирование */
+    margin-top: -100px; /* Поднимаем контейнер выше */
+}
+
+h1, h2 {
+    margin: 10px 0;
+}
+
+table {
+    width: 415px; /* Изменяем ширину таблицы согласно размеру навигации */
+    max-width: 100%; /* Максимальная ширина для адаптивности */
+    margin-top: 20px;
+    border-collapse: collapse; /* Убираем двойные границы */
+    border: 1px solid #ddd; /* Граница таблицы */
+    border-radius: 8px; /* Закругленные углы */
+    overflow: hidden; /* Скрываем переполнение для закругленных углов */
+}
+
+th, td {
+    padding: 15px; /* Внутренние отступы ячеек */
+    text-align: left; /* Выравнивание текста в ячейках */
+    border-bottom: 1px solid #ddd; /* Нижняя граница ячеек */
+}
+
+.no-tasks {
+    text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+    table {
+        width: 100%; /* Делаем таблицу полной ширины для мобильных устройств */
+    }
+}
+</style>
+{% endblock %}
+</body>
+</html>

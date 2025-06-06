@@ -1,0 +1,44 @@
+
+<title>Загруженные макеты</title>
+{% load static %}
+
+
+<h1>Загруженные макеты</h1>
+
+<div class="photo-display">
+    {% if photos %}
+        {% for photo in photos %}
+            <div class="photo-container">
+                <img src="{{ photo.image.url }}" alt="Фото" class="photo">
+
+                <div class="tasks-container">
+                    <h3>Задачи для этого макета:</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="photo_id" value="{{ photo.id }}">
+                        <select name="task_id">
+                            <option value="" disabled selected>Выберите задачу</option>
+                            {% for task in photo.tasks.all %}
+                                {% if not task.completed %}
+                                    <option value="{{ task.id }}">{{ task.title }}</option>
+                                {% endif %}
+                            {% empty %}
+                                <option value="">Нет доступных задач</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Завершить задачу и отправить менеджеру</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Нет загруженных макетов.</p>
+    {% endif %}
+</div>
+
+{% if message %}
+    <div class="message">
+        <p>{{ message }}</p>
+    </div>
+{% endif %}
+

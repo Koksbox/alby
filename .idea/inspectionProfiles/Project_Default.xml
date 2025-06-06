@@ -1,0 +1,33 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="20">
+            <item index="0" class="java.lang.String" itemvalue="pandas" />
+            <item index="1" class="java.lang.String" itemvalue="geopy" />
+            <item index="2" class="java.lang.String" itemvalue="schedule" />
+            <item index="3" class="java.lang.String" itemvalue="email-validator" />
+            <item index="4" class="java.lang.String" itemvalue="google-auth-oauthlib" />
+            <item index="5" class="java.lang.String" itemvalue="gspread" />
+            <item index="6" class="java.lang.String" itemvalue="phonenumbers" />
+            <item index="7" class="java.lang.String" itemvalue="pyTelegramBotAPI" />
+            <item index="8" class="java.lang.String" itemvalue="google-auth-httplib2" />
+            <item index="9" class="java.lang.String" itemvalue="google-api-python-client" />
+            <item index="10" class="java.lang.String" itemvalue="Jinja2" />
+            <item index="11" class="java.lang.String" itemvalue="Django" />
+            <item index="12" class="java.lang.String" itemvalue="django-rest-auth" />
+            <item index="13" class="java.lang.String" itemvalue="djangorestframework-simplejwt" />
+            <item index="14" class="java.lang.String" itemvalue="drf-pyotp" />
+            <item index="15" class="java.lang.String" itemvalue="drf-jwt" />
+            <item index="16" class="java.lang.String" itemvalue="django-allauth" />
+            <item index="17" class="java.lang.String" itemvalue="requests" />
+            <item index="18" class="java.lang.String" itemvalue="djangorestframework" />
+            <item index="19" class="java.lang.String" itemvalue="drf-writable-nested" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

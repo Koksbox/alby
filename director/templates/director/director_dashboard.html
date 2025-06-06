@@ -1,0 +1,211 @@
+{% extends 'director/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель директора</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/css_dd.css' %}">
+</head>
+<body>
+{% block content %}
+    <main>
+        <h1>Неутвержденные пользователи</h1>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Должность</th>
+                    <th>Действия</th>
+                </tr>
+                {% for user in unapproved_users %}
+                <tr>
+                    <td>{{ user.full_name }}</td>
+                    <td>
+                        <form action="{% url 'approve_user' user.id %}" method="post">
+                            {% csrf_token %}
+                            <select name="user_role">
+                                {% for choice in user_type_choices %}
+                                    {% if choice.0 != 'unapproved' %}
+                                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <td>
+                            <button type="submit" class="btn-approve">Подтвердить</button>
+                            </td>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </main>
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
+    color: white;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+}
+
+main {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.table-container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(0, 0, 0, 0.6);
+    height: 60%;
+}
+
+th, td {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid white;
+    text-align: left;
+    width: auto;
+}
+
+th {
+    background-color: white;
+    color: black;
+}
+
+select {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid white;
+    background-color: black;
+    color: white;
+}
+
+.btn-approve {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-approve:hover {
+    background-color: black;
+    color: white;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn:hover {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+}
+
+/* Медиазапросы для адаптивности */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 20px; /* Уменьшение размера заголовка на малых экранах */
+    }
+
+    .table-container {
+        overflow-x: auto; /* Добавление прокрутки для таблицы на маленьких экранах */
+    }
+
+    table {
+        font-size: 12px; /* Уменьшение размера шрифта таблицы */
+    }
+
+    th, td {
+        padding: 8px; /* Уменьшение отступов в ячейках */
+    }
+
+    .btn-approve {
+        width: 100%; /* Кнопка занимает всю ширину на маленьких экранах */
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 18px; /* Дополнительное уменьшение заголовка на очень малых экранах */
+    }
+
+    table {
+        font-size: 10px; /* Дополнительное уменьшение шрифта таблицы */
+    }
+
+    select {
+        font-size: 12px; /* Уменьшение размера шрифта в селекте */
+    }
+
+    .btn-approve {
+        font-size: 12px; /* Уменьшение размера шрифта кнопки */
+    }
+}
+
+
+    /* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+main > * { /* Применяем анимацию ко всем дочерним элементам main */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+main > :nth-child(1) { animation-delay: 0.1s; }
+main > :nth-child(2) { animation-delay: 0.3s; }
+main > :nth-child(3) { animation-delay: 0.5s; }
+main > :nth-child(4) { animation-delay: 0.7s; }
+main > :nth-child(5) { animation-delay: 0.9s; }
+</style>
+{% endblock %}
+</body>
+</html>

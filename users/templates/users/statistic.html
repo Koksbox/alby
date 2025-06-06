@@ -1,0 +1,235 @@
+{% extends 'users/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статистика сотрудника</title>
+</head>
+<body>
+    {% block content %}
+    <div class="main">
+        <h1>Статистика:</h1>
+
+        <!-- Форма выбора месяца -->
+        <form method="get">
+            <label for="month">Выберите месяц:</label>
+            <input
+                type="month"
+                id="month"
+                name="month"
+                value="{{ selected_month|date:'Y-m' }}"
+                min="2000-01"
+                max="{{ current_year }}-{{ current_month }}"
+            >
+            <button type="submit">Показать статистику</button>
+        </form>
+        <div class="table">
+        <!-- Отображение статистики -->
+        {% if user or total_salary or worked_photos %}
+            <h2>Статистика за: {{ start_date|date:"F Y" }}</h2>
+            <p>Средний рейтинг: {{ user.average_ratings|floatformat:1|default:"Нет данных" }}</p>
+            <p>Количество часов : {{ total_shift_hours|floatformat:2 }}</p>
+            <p>Количество завершенных задач: {{ user.completed_tasks_count|default:0 }}</p>
+            <p>Общая зарплата за месяц: {{ total_salary|floatformat:2 }} руб.</p>
+            <p><a href="{% url 'my_maket' %}" class="maket_zav"> Завершённые макеты:</a>      {{ worked_photos }}</p>
+        {% else %}
+            <p>За выбранный период нет данных.</p>
+        {% endif %}
+        </div>
+        <div style="height: 40px;">
+
+        </div>
+    </div>
+
+<style>
+/* Основные стили */
+html, body {
+    height: 100%;
+    margin: 0;
+    color: white;
+}
+
+.main {
+    padding: 20px;
+    width: 100%;
+    margin: auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 2em; /* Размер заголовка по умолчанию */
+}
+
+/* Форма выбора месяца */
+form {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%; /* Ширина формы */
+    max-width: 400px; /* Максимальная ширина для десктопов */
+}
+
+label {
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: white;
+}
+
+input[type="month"] {
+    padding: 10px;
+    width: 80%; /* Полная ширина */
+    margin-bottom: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 5px;
+    background: white;
+    color: black;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+
+input[type="month"]:focus {
+    border-color: white;
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: black;
+    background-color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 70%; /* Ширина кнопки по умолчанию */
+}
+
+button:hover {
+    color: white;
+    background-color: black;
+}
+
+/* Статистика */
+.table {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 30px;
+    border: none;
+    border-radius: 20px;
+    width: 90%; /* Ширина таблицы */
+    max-width: 600px; /* Максимальная ширина для десктопов */
+    margin-top: 20px;
+}
+
+h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    font-weight: 500;
+    border-bottom: 1px solid white;
+}
+
+p {
+    margin-top: 15px;
+    font-size: 1em;
+    line-height: 1.6;
+    border-bottom: 1px solid white;
+    padding-bottom: 5px;
+}
+
+a {
+    color: rgb(12, 232, 247);
+}
+/* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.main > * { /* Применяем анимацию ко всем дочерним элементам main */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.main > :nth-child(1) { animation-delay: 0.1s; }
+.main > :nth-child(2) { animation-delay: 0.3s; }
+.main > :nth-child(3) { animation-delay: 0.5s; }
+.main > :nth-child(4) { animation-delay: 0.7s; }
+.main > :nth-child(5) { animation-delay: 0.9s; }
+
+/* Медиазапрос для экранов до 480px (маленькие телефоны) */
+@media (max-width: 380px) {
+    h1 {
+        font-size: 1.5em; /* Дополнительно уменьшаем заголовок */
+    }
+
+    form {
+        padding: 10px; /* Дополнительно уменьшаем отступы внутри формы */
+    }
+
+    input[type="month"], button {
+        padding: 8px; /* Дополнительно уменьшаем внутренние отступы */
+        font-size: 1em; /* Дополнительно уменьшаем размер шрифта */
+    }
+
+    .table {
+        padding: 15px; /* Дополнительно уменьшаем отступы внутри контейнера таблицы */
+    }
+
+    h2 {
+        font-size: 1em; /* Дополнительно уменьшаем размер заголовка */
+    }
+
+    p {
+        font-size: 0.8em; /* Дополнительно уменьшаем размер текста */
+    }
+}
+
+/* Медиазапрос для экранов до 380px (очень маленькие телефоны) */
+@media (max-width: 380px) {
+    h1 {
+        font-size: 1.2em; /* Минимальный размер заголовка */
+    }
+
+    form {
+        padding: 8px; /* Минимальные отступы внутри формы */
+    }
+
+    input[type="month"], button {
+        padding: 6px; /* Минимальные внутренние отступы */
+        font-size: 0.7em; /* Минимальный размер шрифта */
+    }
+
+    .table {
+        padding: 10px; /* Минимальные отступы внутри контейнера таблицы */
+    }
+
+    h2 {
+        font-size: 0.9em; /* Минимальный размер заголовка */
+    }
+
+    p {
+        font-size: 0.7em; /* Минимальный размер текста */
+        margin-top: 10px; /* Уменьшаем отступы между элементами */
+    }
+}
+</style>
+    {% endblock %}
+</body>
+</html>

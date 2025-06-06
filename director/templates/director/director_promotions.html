@@ -1,0 +1,103 @@
+{% extends 'director/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запросы на Повышение</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/css_director.css' %}">
+
+</head>
+<body>
+{% block content %}
+<table>
+    <tr>
+        <th>Пользователь</th>
+        <th>Запрашиваемая должность</th>
+        <th>Действия</th>
+    </tr>
+    {% for request in promotion_requests %}
+    <tr>
+        <td>{{ request.user.full_name }}</td>
+        <td>{{ request.requested_post }}</td>
+        <td>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="promotion_request_id" value="{{ request.id }}">
+                <button type="submit" name="approve" value="1">Подтвердить</button>
+                <button type="submit" name="approve" value="0">Отклонить</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0; /* Убирает отступы */
+    color: white;
+    padding: 20px; /* Добавим отступы вокруг контента */
+}
+
+table {
+    width: 100%; /* Таблица будет занимать всю ширину экрана */
+    border-collapse: collapse;
+    overflow-x: auto; /* Добавим горизонтальную прокрутку, если таблица не помещается */
+    height: auto;
+    max-height:100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+td {
+    border: none;
+    height: 25px;
+    font-size: 14px !important;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    height: 25px;
+    font-size: 14px !important;
+    padding: 10px;
+    text-align: left;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.0);
+    border: none;
+}
+
+
+.btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.approve {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.approve:hover {
+    background-color: #45a049;
+}
+
+.decline {
+    background-color: #f44336;
+    color: white;
+}
+
+.decline:hover {
+    background-color: #e53935;
+}
+
+</style>
+{% endblock %}
+</body>
+</html>

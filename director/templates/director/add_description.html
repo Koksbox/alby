@@ -1,0 +1,122 @@
+<style>
+    /* Основные стили */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f7fa; /* Нежно-серый фон */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px; /* Ограничим ширину контейнера */
+    margin: 50px auto; /* Центрирование по горизонтали и вертикали */
+    background: #fff; /* Белый фон для формы */
+    padding: 20px 30px; /* Отступы внутри формы */
+    border-radius: 10px; /* Скругленные углы */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Легкая тень для объема */
+}
+
+.container h2 {
+    font-size: 1.8rem;
+    color: #333; /* Тёмный текст */
+    margin-bottom: 20px; /* Отделяем заголовок от формы */
+    text-align: center; /* Выравним посередине */
+}
+
+/* Формы */
+form {
+    display: flex;
+    flex-direction: column; /* Элементы формы располагаются вертикально */
+    gap: 15px; /* Пространство между элементами формы */
+}
+
+form input,
+form select,
+form textarea {
+    font-size: 1rem;
+    padding: 10px 15px; /* Немного внутреннего отступа */
+    border: 1px solid #dcdcdc; /* Легкий серый цвет обводки */
+    border-radius: 5px; /* Скругленные углы */
+    outline: none;
+    background-color: #f9f9f9; /* Легкий фон */
+    transition: border-color 0.3s; /* Анимация для фокуса */
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+    border-color: #007bff; /* Цвет обводки при фокусе */
+    background-color: #fff; /* Белый фон при фокусе */
+}
+
+/* Кнопки */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s; /* Анимация эффектов */
+}
+
+.btn-success {
+    background-color: #28a745; /* Зеленый цвет для кнопки */
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: #218838; /* Темно-зеленый при наведении */
+    transform: translateY(-1px); /* Легкий эффект поднятия */
+}
+
+.btn-secondary {
+    background-color: #6c757d; /* Серый цвет для вторичных кнопок */
+    color: #fff;
+    margin-left: 10px; /* Отступ от кнопки Сохранить */
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268; /* Более темный серый при наведении */
+    transform: translateY(-1px);
+}
+
+/* Стиль для ошибок формы */
+.text-danger {
+    color: #dc3545; /* Красный цвет текста для сообщений об ошибках */
+    font-size: 0.85rem;
+}
+
+/* На мобильных устройствах */
+@media (max-width: 768px) {
+    .container {
+        width: 90%; /* Уменьшим ширину контейнера на маленьких экранах */
+        padding: 20px;
+    }
+
+    form {
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%; /* Кнопки занимают всю ширину */
+        margin: 0; /* Устраняем отступы */
+    }
+
+    .btn-secondary {
+        margin-top: 10px; /* Отделяем вторую кнопку только по вертикали */
+    }
+}
+</style>
+<div class="container">
+    <h2>Добавить описание для макета</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Сохранить описание</button>
+        <a href="{% url 'photo_detail' photo.id %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>

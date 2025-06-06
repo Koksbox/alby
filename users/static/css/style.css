@@ -1,0 +1,68 @@
+html, body {
+    color: white;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.main {
+    text-align: center;
+    position: relative;
+}
+
+.logo {
+    margin-bottom: 20px;
+}
+
+.img-logo {
+    width: 80%; /* Изменено на 80% для лучшей адаптикации */
+    max-width: 400px; /* Установка максимальной ширины */
+    height: auto;
+    filter: brightness(1.2) contrast(1.1);
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.btn {
+    border-radius: 30px;
+    padding: 15px;
+    color: white;
+    transition: background-color 0.3s, color 0.3s;
+    width: 80%;
+}
+
+.btn-transparent {
+    background-color: rgba(0, 0, 0, 0.0);
+    border: 1px solid white;
+    margin-top: 2%;
+}
+
+.btn-transparent:hover {
+    background-color: black;
+    color: white;
+    border: none;
+}
+
+.btn-primary {
+    margin-top: 30%;
+    background-color: white;
+    color: black;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: black;
+    color: white;
+}

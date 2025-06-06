@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подтверждение аккаунта</title>
+    {% load static %}
+</head>
+<body>
+    <div class="container">
+        <h1>Подтверждение аккаунта</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="confirmation_code" placeholder="Код подтверждения" required maxlength="20">
+            <button type="submit">Подтвердить</button>
+        </form>
+        <a class="btn" href="{% url 'register' %}">Назад</a>
+    </div>
+
+<style>
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+    text-decoration: none;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    height: auto; /* изменено для адаптивности */
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; /* добавлено для отступов */
+}
+
+h1 {
+    padding: 5px;
+}
+
+.container input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    font-size: 16px;
+    background: rgba(0, 0, 0, 0.0);
+    border-bottom: 2px solid white;
+    color: white;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+ul {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    list-style-type: none; /* добавлено для удаления маркеров */
+    padding: 0; /* удаление стандартных отступов */
+}
+
+button {
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 20px;
+    padding: 15px;
+    margin: 30px 0px 10px;
+    font-size: 15px;
+    color: black;
+    cursor: pointer;
+    width: 70%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button:hover {
+    background-color: black;
+    color: white;
+    border: 1px solid black;
+}
+
+.btn {
+    background-color: white;
+    color: black;
+    border: none;
+    width: 20%;
+    padding: 10px;
+    border-radius: 30px;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn:hover {
+    color: white;
+    background-color: black;
+}
+
+/* Стили для сообщений */
+li {
+    color: red; /* или любой другой цвет, выделяющий сообщения */
+}
+</style>
+</body>
+</html>

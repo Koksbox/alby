@@ -1,0 +1,43 @@
+from django.urls import path, include
+from . import views
+from .views import upload_photo_director
+
+urlpatterns = [
+    path('', views.home_director, name='home_director'),
+    path('employee_director/',views.employee_director, name='employee_director'),
+    path('employee_manager/', views.employee_manager, name='employee_manager'),
+    path('profile_employee/<int:user_id>/', views.profile_employee, name='profile_employee'),
+    path('edit_user/<int:user_id>/', views.edit_user, name='edit_user'),
+    path('request/', views.promotion_requests, name='request'),
+    path('director_promotions/',views.director_promotions, name='director_promotions'),
+    path('approve_user/<int:user_id>/', views.approve_user, name='approve_user'),
+    path('director_dashboard/', views.director_dashboard, name='director_dashboard'),
+    path('task_list_director/', views.task_list_director, name='task_list_director'),
+    path('task_list_director_completed/', views.task_list_director_completed, name='task_list_director_completed'),
+    path('photo/<int:photo_id>maket_director/', views.maket_director, name='maket_director'),
+    path('upload_director/', upload_photo_director, name='upload_photo_director'),
+    path('photo/<int:photo_id>/upload-file/', views.upload_file_to_photo, name='upload_file_to_photo'),
+    path('photo/<int:photo_id>/', views.photo_detail, name='photo_detail'),
+    path('photo/<int:photo_id>/add_description/', views.add_description, name='add_description'),
+    path('director_prize/', views.director_prize, name='director_prize'),
+    path('director/set_prize/<int:user_id>/', views.set_prize, name='set_prize'),
+    path('director/prize_history/', views.prize_history, name='prize_history'),
+    path('salary_report/', views.salary_report, name='salary_report'),
+    path('salary_manager/', views.salary_manager, name='salary_manager'),
+    path('director_user_statistic/<int:user_id>/', views.director_user_statistic, name='director_user_statistic'),
+    path('director_manager_statistic/<int:user_id>/', views.director_manager_statistic, name='director_manager_statistic'),
+    path('maket_info_director/<int:photo_id>/', views.maket_info_director, name='maket_info_director'),
+    path('maket/edit/<int:id>/', views.edit_maket, name='edit_maket_director'),
+    path('photo/<int:photo_id>/completed_maket/', views.completed_maket, name='completed_maket'),
+    path('photo/<int:photo_id>/delete/', views.delete_photo, name='delete_photo'),
+    path('photo/<int:photo_id>/add_task_director/', views.add_task_director, name='add_task_director'),
+    path('delete_task_director/<int:task_id>/', views.delete_task_director, name='delete_task_director'),  # Удаление задачи
+    path('employee_shiftsdir/<int:user_id>/', views.employee_shiftsdir, name='employee_shiftsdir'),
+    path('manager_shifts/<int:user_id>/', views.manager_shifts, name='manager_shifts'),
+    path('task-templates/<int:photo_id>/', views.task_templates_director, name='task_templates_director'),
+    path('delete-template/<int:template_id>/<int:photo_id>/', views.delete_template, name='delete_template'),
+    path('get-template/<int:template_id>/', views.get_template_data, name='get_template_data_director'),
+    path('edit-template/<int:template_id>/', views.edit_template_director, name='edit_template_director'),
+    path('create-template/<int:photo_id>/', views.create_template_director, name='create_template_director'),
+    path('task-monitoring/', views.task_monitoring, name='task_monitoring'),
+]

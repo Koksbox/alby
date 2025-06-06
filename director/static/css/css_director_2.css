@@ -1,0 +1,62 @@
+/* css_director_2.css */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar {
+    background-color: #fff;
+    width: 300px; /* Увеличена ширина */
+    max-height: 80vh; /* Увеличена высота */
+    overflow-y: auto; /* Добавлен скролл для содержания */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    transform: translateY(0);
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar:hover {
+    transform: translateY(-5px);
+}
+
+.sidebar a {
+    display: block;
+    padding: 15px 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 1.1em;
+    border-bottom: 1px solid #f1f1f1;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar a:first-child {
+    border-radius: 10px 10px 0 0;
+}
+
+.sidebar a:last-child {
+    border-bottom: none;
+}
+
+.sidebar a:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.sidebar a:active {
+    background-color: #0056b3;
+}
+
+@media (max-width: 600px) {
+    .sidebar {
+        width: 100%;
+    }
+}

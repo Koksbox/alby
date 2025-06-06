@@ -1,0 +1,263 @@
+{% extends 'director/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчет по зарплате</title>
+    {% load static %}
+    {% load custom_filters %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+{% block content %}
+<div class="main">
+    <div class="container">
+        <h2 class="text-center fade-in-item">Отчет по зарплате</h2>
+
+        <button id="toggleDateForm" class="btn mb-3 fade-in-item">Выбрать период</button>
+
+        <form method="get" class="date-form fade-in-item" id="dateForm">
+            <input type="hidden" name="post_user" value="{{ selected_post_user }}">
+            <input type="hidden" name="sort_by" value="{{ sort_by }}">
+            <input type="hidden" name="min_rating" value="{{ min_rating }}">
+            <input type="hidden" name="max_rating" value="{{ max_rating }}">
+
+            <div class="row mb-3">
+                <div class="col-md-5">
+                    <label for="start_date">Начальная дата:</label>
+                    <input type="date" name="start_date" id="start_date" value="{{ start_date }}" class="form-control">
+                </div>
+                <div class="col-md-5">
+                    <label for="end_date">Конечная дата:</label>
+                    <input type="date" name="end_date" id="end_date" value="{{ end_date }}" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn mt-4">Подтвердить</button>
+                </div>
+            </div>
+        </form>
+
+        <p class="text-center fade-in-item">Выбранная дата: {{ start_date }} - {{ end_date }}</p>
+
+        <form method="get" class="mb-3 fade-in-item">
+            <input type="hidden" name="start_date" value="{{ start_date }}">
+            <input type="hidden" name="end_date" value="{{ end_date }}">
+
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="sort_by">Сортировка:</label>
+                    <select name="sort_by" id="sort_by" class="form-select">
+                        <option value="asc" {% if sort_by == 'asc' %}selected{% endif %}>По возрастанию ставки</option>
+                        <option value="desc" {% if sort_by == 'desc' %}selected{% endif %}>По убыванию ставки</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn mt-4 pokaz">Применить</button>
+                    <div class="danger">Примените свои настройки перед просмотром </div>
+                </div>
+            </div>
+        </form>
+
+        {% if total_salary is not None %}
+        <p class="total-salary text-center fade-in-item"><strong>Общая зарплата за период (все сотрудники):</strong> {{ total_salary|floatformat:0 }} ₽</p>
+        {% endif %}
+
+        <div class="scroll fade-in-item">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Должность</th>
+                    <th>Ставка (₽/ч)</th>
+                    <th>Зарплата за период (₽)</th>
+                    <th>Номер телефона</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                <tr class="fade-in-item">
+                    <td>{{ user.full_name }}</td>
+                    <td>{{ user.get_post_display }}</td>
+                    <td>{{ user.stavka|floatformat:0 }}</td>
+                    <td>
+                        {% with user_salary=individual_salaries|dict_get:user.id %}
+                        {% if user_salary is not None and user_salary != 0 %}
+                        {{ user_salary|floatformat:0 }} ₽
+                        {% else %}
+                        0 ₽
+                        {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td>
+                        {{ user.phone_number }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr class="fade-in-item">
+                    <td colspan="6" class="text-center">Менеджеры не найдены.</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: white;
+    overflow-y: hidden;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+}
+
+.container {
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.date-form {
+    margin-bottom: 20px;
+    display: none; /* Скрыть форму по умолчанию */
+}
+
+.scroll {
+    overflow: auto;
+}
+
+.table {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: black;
+    width: 100%;
+    height: auto;
+}
+
+th {
+    padding: 5px; /* Уменьшение отступов заголовков */
+    font-size: 0.9em; /* Меньший размер шрифта */
+    background-color: rgba(220, 220, 220, 0.8);
+    border-bottom: 2px solid #ccc;
+}
+
+td {
+    height: auto;
+    padding: 8px 5px; /* Уменьшение отступов ячеек */
+    font-size: 0.9em; /* Меньший размер шрифта для ячеек */
+}
+
+.total-salary {
+    font-weight: bold;
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+
+.form-select {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px;
+    transition: border-color 0.3s ease;
+}
+
+.form-select:hover {
+    border-color: #007bff;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Стиль для кнопок */
+.btn {
+    background-color: white; /* Темнее при наведении */
+    border-radius: 5px; /* Закругленные углы */
+    transition: background-color 0.3s ease; /* Анимация изменения фона */
+    width: 40%;
+    color: black;
+    padding: 5px;
+}
+
+/* Стиль кнопки при наведении */
+.btn:hover {
+    background-color: black; /* Темнее при наведении */
+    color: white;
+}
+
+.pokaz {
+    margin: 2% 0px 2%;
+}
+
+.danger {
+    color: rgb(255, 0, 0);
+    font-size: 16px;
+    font-weight: bold;
+}
+
+input {
+    margin: 2% 0px 2%; /* Отступы строк ввода */
+}
+
+@media (max-width: 380px) {
+    .btn {
+        width: 100%;
+    }
+    .table {
+        font-size: 0.8em;
+    }
+    .total-salary {
+        font-size: 1em;
+    }
+}
+
+/* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-in-item:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-item:nth-child(2) { animation-delay: 0.3s; }
+.fade-in-item:nth-child(3) { animation-delay: 0.5s; }
+.fade-in-item:nth-child(4) { animation-delay: 0.7s; }
+.fade-in-item:nth-child(5) { animation-delay: 0.9s; }
+</style>
+
+<script>
+document.getElementById('toggleDateForm').addEventListener('click', function () {
+    const dateForm = document.getElementById('dateForm');
+    dateForm.style.display = dateForm.style.display === 'none' ? 'block' : 'none';
+});
+</script>
+{% endblock %}
+</body>
+</html>

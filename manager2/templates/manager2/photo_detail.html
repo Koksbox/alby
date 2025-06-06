@@ -1,0 +1,537 @@
+{% extends 'manager2/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задачи и Макеты</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/css_zadachi.css' %}">
+</head>
+<body>
+{% block content %}
+<main>
+    <div class="button-group fade-in-item">
+        <a href="{% url 'completed_tasks' photo.id %}" class="card-btn">Оценить задачи</a>
+        <a href="{% url 'rated_tasks' photo.id %}" class="card-btn">Оцененные задачи</a>
+        <a href="{% url 'task_completed' photo.id %}" class="card-btn">Завершенные задачи</a>
+        <button class="card-btn" onclick="toggleEditForm()">Редактировать макет</button>
+    </div>
+
+    <div class="photo-container fade-in-item">
+        <img src="{{ photo.image.url }}" alt="Фото" class="photo">
+
+        <form method="post" action="{% url 'delete_photo' photo.id %}" class="action-form delete-form">
+            {% csrf_token %}
+            <button type="submit" class="delete-maket-btn" onclick="return confirm('Вы уверены, что хотите удалить этот макет?')">
+                Удалить макет
+            </button>
+        </form>
+
+        <div id="editForm" style="display: none;" class="edit-form-container">
+            <form method="post" action="{% url 'edit_photo' photo.id %}" class="edit-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="image_name">Название макета:</label>
+                    <input type="text" id="image_name" name="image_name" value="{{ photo.image_name }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="description">Описание:</label>
+                    <textarea id="description" name="description" class="form-control">{{ photo.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="requirements">Требования:</label>
+                    <textarea id="requirements" name="requirements" class="form-control">{{ photo.requirements }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="due_date">Срок сдачи:</label>
+                    <input type="date" id="due_date" name="due_date" value="{{ photo.due_date|date:'Y-m-d' }}" class="form-control">
+                </div>
+                <button type="submit" class="btnn">Сохранить изменения</button>
+            </form>
+        </div>
+
+        <div class="description-container">
+            <h3>Описание макета:</h3>
+            <p>{{ photo.description }}</p>
+        </div>
+
+        <div class="files-container">
+            <h3>Файлы для этого макета:</h3>
+            <ul class="file-list">
+                {% for file in photo.files.all %}
+                <li class="file-item fade-in-item">
+                    <div class="file-info">
+                        <a href="{{ file.file.url }}" target="_blank" class="file-link">{{ file.file.name }}</a>
+                        <span class="file-date">Загружено: {{ file.uploaded_at|date:"d M Y H:i" }}</span>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="file-item empty fade-in-item">
+                    <em>Файлы отсутствуют</em>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <a href="{% url 'add_task' photo.id %}" class="primary-button fade-in-item">Добавить задачу</a>
+
+        <div class="tasks-container">
+            <h3>Задачи для этого макета:</h3>
+            <ul class="task-list">
+                {% for task in photo.tasks.all %}
+                <li class="task-item fade-in-item">
+                    <strong>Задача - {{ task.title }}</strong>
+                    <p>Описание - {{ task.description }}</p>
+                    <p>Назначены:
+                        {% if task.assigned_user.all %}
+                        {% for user in task.assigned_user.all %}
+                        {{ user.full_name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <span>Нет назначенных сотрудников</span>
+                        {% endif %}
+                    </p>
+                    <p>Количество людей на задачу - {{ task.max_assigned_users }}</p>
+                    {% if not task.completed %}
+                    <form action="{% url 'delete_task' task.id %}" method="POST" class="delete-task-form">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-button"
+                                onclick="return confirm('Вы уверены, что хотите удалить эту задачу?');">Удалить задачу
+                        </button>
+                    </form>
+
+                    {% if task.photo %}
+                    <div class="task-actions">
+                        <a href="{% url 'edit_task' task_id=task.id %}" class="btnn">Редактировать</a>
+                    </div>
+                    {% else %}
+                    <span class="error-text">Ошибка: Задача не привязана к макету</span>
+                    {% endif %}
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li class="task-item fade-in-item"><em>Задач для этого макета пока нет</em></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if not photo.is_completed %}
+        <div class="action-buttons-container fade-in-item">
+            <form method="post" action="{% url 'complete_photo' photo.id %}" class="action-form">
+                {% csrf_token %}
+                <button type="submit" class="complete-maket-btn" onclick="return confirm('Вы уверены, что хотите завершить этот макет?')">
+                    Завершить макет
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    <div style="height: 70px;"></div>
+</main>
+<script src="{% static 'js/js_task.js' %}"></script>
+<script>
+function toggleEditForm() {
+    var form = document.getElementById('editForm');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+<style>
+/* Основные стили */
+html, body {
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-y: auto;
+    background-color: #1e1e1e;
+}
+
+main {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.text-center {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.photo-container {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 20px auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.photo {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.description-container, .files-container, .tasks-container {
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.file-list, .task-list {
+    list-style: none;
+    padding: 0;
+}
+
+.file-item, .task-item {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.file-link {
+    color: #00aaff;
+    text-decoration: none;
+}
+
+.file-link:hover {
+    text-decoration: underline;
+}
+
+.file-date {
+    display: block;
+    font-size: 12px;
+    color: #ccc;
+    margin-top: 5px;
+}
+
+/* Увеличенная кнопка primary-button */
+.primary-button {
+    background: white;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 10px; /* Увеличили padding */
+    color: black;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    width: auto; /* Убрали фиксированную ширину */
+    font-size: 14px; /* Увеличили размер шрифта */
+    min-width: 200px; /* Минимальная ширина для удобства нажатия */
+    text-align: center;
+}
+
+.primary-button:hover {
+    background-color: black;
+    color: white;
+    transform: translateY(-2px); /* Добавили эффект при наведении */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Кнопки управления макетом */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.card-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 12px 25px; /* Стандартный размер кнопок */
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    min-width: 180px;
+    text-align: center;
+}
+
+.card-btn:hover {
+    background: white;
+    color: black;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Кнопка удаления задачи */
+.delete-button {
+    background-color: #dc3545;
+    color: white;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.delete-button:hover {
+    background-color: #a71d2a;
+}
+
+/* Кнопка редактирования задачи */
+.btnn {
+    background-color: black;
+    color: white;
+    width: 95%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btnn:hover {
+    background-color: white;
+    color: black;
+}
+
+/* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-in-item:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-item:nth-child(2) { animation-delay: 0.3s; }
+.fade-in-item:nth-child(3) { animation-delay: 0.5s; }
+.fade-in-item:nth-child(4) { animation-delay: 0.7s; }
+.fade-in-item:nth-child(5) { animation-delay: 0.9s; }
+.fade-in-item:nth-child(6) { animation-delay: 1.1s; }
+.fade-in-item:nth-child(7) { animation-delay: 1.3s; }
+.fade-in-item:nth-child(8) { animation-delay: 1.5s; }
+
+/* Адаптация для смартфонов */
+@media (max-width: 768px) {
+    .text-center {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-primary {
+        width: 100%; /* Занимает всю доступную ширину */
+        max-width: none;
+        font-size: 14px; /* Уменьшили размер шрифта */
+        padding: 10px; /* Уменьшили padding */
+    }
+
+    .photo-container {
+        padding: 15px;
+    }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    .file-item, .task-item {
+        padding: 8px;
+    }
+
+    .file-date {
+        font-size: 10px;
+    }
+}
+
+.edit-form-container {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    color: white;
+    font-weight: bold;
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: white;
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Стили для контейнера и кнопки удаления макета */
+.delete-maket-container {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: rgba(220, 53, 69, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.delete-maket-btn {
+    background: rgba(220, 53, 69, 0.1);
+    border: 2px solid #dc3545;
+    border-radius: 10px;
+    padding: 12px 25px;
+    color: #dc3545;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.delete-maket-btn:hover {
+    background: #dc3545;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+}
+
+.delete-form {
+    margin: 15px 0;
+    width: 100%;
+}
+
+.description-container {
+    margin-bottom: 20px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
+.description-container p {
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    margin: 0;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .delete-maket-container {
+        margin: 15px 0;
+        padding: 10px;
+    }
+
+    .delete-maket-btn {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+}
+
+/* Стили для контейнера кнопок действий */
+.action-buttons-container {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.action-form {
+    display: block;
+    width: 100%;
+}
+
+.complete-maket-btn {
+    background: rgba(40, 167, 69, 0.1);
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    padding: 12px 25px;
+    color: #28a745;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.complete-maket-btn:hover {
+    background: #28a745;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+    .delete-form {
+        margin: 10px 0;
+    }
+
+    .delete-maket-btn {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+
+    .action-buttons-container {
+        margin: 15px 0;
+        padding: 10px;
+    }
+
+    .complete-maket-btn {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+}
+</style>
+{% endblock %}
+</body>
+</html>

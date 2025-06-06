@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вы вышли из профиля</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+<main>
+    <div class="container">
+        <h2 class="heading fade-in-item">Вы вышли из системы</h2>
+        <p class="message fade-in-item">Спасибо, что посетили наш сайт!</p>
+        <a class="btn fade-in-item" href="{% url 'home' %}">Войти снова</a>
+    </div>
+</main>
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
+    color: white;
+    overflow: hidden;
+}
+
+main {
+    display: flex;
+    align-items: center; /* Центрирование по вертикали */
+    justify-content: center; /* Центрирование по горизонтали */
+    height: 100vh; /* Установим height для main, чтобы он занимал всю высоту экрана */
+}
+
+.container {
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+}
+
+h2 {
+    color: white;
+}
+
+.heading {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.message {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.btn {
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 20px;
+    padding: 10px;
+    font-size: 14px;
+    color: black;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    width: 100%;
+    max-width: 300px;
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn:hover {
+    background-color: black;
+    color: white;
+    border: 1px solid black;
+}
+
+/* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-in-item:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-item:nth-child(2) { animation-delay: 0.3s; }
+.fade-in-item:nth-child(3) { animation-delay: 0.5s; }
+</style>
+</body>
+</html>

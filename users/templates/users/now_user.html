@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Текущий пользователь</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"></script>
+    <script src="/static/js/redirect.js"></script>
+</head>
+<body>
+<div style="container">
+    <header>
+        <h1>Добро пожаловать!</h1>
+    </header>
+    <main class="main-container">
+            <p>Вы находитесь в разделе Ожидания.</p>
+            <p>Дождитесь подтверждения должности.</p>
+    </main>
+</div>
+<style>
+/* Основные настройки */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+    text-decoration: none;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+}
+
+/* Центрирование содержимого */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Стили для заголовка */
+header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 50%;
+    margin-top: -50%;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+}
+
+/* Контейнер основного содержимого */
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 90%;
+    height: auto;
+    padding: 21px;
+    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон основной области */
+    border-radius: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size:20px;
+}
+
+</style>
+</body>
+</html>

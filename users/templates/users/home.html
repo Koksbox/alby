@@ -1,0 +1,15 @@
+{% extends "users/_base.html" %}
+{% block content %}
+{% load static %}
+    <div class="container-fluid">
+        <div class="main">
+            <div class="logo">
+                <img class="img-logo" src="{% static 'img/loggo.png' %}" alt="Логотип">
+            </div>
+            <div class="button-container">
+                <a href="login" class="btn btn-primary mb-2">Войти</a>
+                <a href="register" class="btn btn-transparent">Регистрация</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

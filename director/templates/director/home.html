@@ -1,0 +1,223 @@
+{% extends 'director/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    {% load static %}
+    {% load custom_filters %}
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/button.css' %}">
+</head>
+<body>
+{% block content %}
+<main>
+    <h1>Статистика системы</h1>
+
+    <table>
+        <tr>
+            <th>Показатель</th>
+            <th>Значение</th>
+        </tr>
+        <tr>
+            <td>Общее количество пользователей</td>
+            <td>{{ total_users }}</td>
+        </tr>
+        <tr>
+            <td>Количество активных пользователей</td>
+            <td>{{ active_users }}</td>
+        </tr>
+        <tr>
+            <td>Количество выполненных задач</td>
+            <td>{{ completed_tasks }}</td>
+        </tr>
+        <tr>
+            <td>Количество выполненных Макетов</td>
+            <td>{{ completed_maket }}</td>
+        </tr>
+        <tr>
+            <td>Общая сумма зарплат сотрудников</td>
+            <td>{{ total_salary|floatformat }} руб.</td>
+        </tr>
+        <tr>
+            <td>Общая сумма зарплат менеджеров</td>
+            <td>{{ total_salary_manager|floatformat }} руб.</td>
+        </tr>
+        <tr>
+            <td>Общие траты на зарплаты </td>
+            <td>{{ full_zarplata|floatformat }} руб.</td>
+        </tr>
+        <tr>
+            <td>Общая сумма премий сотрудников</td>
+            <td>{{ total_prizes|floatformat }} руб.</td>
+        </tr>
+    </table>
+
+    <div class="otchet">
+        <h2>Отчёт по зарплате</h2>
+        <a href="{% url 'salary_report' %}" class="btn">Отчёт сотрудников</a>
+        <a href="{% url 'salary_manager' %}" class="btn">Отчёт менеджеров</a>
+        <a href="{% url 'director_prize' %}" class="btn big">Премии</a>
+        <a href="{% url 'logout' %}" class="btn big">Выход</a>
+    </div>
+</main>
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
+    color: white;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    padding-bottom: 60px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 27px;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+td {
+    border: 1px solid white;
+    height: 25px;
+    font-size: 14px !important;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    height: 25px;
+    font-size: 14px !important;
+    padding: 10px;
+    text-align: left;
+    color: black;
+    background-color: white;
+    border: 1px solid white;
+}
+
+.otchet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: flex-start;
+}
+
+
+h2 {
+    margin-bottom: -3%;
+}
+
+.btn {
+    margin-top: 7%;
+    width: auto;
+    font-size: 18px;
+    color: black;
+    border: 1px solid white;
+    border-radius: 20px;
+    background-color: white;
+    text-decoration: none;
+    padding: 10px;
+    transition: background-color 0.3s, color 0.3s;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: black;
+    color: white;
+    border: none;
+}
+
+.big {
+    width: 70%
+
+}
+
+/* Медиазапросы */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 26px; /* Уменьшаем размер заголовка для мобильных устройств */
+    }
+
+    table {
+        font-size: 14px; /* Уменьшаем шрифт в таблице */
+    }
+
+    .btn {
+        font-size: 16px; /* Уменьшаем размер шрифта кнопок */
+    }
+
+    .otchet {
+        margin-bottom: 20px; /* Увеличиваем отступ внизу для мобильных устройств */
+    }
+}
+
+@media (max-width: 380px) {
+    main {
+        padding: 20px; /* Увеличиваем отступы для маленьких экранов */
+    }
+
+    table {
+        font-size: 10px; /* Еще больше уменьшаем шрифт для очень маленьких экранов */
+    }
+
+    .btn {
+        padding: 8px; /* Уменьшаем отступы кнопок для мобильных устройств */
+        font-size: 14px; /* Уменьшаем размер шрифта кнопок еще больше */
+    }
+}
+
+/* Стиль навигации внизу */
+nav {
+    height: 50px;
+}
+
+
+        /* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+main > * { /* Применяем анимацию ко всем дочерним элементам main */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+main > :nth-child(1) { animation-delay: 0.1s; }
+main > :nth-child(2) { animation-delay: 0.3s; }
+main > :nth-child(3) { animation-delay: 0.5s; }
+main > :nth-child(4) { animation-delay: 0.7s; }
+main > :nth-child(5) { animation-delay: 0.9s; }
+</style>
+<nav>
+
+</nav>
+{% endblock %}
+</body>
+</html>

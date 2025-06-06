@@ -1,0 +1,173 @@
+{% extends 'manager2/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задачи и Макеты</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/css_zadachi.css' %}">
+</head>
+<body>
+{% block content %}
+<h1>Загруженные макеты</h1>
+
+<div class="photo-display">
+    {% if photos %}
+    {% for photo in photos %}
+    <div class="text-center mb-4">
+    <a href="{% url 'completed_tasks' photo.id %}" class="btn btn-primary">Оценить задачи</a>
+    <a href="{% url 'rated_tasks' photo.id %}" class="btn btn-secondary">Оцененные задачи</a>
+    <a href="{% url 'task_completed' photo.id %}" class="btn btn-success">Завершенные задачи</a>
+</div>
+    {% if not photo.is_completed %}
+    <div class="photo-container">
+        <form action="{% url 'delete_photo' photo.id %}" method="POST">
+            {% csrf_token %}
+        </form>
+
+        <img src="{{ photo.image.url }}" alt="Фото" class="photo">
+
+        <div class="description-container">
+            <h3>Описание макета:</h3>
+            <p>{{ photo.description }}</p>
+        </div>
+
+        <div class="files-container">
+            <h3>Файлы для этого макета:</h3>
+            <ul class="file-list">
+                {% for file in photo.files.all %}
+                <li class="file-item">
+                    <div class="file-info">
+                        <a href="{{ file.file.url }}" target="_blank" class="file-link">{{ file.file.name }}</a>
+                        <span class="file-date">Загружено: {{ file.uploaded_at|date:"d M Y H:i" }}</span>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="file-item empty">
+                    <em>Файлы отсутствуют</em>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <a href="{% url 'add_task' photo.id %}" class="primary-button">Добавить задачу</a>
+
+        <div class="tasks-container">
+            <h3>Задачи для этого макета:</h3>
+            <ul>
+                {% for task in photo.tasks.all %}
+                <li>
+                    <strong>Задача - {{ task.title }}</strong>
+                    <p>Описание - {{ task.description }}</p>
+                    <p>Назначены:
+                    {% if task.assigned_user.all %}
+                        {% for user in task.assigned_user.all %}
+                            {{ user.full_name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <span>Нет назначенных сотрудников</span>
+                    {% endif %}
+                    </p>
+                    <p>Количество людей на задачу - {{ task.max_assigned_users }}</p>
+                    {% if photo.is_completed %}
+                        Макет завершен, задачи удалять нельзя
+                    {% else %}
+                        <form action="{% url 'delete_task' task.id %}" method="POST" class="delete-task-form">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-button" onclick="return confirm('Вы уверены, что хотите удалить эту задачу?');">Удалить задачу</button>
+                        </form>
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li><em>Задач для этого макета пока нет</em></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% else %}
+    <div class="no-photo-message">Актуальные макеты отсутствуют</div>
+    {% endif %}
+</div>
+
+<script src="{% static 'js/js_task.js' %}"></script>
+<style>
+body {
+    color: white;
+    margin: 0;
+    overflow-y: hidden; /* Разрешаем вертикальную прокрутку */
+    height: 100vh; /* Высота всего экрана */
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.photo-display {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-y: auto; /* Разрешаем прокрутку внутри фото-дисплея */
+    height: 80%;
+}
+
+.photo-container {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    margin: 10px;
+    padding: 15px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.photo {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.description-container, .files-container {
+    margin-bottom: 10px;
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+}
+
+.file-item {
+    margin: 5px 0;
+}
+
+.primary-button, .delete-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff; /* Основной цвет кнопки */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+}
+
+.delete-button {
+    background-color: #dc3545; /* Цвет кнопки удаления */
+}
+
+.no-photo-message {
+    text-align: center;
+    margin: 20px 0;
+}
+</style>
+{% endblock %}
+</body>
+</html>

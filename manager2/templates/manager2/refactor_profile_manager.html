@@ -1,0 +1,181 @@
+{% extends 'manager2/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    {% load static %}
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="{% static 'js/js.js' %}"></script>
+</head>
+<body>
+{% block content %}
+<div class="main">
+    <h2 class="text-center fade-in-item">Личный Кабинет</h2>
+    <a class="fade-in-item">
+        {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" alt="Аватар" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%">
+        {% else %}
+        <img src="{% static 'img/default_avatar.jpg' %}" alt="Аватар по умолчанию" class="avatarka" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+        {% endif %}
+    </a>
+    <a href="{% url 'upload_avatar' %}" class="btnn fade-in-item">Редактировать аватар</a>
+    <div class="container profile-container mt-5 fade-in-item">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group fade-in-item">
+                <input type="text" class="form-control" id="full_name" name="full_name" placeholder="Ф.И.О">
+            </div>
+            <div class="form-group fade-in-item">
+                <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Телефон">
+            </div>
+            <div class="form-group fade-in-item">
+                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" placeholder="Дата рождения">
+            </div>
+            <div class="text-center fade-in-item">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'profile_manager' %}'">Назад</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    const inputs = document.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+            input.placeholder = '';
+        });
+        input.addEventListener('blur', () => {
+            if (input.value === '') {
+                if (input.id === 'full_name') {
+                    input.placeholder = 'ФИО';
+                } else if (input.id === 'email') {
+                    input.placeholder = 'Электронная почта';
+                } else if (input.id === 'phone_number') {
+                    input.placeholder = 'Телефон';
+                } else if (input.id === 'date_of_birth') {
+                    input.placeholder = 'Дата рождения';
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+html, body {
+    overflow-y: auto;
+    height: 100%;
+    margin: 0;
+    background-color: #1e1e1e;
+}
+
+.main {
+    text-align: center;
+    width: 100%;
+    color: white;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.profile-container {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    border-radius: 8px;
+    width: 93%;
+}
+
+.form-control {
+    width: 95%;
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid white;
+    background-color: rgba(0, 0, 0, 0.0);
+    color: white;
+    margin-top: 10%;
+}
+
+.form-group {
+    position: relative;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+input[type="date"] {
+    background-color: white;
+    color: black;
+    border-bottom: none;
+    width: 95%;
+    height: auto;
+}
+
+/* Стиль для полупрозрачного белого плейсхолдера */
+::placeholder {
+    color: rgba(255, 255, 255, 0.7);  /* Белый цвет с 60% непрозрачностью */
+    opacity: 1;  /* Для поддержки различных браузеров */
+}
+
+.btnn {
+    margin-top: 20px;
+    background-color: rgba(0, 0, 0, 0.0);
+    border: none;
+    border-radius: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.btn {
+    margin-top: 20px;
+    background-color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: black;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: black;
+    color: white;
+}
+
+/* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-in-item:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-item:nth-child(2) { animation-delay: 0.3s; }
+.fade-in-item:nth-child(3) { animation-delay: 0.5s; }
+.fade-in-item:nth-child(4) { animation-delay: 0.7s; }
+.fade-in-item:nth-child(5) { animation-delay: 0.9s; }
+.fade-in-item:nth-child(6) { animation-delay: 1.1s; }
+.fade-in-item:nth-child(7) { animation-delay: 1.3s; }
+.fade-in-item:nth-child(8) { animation-delay: 1.5s; }
+</style>
+{% endblock %}
+</body>
+</html>

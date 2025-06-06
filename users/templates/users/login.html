@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracker - Вход</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="main">
+        <div class="registration-form">
+            <div class="title">
+                <h2>Войти в</h2>
+                <h3>учётную запись</h3>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Пароль" required>
+                </div>
+                <a href="{% url 'password' %}" class="login-link">Забыли пароль?</a>
+                <button type="submit" class="btn-btn">Войти</button>
+                <a href="/register/" class="btn">Регистрация</a>
+            </form>
+        </div>
+    </div>
+
+<style>
+html, body {
+    overflow: hidden;
+    height: 100%;
+    width:100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+    text-decoration: none;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+    background-position: center; /* Лучше вертикально и горизонтально */
+    background-repeat: no-repeat; /* Не повторять фон */
+    background-size: cover; /* Покрытие всего экрана */
+}
+.main {
+    text-align: center;
+    width: 100%;
+    color: white;
+    padding: 20px;
+    margin: 0 auto; /* Центруем на большом экране */
+}
+.title {
+    margin-bottom: 40px; /* Отступ снизу */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+}
+h2, h3 {
+    color: white;
+    margin-bottom: 10px;
+    font-size: 2rem; /* Адаптивный размер шрифта */
+    font-weight: bold;
+}
+input[type="email"],
+input[type="password"] {
+    width: 100%; /* Учитываем отступы */
+    padding: 10px;
+    border: none;
+    border-radius: 0; /* Убираем закругления */
+    border-bottom: 2px solid white;
+    background-color: rgba(0, 0, 0, 0.0); /* Светлый фон для контраста */
+    color: white;
+    outline: none;
+    margin: 10px -15px; /* Добавляем отступы между полями ввода */
+}
+
+input[type="email"]::placeholder,
+input[type="password"]::placeholder {
+    color: white; /* Устанавливаем цвет плейсхолдера белым */
+    opacity: 1;
+}
+
+/* Стили для Firefox */
+input[type="email"]::-moz-placeholder,
+input[type="password"]::-moz-placeholder {
+    color: white;
+    opacity: 1;
+}
+
+/* Стили для IE */
+input[type="email"]:-ms-input-placeholder,
+input[type="password"]:-ms-input-placeholder {
+    color: white;
+    opacity: 1;
+}
+
+/* Стили для Edge */
+input[type="email"]::-ms-input-placeholder,
+input[type="password"]::-ms-input-placeholder {
+    color: white;
+    opacity: 1;
+}
+
+.login-link {
+    display: inline-block;
+    margin: 10px 0;
+    color: white;
+    text-decoration: underline;
+    font-size: 1rem;
+}
+.login-link:hover {
+    color: black;
+}
+
+.btn, .btn-btn {
+    margin: 10px 0;
+    border-radius: 30px;
+    padding: 15px;
+    color: white;
+    font-size: 1.1rem; /* Адаптивный размер шрифта */
+    cursor: pointer;
+    text-decoration: none;
+    width: 100%; /* 100% ширина кнопки */
+}
+.btn {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: none;
+}
+.btn:hover {
+    background-color: black;
+    color: white;
+    border: none;
+}
+.btn-btn {
+    background-color: white;
+    color: black;
+    border: none;
+}
+.btn-btn:hover {
+    background-color: black;
+    color: white;
+    border: none;
+}
+
+    /* Анимация */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .main > * { /* Применяем анимацию ко всем дочерним элементам main */
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    .main > :nth-child(1) { animation-delay: 0.1s; }
+</style>
+</body>
+</html>

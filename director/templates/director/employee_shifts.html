@@ -1,0 +1,286 @@
+{% extends 'director/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История смен сотрудника</title>
+    {% load custom_filters %}
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+{% block content %}
+<div class="main">
+    <h1>История смен сотрудника: {{ employee.full_name }}</h1>
+    <a href="/director/employee_director/" class="btn">Назад</a>
+    
+    <div class="filter-section">
+        <form method="get" class="filter-form">
+            <input type="month" name="month" value="{{ selected_month|date:'Y-m' }}" class="month-input">
+            <button type="submit" class="filter-btn">Показать</button>
+        </form>
+    </div>
+
+    {% if active_shift %}
+    <div class="active-shift">
+        <h2>Текущая смена</h2>
+        <div class="entry-item">
+            <strong>Начало смены:</strong> {{ active_shift.start_time|date:"Y-m-d H:i:s" }}<br>
+            <strong>Прошло времени:</strong> <span id="current-time">{{ elapsed_time|format_time }}</span><br>
+            <strong>Текущая зарплата:</strong> <span id="current-salary">0.00</span> Р.
+        </div>
+    </div>
+    {% endif %}
+
+    <ul class="entry-list">
+        {% if time_entries %}
+            {% for entry in time_entries %}
+                <li class="entry-item">
+                    <strong>Начало смены:</strong> {{ entry.start_time|date:"Y-m-d H:i:s" }}<br>
+                    <strong>Окончание смены:</strong> {{ entry.end_time|date:"Y-m-d H:i:s" }}<br>
+                    <strong>Длительность смены:</strong> {{ entry.duration|format_time }}<br>
+                    <strong>Зарплата:</strong> {{ entry.salary|floatformat:2 }} Р.
+                </li>
+            {% endfor %}
+        {% else %}
+            <li class="placeholder">Нет записей времени за выбранный период.</li>
+        {% endif %}
+    </ul>
+
+    <div class="summary">
+        <h2>Итого за период:</h2>
+        <p><strong>Общее время:</strong> {{ total_duration|format_time }}</p>
+        <p><strong>Общая зарплата:</strong> {{ total_salary|floatformat:2 }} Р.</p>
+    </div>
+
+    <div style="height: 100px !important;"></div>
+</div>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #1e1e1e;
+}
+
+.main {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    padding-bottom: 50px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.filter-section {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+    animation-delay: 0.1s;
+}
+
+.filter-form {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.month-input {
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.filter-btn {
+    background-color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.filter-btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.entry-list {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.entry-item, .placeholder {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.placeholder {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 15px;
+    width: 100%;
+    text-align: center;
+    animation-delay: 0.2s;
+}
+
+strong {
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.summary {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.summary h2 {
+    margin-top: 0;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.summary p {
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+.btn {
+    background-color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: black;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    width: 40% !important;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+    animation-delay: 0.1s;
+}
+
+.btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.active-shift {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.active-shift h2 {
+    color: #66CDAA;
+    margin-bottom: 15px;
+}
+
+.active-shift .entry-item {
+    background-color: rgba(102, 205, 170, 0.2);
+    border: 1px solid #66CDAA;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.entry-item:nth-child(1) { animation-delay: 0.2s; }
+.entry-item:nth-child(2) { animation-delay: 0.4s; }
+.entry-item:nth-child(3) { animation-delay: 0.6s; }
+.entry-item:nth-child(4) { animation-delay: 0.8s; }
+.entry-item:nth-child(5) { animation-delay: 1.0s; }
+</style>
+
+{% if active_shift %}
+<script>
+function formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    return `${hours} ч ${minutes} м ${remainingSeconds} с`;
+}
+
+function updateTimer() {
+    const startTimeString = '{{ active_shift.start_time|date:"c" }}';
+    const startTime = new Date(startTimeString).getTime();
+    const now = new Date().getTime();
+    const elapsedSeconds = Math.floor((now - startTime) / 1000);
+
+    document.getElementById('current-time').textContent = formatTime(elapsedSeconds);
+
+    const hourlyRate = parseFloat('{{ user_stavka }}');
+    if (!isNaN(hourlyRate)) {
+        const salary = (elapsedSeconds / 3600) * hourlyRate;
+        document.getElementById('current-salary').textContent = salary.toFixed(2);
+    }
+}
+
+setInterval(updateTimer, 1000);
+updateTimer();
+</script>
+{% endif %}
+
+{% endblock %}
+</body>
+</html> 

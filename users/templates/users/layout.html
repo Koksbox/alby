@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Time Tracker{% endblock %}</title>
+{% load static %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+{% block content %}
+<!-- Здесь будет содержимое конкретной страницы -->
+{% endblock %}
+
+<!-- Навигационная панель -->
+<div class="navigation">
+    <a href="/statistic" aria-label="Завершённые задачи">
+        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="white" class="bi bi-graph-up" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07"/></svg>
+    </a>
+    <a href="/startapp/" aria-label="Главная">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="white" class="bi bi-house" viewBox="0 0 16 16">
+            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+        </svg>
+    </a>
+    <a href="/photo_maket" aria-label="Выбор задачи">
+        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="white" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+            <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
+        </svg>
+    </a>
+    <a href="/profile/" aria-label="Профиль">
+        <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+        </svg>
+    </a>
+</div>
+
+
+<style>
+/* Основные стили для страницы */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+    background-size: cover; /* Изображение будет покрывать весь фон */
+    background-attachment: fixed; /* Фон будет зафиксирован при прокрутке */
+    height: 100%; /* Убираем ограничение высоты */
+    margin: 0;
+    color: white;
+}
+
+/* Стили для навигации */
+.navigation {
+    position: fixed; /* Фиксированное расположение */
+    bottom: 0; /* Прикрепление к низу экрана */
+    width: 100%; /* Полная ширина */
+    background-color: rgba(0, 0, 0, 0.6); /* Полупрозрачный фон */
+    padding: 10px 0; /* Отступы */
+    display: flex; /* Используем флекс для расположения элементов */
+    justify-content: space-around; /* Выравнивание элементов */
+    align-items: center; /* Вертикальное выравнивание */
+    height: 5%;
+}
+
+/* Стили для ссылок навигации */
+.navigation a {
+    color: white; /* Цвет текста */
+    text-decoration: none; /* Убираем подчеркивание */
+    display: flex; /* Флекс для центровки внутренностей */
+    align-items: center; /* Центровка по вертикали */
+    justify-content: center; /* Центровка по горизонтали */
+    width: 50px; /* Ширина кнопки */
+    height: 50px; /* Высота кнопки */
+    font-size: 1.5em; /* Размер шрифта */
+    transition: transform 0.3s; /* Плавный переход при наведении */
+}
+
+.navigation a:hover {
+    transform: scale(1.2); /* Увеличение при наведении */
+}
+
+/* Медиа-запрос для адаптивного дизайна */
+@media (max-width: 480px) {
+    .profile-header h1 {
+        font-size: 20px; /* Уменьшаем заголовок на малых экранах */
+    }
+    .profile-container {
+        padding: 15px; /* Отступ для контейнера профиля */
+    }
+}
+</style>
+</body>
+</html>

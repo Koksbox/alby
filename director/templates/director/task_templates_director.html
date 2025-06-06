@@ -1,0 +1,120 @@
+{% extends 'director/layout.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Шаблоны задач</h2>
+    
+    <!-- Форма создания шаблона -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4 class="card-title">Создать новый шаблон</h4>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}">Название шаблона:</label>
+                    {{ form.title }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">Описание:</label>
+                    {{ form.description }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.requirements.id_for_label }}">Требования:</label>
+                    {{ form.requirements }}
+                </div>
+                <button type="submit" class="btn btn-primary">Создать шаблон</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Список существующих шаблонов -->
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Существующие шаблоны</h4>
+            {% if templates %}
+                <div class="list-group">
+                    {% for template in templates %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-1">{{ template.title }}</h5>
+                                <form method="post" action="{% url 'delete_template' template.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Вы уверены, что хотите удалить этот шаблон?')">
+                                        Удалить
+                                    </button>
+                                </form>
+                            </div>
+                            <p class="mb-1"><strong>Описание:</strong> {{ template.description }}</p>
+                            <p class="mb-1"><strong>Требования:</strong> {{ template.requirements }}</p>
+                            <small class="text-muted">Создал: {{ template.created_by.full_name }} | {{ template.created_at|date:"d.m.Y H:i" }}</small>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-center">Шаблоны пока не созданы</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.list-group-item {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+}
+</style>
+{% endblock %} 

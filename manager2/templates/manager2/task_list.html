@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задачи и Макеты</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/css_zadachi.css' %}">
+</head>
+<body>
+    <h1>Загруженные макеты</h1>
+
+    <div>
+        <a href="{% url 'upload_photo' %}">Загрузить еще макеты</a>
+    </div>
+
+    <div class="photo-display">
+        {% if photos %}
+            {% for photo in photos %}
+                <div class="photo-container">
+                    <form action="{% url 'delete_photo' photo.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-button" onclick="return confirm('Вы уверены, что хотите удалить это фото?');">
+                            Удалить
+                        </button>
+
+                    </form>
+                    <img src="{{ photo.image.url }}" alt="Фото" class="photo">
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Нет загруженных макетов.</p>
+        {% endif %}
+    </div>
+
+    <h1>Список задач</h1>
+
+    <button id="toggleTaskFormBtn" class="primary-button">Добавить новую задачу</button>
+
+    <div class="task-form" id="taskFormContainer" style="display: none;">
+        <!-- Форма для добавления новой задачи -->
+        <form action="{% url 'add_task' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="title" placeholder="Название задачи" required>
+            <button type="submit">Добавить задачу</button>
+        </form>
+    </div>
+
+    <div class="task-display">
+        {% if tasks %}
+            {% for task in tasks %}
+                <div class="task-container">
+                    <p>{{ task.title }}</p>
+                    <form action="{% url 'complete_task' task.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit">Завершить задачу</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Нет задач.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        document.getElementById('toggleTaskFormBtn').onclick = function() {
+            var formContainer = document.getElementById('taskFormContainer');
+            formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
+        };
+        document.querySelectorAll('.delete-photo-form').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const photoId = this.dataset.photoId;
+
+            fetch(`/delete-photo/${photoId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': this.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Удаляем элемент из DOM
+                    this.closest('.photo-item').remove();
+                } else {
+                    alert('Error deleting photo');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

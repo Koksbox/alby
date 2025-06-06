@@ -1,0 +1,49 @@
+.btn-primary {
+    margin-top: 20px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 1px;
+    color: white;
+    padding: 10px 10px; /* Увеличили внутренний отступ с 10px и 20px до 15px и 30px */
+    font-size: 8px; /* Увеличили размер шрифта с 16px до 20px */
+    text-transform: uppercase; /* Преобразуем текст в верх*/
+    transition: background-color 0.3s, transform 0.3s; /* Плавные переходы */
+    cursor: pointer; /* Изменяем курсор на указатель */
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Цвет фона при наведении */
+}
+
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+}
+
+.sidebar a {
+    text-decoration: none;
+    padding: 10px 15px; /* Отступ для ссылок */
+    display: block; /* Каждая ссылка занимает отдельную строку */
+    border-radius: 5px; /* Скругление углов */
+    transition: background-color 0.3s ease; /* Плавный переход цвета */
+}
+
+.sidebar a:hover {
+    background-color: #495057; /* Цвет фона при наведении */
+}
+
+.main-content {
+    margin-left: 700px; /* Отступ слева для основного контента */
+    padding: 20px; /* Отступ для основного контента */
+}
+
+.main-content h1 {
+    font-size: 2em; /* Размер заголовка */
+    margin-bottom: 20px; /* Отступ снизу заголовка */
+}
+
+.main-content p {
+    font-size: 1.2em; /* Размер текста абзаца */
+    margin-bottom: 10px; /* Отступ снизу абзаца */
+}

@@ -1,0 +1,130 @@
+{% extends 'manager2/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Загрузка аватарки</title>
+    {% load static %}
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+{% block content %}
+    <div class="main">
+        <div class="container">
+            <h2>Загрузка аватарки</h2>
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Аватар" class="img-fluid rounded-circle"
+                        style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+                <!-- Кнопка для удаления аватара -->
+                {% else %}
+                    <img src="{% static 'img/default_avatar.jpg' %}" alt="Аватар по умолчанию" class="img-fluid rounded-circle"
+                        style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+                {% endif %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="file" name="avatar" accept="image/*" class="form-control-file">
+                </div>
+                <button type="submit" name="upload" class="btn">Загрузить аватар</button>
+
+                <div class="form-group mt-3">
+                    <button type="submit" name="delete" class="btn btn-danger">Удалить аватар</button>
+                </div>
+            </form>
+            <a href="{% url 'refactor_profile_manager' %}" class="btn btn-secondary">Назад</a>
+        </div>
+    </div>
+<style>
+/* Основные стили для страницы */
+body {
+    overflow: hidden; /* Запрещаем горизонтальный скроллинг */
+    font-family: "Montserrat", serif;
+    width: 100%;
+}
+
+.main {
+    display: flex;
+    justify-content: center; /* Центрируем контейнер по горизонтали */
+    align-items: center; /* Центрируем вертикально */
+    flex-direction: column;
+    min-height: 100vh; /* Установить минимальную высоту */
+}
+
+.container {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    width: 90%; /* Устанавливаем ширину контейнера */
+    text-align: center;
+    color: white;
+    padding: 10px; /* Увеличены отступы для удобства использования */
+}
+
+h2 {
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.form-group input[type="file"] {
+    width: 92%; /* Учитываем отступы */
+    padding: 10px;
+    border: 2px solid white;
+    border-radius: 0; /* Убираем закругления */
+    background-color: rgba(0, 0, 0, 0.0); /* Светлый фон для контраста */
+    outline: none;
+    margin: 5px;
+}
+
+.form-group input[type="file"]:hover {
+    transform: scale(1.05); /* Увеличение кнопки на 5% при наведении */
+    background-color: rgba(0, 0, 0, 1.9); /* Светлый фон для контраста */
+    border: none;
+}
+
+.btn {
+    background-color: white;
+    border-radius: 20px;
+    border: 1px solid white;
+    padding: 7px 0;
+    font-size: 14px;
+    color: black;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 10px; /* Отступ сверху */
+    display: inline-block; /* Выравнивание кнопок */
+    width: 70%; /* Широкие кнопки */
+}
+
+.btn:hover {
+    background-color: rgba(0, 0, 0, 0.0);
+    color: white;
+    border: 1px solid white;
+}
+
+    @keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.main > * {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.main > *:nth-child(1) { animation-delay: 0.1s; }
+.main > *:nth-child(2) { animation-delay: 0.3s; }
+.main > *:nth-child(3) { animation-delay: 0.5s; }
+.main > *:nth-child(4) { animation-delay: 0.7s; }
+.main > *:nth-child(5) { animation-delay: 0.9s; }
+</style>
+{% endblock %}
+</body>
+</html>

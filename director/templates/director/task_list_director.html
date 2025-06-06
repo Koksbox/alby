@@ -1,0 +1,278 @@
+{% extends 'director/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задачи и Макеты</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/css_zadachi.css' %}">
+</head>
+<body>
+{% block content %}
+<main>
+    <div class="container">
+        <div class="header">
+            <h1>Список Макетов</h1>
+        </div>
+    </div>
+    <div class="links-container">
+        <a href="/director/task-monitoring/" class="monitoring-button">
+            <i class="fas fa-chart-line"></i>
+            Мониторинг активных задач
+        </a>
+        <a href="{% url 'task_list_director_completed' %}" class="btn">Завершенные</a>
+        <a href="{% url 'upload_photo_director' %}" class="btn zagr">Загрузить еще</a>
+    </div>
+
+    <div class="photo-display">
+        {% if photos %}
+        {% for photo in photos %}
+        {% if not photo.is_completed %}
+        <div class="photo-container">
+            <img src="{{ photo.image.url }}" alt="Фото" class="photo">
+            <div class="description-container">
+                <p><strong>Процент завершения:</strong> {{ photo.completion_percentage|floatformat:0 }}%</p>
+                <p><strong>Название макета:</strong> {{ photo.image_name }}</p>
+                <p><strong>Описание макета:</strong> {{ photo.description }}</p>
+                <a href="{% url 'maket_info_director' photo.id %}" class="btn btn-primary">Подробнее</a>
+                <a href="{% url 'edit_maket_director' photo.id %}" class="btn btn-primary edit-btn">Редактировать</a>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <div class="no-photo-message">Актуальные Макеты отсутствуют</div>
+        {% endif %}
+    </div>
+
+    <div class="empty"></div>
+</main>
+
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    margin: 0;
+    color: white;
+}
+
+main {
+    height: 100vh;
+    font-size: 10px;
+    overflow: auto;
+}
+
+h1 {
+    font-size: 28px;
+}
+
+.photo-display {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.description-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+}
+
+.photo {
+    box-shadow: 6px -4px 24px -2px rgba(0, 0, 0, 0.4);
+    padding-top: 5px;
+    width: 90%;
+    height: 90%;
+    border-radius: 10px;
+}
+
+.photo-container {
+    text-align: center;
+    width: 47%;
+    height: auto;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin: 3px;
+}
+
+.links-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.btn {
+    color: white;
+    text-decoration: none;
+    background-color: black;
+    border: none;
+    border-radius: 15px;
+    padding: 15px;
+    font-size: 1em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 40%;
+}
+
+.btn:hover {
+    background-color: white; /* Прозрачный фон при наведении */
+    color: black; /* Белый текст при наведении */
+    border: none; /* Белая рамка при наведении */
+}
+
+.zagr {
+    width: 40%;
+    color: black;
+    text-decoration: none;
+    background-color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 15px;
+    font-size: 1em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.zagr:hover {
+    background-color: black;
+    color: white;
+}
+
+.btn-primary {
+    width: auto;
+    padding: 10px;
+    border: none;
+    border-radius: 45px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.empty {
+    height: 100px;
+}
+
+.no-photo-message {
+    text-align: center;
+    color: white;
+    font-size: 18px;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.monitoring-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+    width: auto;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.monitoring-button:hover {
+    background-color: #45a049;
+}
+
+.monitoring-button i {
+    font-size: 1em;
+}
+
+
+
+/* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.photo-display > * {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.photo-display > :nth-child(1) { animation-delay: 0.1s; }
+.photo-display > :nth-child(2) { animation-delay: 0.3s; }
+.photo-display > :nth-child(3) { animation-delay: 0.5s; }
+.photo-display > :nth-child(4) { animation-delay: 0.7s; }
+.photo-display > :nth-child(5) { animation-delay: 0.9s; }
+
+/* Медиазапросы */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 24px;
+    }
+
+    .photo-container {
+        width: 47%; /* На мобильных устройствах будет занимать больше места */
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .btn-primary {
+        padding: 8px;
+    }
+
+    .description-container {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 380px) {
+    h1 {
+        font-size: 20px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .description-container {
+        font-size: 10px;
+    }
+
+    .no-photo-message {
+        font-size: 16px;
+    }
+}
+
+
+</style>
+{% endblock %}
+</body>
+</html>

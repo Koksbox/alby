@@ -1,0 +1,194 @@
+{% extends 'manager2/layout.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Управление пользователями</title>
+</head>
+<body>
+{% block content %}
+<main>
+    <h2 class="fade-in-item">Список пользователей</h2>
+    <a href="{% url 'my_statistic' %}" class="btnn fade-in-item">Моя статистика</a>
+    <div class="table-container fade-in-item">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Полное имя</th>
+                    <th>Должность</th>
+                    <th>Профиль</th>
+                    <th>Статистика</th>
+                    <th>История смен</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    {% if user.is_active %}
+                    <tr class="fade-in-item">
+                        <td>{{ user.full_name }}</td>
+                        <td>{{ user.get_post_user_display }}</td>
+                        <td>
+                            <a href="{% url 'profile_employee_manager' user.id %}" class="btn-primary">Профиль</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'manager_user_statistic' user.id %}" class="btn-primary">Статистика</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'employee_shifts' user.id %}" class="btn-primary">История смен</a>
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="empty"></div>
+    </div>
+</main>
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    margin: 0;
+    color: white;
+    overflow-y: auto;
+    background-color: #1e1e1e;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+h2 {
+    font-size: 24px; /* Размер заголовка */
+    margin-bottom: 20px; /* Отступ снизу заголовка */
+}
+
+.table-container {
+    width: 100%; /* Контейнер таблицы занимает всю ширину */
+    overflow-y: auto; /* Добавляем прокрутку, если таблица не помещается */
+}
+
+.table {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 0px;
+    width: 100%;
+    font-size: 14px;
+    border-collapse: collapse;
+}
+
+.empty {
+    height: 50px;
+}
+
+th, td {
+    padding: 10px 0px; /* Отступы для ячеек */
+    font-size: 12px; /* Размер текста для ячеек таблицы */
+    border: 1px solid white;
+}
+
+td {
+    height: 50px;       /* задаём минимальную высоту для ячеек */
+}
+
+.btnn {
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 20px;
+    text-decoration: none;
+    width: auto;
+    padding: 7px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.btn {
+    font-size: 14px;
+    color: black;
+    border: 1px solid white;
+    border-radius: 20px;
+    background-color: white;
+    text-decoration: none;
+    padding: 5px; /* Увеличим отступы для кнопок */
+    transition: background-color 0.3s, color 0.3s; /* Плавный переход */
+}
+
+.btn:hover {
+    background-color: black; /* Прозрачный фон при наведении */
+    color: white; /* Белый текст при наведении */
+    border: none; /* Белая рамка при наведении */
+}
+
+.btn-primary {
+    font-size: 14px;
+    color: white;
+    border: none;       /* убрал границы кнопок */
+    border-radius: 20px;   /* убрал закругления кнопок */
+    background-color: transparent;
+    text-decoration: underline;    /* центрируем текст по вертикали */
+    padding: 10px 5px;
+}
+
+.btn-primary:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: black;
+    border: none;
+}
+
+/* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-in-item:nth-child(1) { animation-delay: 0.1s; } /* Заголовок */
+.fade-in-item:nth-child(2) { animation-delay: 0.3s; } /* Кнопка "Моя статистика" */
+.fade-in-item:nth-child(3) { animation-delay: 0.5s; } /* Таблица */
+.fade-in-item:nth-child(4) { animation-delay: 0.7s; } /* Первая строка таблицы */
+.fade-in-item:nth-child(5) { animation-delay: 0.9s; } /* Вторая строка таблицы */
+.fade-in-item:nth-child(6) { animation-delay: 1.1s; } /* Третья строка таблицы */
+.fade-in-item:nth-child(7) { animation-delay: 1.3s; } /* Четвертая строка таблицы */
+.fade-in-item:nth-child(8) { animation-delay: 1.5s; } /* Пятая строка таблицы */
+
+/* Адаптация для маленьких экранов */
+@media (max-width: 380px) {
+    h2 {
+        font-size: 20px;
+    }
+
+    table {
+        padding: 5px 15px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 8px 5px;
+    }
+
+    th, td {
+        padding: 8px;
+        font-size: 10px;
+    }
+}
+</style>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,210 @@
+{% extends 'manager2/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My_maket</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/css_zadachi.css' %}">
+</head>
+<body>
+{% block content %}
+<main>
+    <h1 style="text-align: center;">Мои макеты</h1>
+    <!-- Форма выбора месяца -->
+        <form method="get">
+            <label for="month">Выберите месяц:</label>
+            <input
+                type="month"
+                id="month"
+                name="month"
+                value="{{ selected_month|date:'Y-m' }}"
+                min="2000-01"
+                max="{{ current_year }}-{{ current_month }}"
+            >
+            <button type="submit">Показать статистику</button>
+        </form>
+    <!-- Отображение фотографий -->
+    <div class="photo-display">
+        {% if photos %}
+        {% for photo in photos %}
+        <div class="photo-container">
+            <!-- Само изображение -->
+            <img src="{{ photo.image.url }}" alt="Фото" class="photo">
+            <!-- Описание макета -->
+            <div class="description-container">
+                <p><strong>Название макета  :</strong> {{ photo.image_name }}</p>
+                <p><strong>Описание макета  :</strong> {{ photo.description }}<p>
+
+                <!-- Кнопка "Подробнее" -->
+                <a href="{% url 'maket_info_manager' photo.id %}" class="btn btn-primary">Подробнее</a>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        {% endif %}
+        </div>
+
+    <div class="empty">
+
+    </div>
+</main>
+
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    margin: 0;
+    color: white;
+}
+
+main {
+    height: 100vh; /* Высота экрана на 100% для полного центрирования */
+    font-size: 10px;
+    overflow-y: auto;
+    display: flex;
+    justify-content: flex-start; /* Центровка контейнера */
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    font-size: 28px;
+}
+
+.photo-display {
+    display: flex;
+    flex-wrap: wrap; /* Позволяет элементам переноситься на следующую строку */
+    justify-content: center; /* Центровка контейнера */
+}
+
+.description-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%; /* Изменено на 100% для мобильных устройств */
+    padding: 10px; /* Добавлен отступ для мобильных устройств */
+    font-size:13px;
+}
+
+.photo {
+    box-shadow: 6px -4px 24px -2px rgba(0, 0, 0, 0.4);
+    padding-top: 5px;
+    width: 90%;
+    height:90%;
+    border-radius: 10px; /* Добавлено округление углов для изображений */
+}
+
+.photo-container {
+    text-align: center;
+    width: 47%; /* Изменено значение на 45% для отображения двух фотографий в ряд */
+    height: auto; /* Высота устанавливается автоматически */
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center; /* Центровка ставки по вертикали */
+    margin: 3px; /* Удален нижний отступ для лучшего размещения */
+}
+
+.btn-primary {
+    width: auto; /* Изменено на авто для кнопки */
+    padding: 10px 0; /* Отображение кнопки на всю ширину */
+    border: none;
+    border-radius: 45px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.empty{
+height:100px
+}
+
+/* Форма выбора месяца */
+form {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%; /* Ширина формы */
+    max-width: 400px; /* Максимальная ширина для десктопов */
+}
+
+label {
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: white;
+}
+
+input[type="month"] {
+    padding: 10px;
+    width: 80%; /* Полная ширина */
+    margin-bottom: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 5px;
+    background: white;
+    color: black;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+
+input[type="month"]:focus {
+    border-color: white;
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: black;
+    background-color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 70%; /* Ширина кнопки по умолчанию */
+}
+
+button:hover {
+    color: white;
+    background-color: black;
+}
+
+/* Анимация */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .photo-display > * {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    .photo-display > :nth-child(1) { animation-delay: 0.1s; }
+    .photo-display > :nth-child(2) { animation-delay: 0.3s; }
+    .photo-display > :nth-child(3) { animation-delay: 0.5s; }
+    .photo-display > :nth-child(4) { animation-delay: 0.7s; }
+    .photo-display > :nth-child(5) { animation-delay: 0.9s; }
+
+</style>
+{% endblock %}
+</body>
+</html>

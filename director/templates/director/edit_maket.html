@@ -1,0 +1,301 @@
+{% extends 'director/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование макета</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+{% block content %}
+<main>
+    <div class="page-header fade-in-item">
+        <h2>Редактировать макет</h2>
+        <p class="subtitle">Внесите необходимые изменения в информацию о макете</p>
+    </div>
+
+    <div class="form-container fade-in-item">
+        <form method="post" enctype="multipart/form-data" class="edit-form">
+            {% csrf_token %}
+            
+            <!-- Поле: Название -->
+            <div class="form-group">
+                <label for="{{ form.image_name.id_for_label }}">Название макета</label>
+                <input
+                    type="text"
+                    id="{{ form.image_name.id_for_label }}"
+                    name="{{ form.image_name.name }}"
+                    class="form-control"
+                    placeholder="Введите название макета..."
+                    value="{{ form.image_name.value|default:'' }}"
+                    required
+                >
+            </div>
+
+            <!-- Поле: Описание -->
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Описание</label>
+                <textarea
+                    id="{{ form.description.id_for_label }}"
+                    name="{{ form.description.name }}"
+                    class="form-control"
+                    placeholder="Опишите детали макета..."
+                    rows="4"
+                >{{ form.description.value|default:'' }}</textarea>
+            </div>
+
+            <!-- Поле: Требования -->
+            <div class="form-group">
+                <label for="{{ form.requirements.id_for_label }}">Требования</label>
+                <textarea
+                    id="{{ form.requirements.id_for_label }}"
+                    name="{{ form.requirements.name }}"
+                    class="form-control"
+                    placeholder="Укажите требования к макету..."
+                    rows="3"
+                >{{ form.requirements.value|default:'' }}</textarea>
+            </div>
+
+            <!-- Поле: Срок сдачи -->
+            <div class="form-group">
+                <label for="{{ form.due_date.id_for_label }}">Срок сдачи</label>
+                <input
+                    type="date"
+                    id="{{ form.due_date.id_for_label }}"
+                    name="{{ form.due_date.name }}"
+                    class="form-control"
+                    value="{{ form.due_date.value|date:'Y-m-d'|default:'' }}"
+                >
+            </div>
+
+            <!-- Поле: Назначить менеджера -->
+            <div class="form-group">
+                <label for="{{ form.assigned_manager.id_for_label }}">Назначить менеджера</label>
+                <select
+                    id="{{ form.assigned_manager.id_for_label }}"
+                    name="{{ form.assigned_manager.name }}"
+                    class="form-control"
+                >
+                    {% for manager in form.assigned_manager.field.queryset %}
+                        <option value="{{ manager.id }}" {% if form.assigned_manager.value == manager.id %}selected{% endif %}>
+                            {{ manager.full_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-save">Сохранить изменения</button>
+                <a href="{% url 'task_list_director' %}" class="btn btn-cancel">Отмена</a>
+            </div>
+        </form>
+    </div>
+    <div style="height: 150px;">
+
+    </div>
+</main>
+
+<style>
+
+main {
+    padding: 10px;
+    max-width: 800px;
+    margin: 0 auto;
+    overflow-y: auto;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.page-header h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+}
+
+.form-container {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+select.form-control {
+    appearance: none;
+    background-color: white;
+    color: black;
+    padding-right: 35px;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    width: 90%;
+}
+
+.btn-save {
+    background-color: #4CAF50;
+    color: white;
+    width: 100%;
+}
+
+.btn-save:hover {
+    background-color: #45a049;
+}
+
+.btn-cancel {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    text-decoration: none;
+
+}
+
+.btn-cancel:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+    width: 100%;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-item {
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-in-item:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-item:nth-child(2) { animation-delay: 0.3s; }
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    main {
+        padding: 15px;
+    }
+
+    .page-header h2 {
+        font-size: 24px;
+    }
+
+    .form-container {
+        padding: 20px;
+    }
+
+    .form-control {
+        padding: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header h2 {
+        font-size: 20px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+    }
+
+    .form-container {
+        padding: 15px;
+    }
+
+    .form-group label {
+        font-size: 13px;
+    }
+
+    .form-control {
+        font-size: 13px;
+    }
+}
+</style>
+{% endblock %}
+</body>
+</html>

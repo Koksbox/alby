@@ -1,0 +1,171 @@
+{% extends 'users/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    {% load static %}
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="{% static 'js/js.js' %}"></script>
+</head>
+<body>
+{% block content %}
+<div class="main">
+    <h2 class="text-center">Личный Кабинет</h2>
+    <div class="man">
+        {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="Аватар" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+        {% else %}
+            <img src="{% static 'img/default_avatar.jpg' %}" alt="Аватар по умолчанию" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+        {% endif %}
+    </div>
+    <a href="{% url 'upload_avatar_users' %}" class="btnn">Редактировать аватар</a>
+    <div class="container profile-container mt-5">
+        <form method="POST" action="{% url 'refactor_profile' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" class="form-control" id="full_name" name="full_name" placeholder="ФИО" value="{{ user.full_name }}">
+                <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Телефон" value="{{ user.phone_number }}">
+                <input type="date" class="form-control custom" id="date_of_birth" name="date_of_birth" value="{{ user.date_of_birth|date:'Y-m-d' }}">
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='/profile/'">Назад</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<style>
+html, body {
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    margin: 0;
+    color: white;
+    overflow: hidden;
+}
+
+.main {
+    width: 100%;
+    color: white;
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+}
+
+.profile-container {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    width: 90%;
+    padding: 10px;
+}
+
+.form-control {
+    width: 90%;
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid white;
+    background-color: rgba(0, 0, 0, 0.0);
+    color: white;
+    margin-top: 10%;
+}
+
+.form-group {
+    position: relative;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.text-center {
+    display: flex;
+    justify-content: space-around;
+}
+
+/* Стиль для полупрозрачного белого плейсхолдера */
+::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+    opacity: 1;
+}
+
+.custom {
+    background-color: white;
+    color: black;
+}
+
+.btnn {
+    margin-top: 20px;
+    background-color: rgba(0, 0, 0, 0.0);
+    border: none;
+    border-radius: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+
+}
+
+.btn {
+    margin-top: 20px;
+    background-color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: black;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: black;
+    color: white;
+}
+
+.alert {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.alert-danger {
+    background-color: #ffcccc;
+    color: #cc0000;
+}
+
+.alert-success {
+    background-color: #ccffcc;
+    color: #006600;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.main > * {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.main > *:nth-child(1) { animation-delay: 0.1s; }
+.main > *:nth-child(2) { animation-delay: 0.3s; }
+.main > *:nth-child(3) { animation-delay: 0.5s; }
+.main > *:nth-child(4) { animation-delay: 0.7s; }
+.main > *:nth-child(5) { animation-delay: 0.9s; }
+</style>
+{% endblock %}
+</body>
+</html>

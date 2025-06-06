@@ -1,0 +1,30 @@
+.position-dropdown {
+        display: none;
+        position: absolute;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        width: calc(100% - 2px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        max-height: 150px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+
+    .position-dropdown div {
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .position-dropdown div:hover {
+        background-color: #f8f9fa;
+    }
+
+    .input-container {
+        position: relative;
+    }
+
+    #positionInput {
+        cursor: pointer;
+        background-color: #ffffff;
+    }

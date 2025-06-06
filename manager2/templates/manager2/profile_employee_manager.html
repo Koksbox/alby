@@ -1,0 +1,109 @@
+{% extends 'manager2/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Профиль пользователя</title>
+</head>
+<body>
+{% block content %}
+<div class="container">
+    <h2>Профиль пользователя</h2>
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title"><strong>ФИО:</strong> {{ user.full_name }}</h3>
+            <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
+            <p class="card-text"><strong>Номер телефона:</strong> {{ user.phone_number }}</p>
+            <p class="card-text"><strong>Дата рождения:</strong> {{ user.date_of_birth|date:"d.m.Y" }}</p>
+            <p class="card-text"><strong>Должность:</strong> {{ user.get_post_user_display }}</p>
+            <p class="card-text"><strong>Ставка:</strong> {{ user.stavka }}</p>
+        </div>
+        <a href="/manager/employee/" class="but">Назад к списку пользователей</a>
+    </div>
+</div>
+
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    min-height: 100vh; /* Используем min-height вместо height */
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+    max-width: 600px; /* Ограничиваем максимальную ширину */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.card {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    margin-top: 20px;
+    padding: 20px;
+    width: 100%; /* Карточка занимает всю ширину контейнера */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Добавляем тень */
+}
+
+.card-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.card-text {
+    font-size: 1rem;
+    margin: 15px 0;
+    padding-bottom: 10px; /* Отступ снизу для разделительной линии */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Полупрозрачная линия */
+}
+
+strong {
+    font-weight: bold;
+    margin-right: 10px; /* Отступ между strong и текстом */
+}
+
+.btn, .but {
+    margin-top: 20px;
+    background-color: white; /* Фоновый цвет кнопки */
+    color: black; /* Цвет текста на кнопке */
+    border-radius: 50px;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 0.3s, color 0.3s; /* Плавный переход */
+    display: inline-block; /* Делаем кнопки строчно-блочными */
+    text-align: center;
+}
+
+.btn:hover, .but:hover {
+    background-color: black; /* Прозрачный фон при наведении */
+    color: white; /* Белый текст при наведении */
+}
+
+h2 {
+    margin-top: -20%;
+    margin-bottom: 40px;
+    font-size: 2rem; /* Увеличиваем размер заголовка */
+    font-weight: 900;
+}
+</style>
+{% endblock %}
+</body>
+</html>

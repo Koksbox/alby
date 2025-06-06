@@ -1,0 +1,169 @@
+{% extends 'director/layout.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Управление пользователями</title>
+</head>
+<body>
+{% block content %}
+<div class="main">
+    <h2>Список пользователей</h2>
+    <a href="{% url 'prize_history' %}" class="btn  mb-3">Истории премии</a>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Полное имя</th>
+            <th>Должность</th>
+            <th>Сумма премии</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.full_name }}</td>
+            <td>{{ user.get_post_user_display }}</td>
+            <td>
+                <form method="post" action="{% url 'set_prize' user.id %}">
+                    {% csrf_token %}
+                    <input type="number" id="prize" name="prize" min="100" max="50000" step="1" required>
+                    <td>
+                    <button type="submit" class="btnn btn-primary">Сохранить</button>
+                    </td>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-image: url('/static/img/photo_2025-01-24_01-36-25.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+        color: white;
+        overflow: auto;
+    }
+
+    .main {
+        display: flex;
+        justify-content: center;
+        align-items: center; /* Изменяем на flex-start для оптимизации вертикального пространства */
+        flex-direction: column;
+        text-align: center;
+        overflow-y: auto; /* Добавляем прокрутку только для контейнера при необходимости */
+        font-size: 18px;
+    }
+
+    table {
+        background-color: rgba(0, 0, 0, 0.6);
+        width: 100%; /* Ширина таблицы теперь 100% */
+        height: auto;
+        border-radius: 10px;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 9px 2px;
+        font-size: 12px;
+    }
+
+    h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    /* Скрываем стрелки в поле ввода чисел */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+        width: auto; /* Учитываем отступы */
+        padding: 10px;
+        border: none;
+        border-radius: 0; /* Убираем закругления */
+        border-bottom: 2px solid white;
+        background-color: rgba(0, 0, 0, 0.0); /* Светлый фон для контраста */
+        color: white;
+        outline: none;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+    .form-control {
+        display: inline-block;
+        width: auto;
+        max-width: 120px; /* Увеличен для удобства ввода */
+        margin-right: 5px;
+    }
+
+    .btnn {
+        font-size: 14px;
+        color: black;
+        border-radius: 20px;
+        background-color: white;
+        text-decoration: none;
+        padding: 7px;
+        width: auto;
+    }
+
+    .btnn:hover {
+        background-color: black;
+        color: white; /* Белый текст при наведении */
+    }
+
+    .btn {
+        font-size: 14px;
+        color: black;
+        border-radius: 20px;
+        background-color: white;
+        text-decoration: none;
+        padding: 7px;
+        width: 60%;
+    }
+
+    .btn:hover {
+        background-color: black;
+        color: white; /* Белый текст при наведении */
+    }
+
+        /* Анимации */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .main > * {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    .main > *:nth-child(1) { animation-delay: 0.1s; }
+    .main > *:nth-child(2) { animation-delay: 0.3s; }
+    .main > *:nth-child(3) { animation-delay: 0.5s; }
+    .main > *:nth-child(4) { animation-delay: 0.7s; }
+    .main > *:nth-child(5) { animation-delay: 0.9s; }
+</style>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,147 @@
+{% extends 'manager2/layout.html' %}
+
+{% block content %}
+<div class="create-template-container">
+    <div class="header">
+        <h1>Создание нового шаблона</h1>
+        <a href="{% url 'task_templates_manager' photo_id %}" class="back-button">Назад к шаблонам</a>
+    </div>
+
+    <div class="form-wrapper">
+        <form method="post" class="template-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Название:</label>
+                {{ form.title }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Описание:</label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.requirements.id_for_label }}">Требования:</label>
+                {{ form.requirements }}
+            </div>
+
+            <button type="submit" class="submit-button">Создать шаблон</button>
+        </form>
+    </div>
+</div>
+
+<style>
+.create-template-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    margin: 0;
+    color: white;
+    font-size: 24px;
+}
+
+.back-button {
+    background: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.back-button:hover {
+    background: #444;
+}
+
+.form-wrapper {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.template-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: white;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.submit-button {
+    background: #28a745;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.submit-button:hover {
+    background: #218838;
+}
+
+@media (max-width: 768px) {
+    .create-template-container {
+        padding: 15px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .form-wrapper {
+        padding: 15px;
+    }
+
+    .template-form {
+        gap: 15px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 16px;
+    }
+}
+</style>
+{% endblock %} 

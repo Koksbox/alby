@@ -1,0 +1,6 @@
+<h2>Подтвердите тип пользователя для {{ user.full_name }}</h2>
+<p>Текущий тип: {{ user.get_user_type_display }}</p>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Подтвердить</button>
+</form>

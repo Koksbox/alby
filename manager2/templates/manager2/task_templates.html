@@ -1,0 +1,169 @@
+{% extends 'manager2/layout.html' %}
+{% block content %}
+<div class="templates-container">
+    <div class="header">
+        <h1>Шаблоны задач</h1>
+        <a href="{% url 'add_task' photo_id %}" class="back-button">Назад к созданию задачи</a>
+    </div>
+
+    <div class="templates-grid">
+        {% for template in templates %}
+        <div class="template-card">
+            <h3>{{ template.title }}</h3>
+            <p class="description">{{ template.description }}</p>
+            <p class="requirements"><strong>Требования:</strong> {{ template.requirements }}</p>
+            <div class="template-actions">
+                <a href="{% url 'delete_template' template.id photo_id %}" class="delete-button" onclick="return confirm('Вы уверены, что хотите удалить этот шаблон?')">Удалить</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-templates">
+            <p>Шаблоны задач пока не созданы</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'create_template_manager' photo_id %}" class="create-button">Создать новый шаблон</a>
+    <div style="height: 150px;">
+
+    </div>
+</div>
+
+<style>
+.templates-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    margin: 0;
+    color: white;
+    font-size: 24px;
+}
+
+.back-button {
+    background: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.back-button:hover {
+    background: #444;
+}
+
+.templates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.template-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+}
+
+.template-card h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+}
+
+.description {
+    margin-bottom: 15px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.requirements {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.template-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.delete-button {
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.3s;
+    background: #dc3545;
+    color: white;
+}
+
+.delete-button:hover {
+    background: #c82333;
+}
+
+.create-button {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    background: #28a745;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.create-button:hover {
+    background: #218838;
+}
+
+.no-templates {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .templates-container {
+        padding: 15px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .templates-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .template-card {
+        padding: 15px;
+    }
+
+    .template-actions {
+        flex-direction: column;
+    }
+
+    .delete-button {
+        text-align: center;
+    }
+}
+</style>
+{% endblock %} 

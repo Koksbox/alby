@@ -1,0 +1,212 @@
+{% extends 'users/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задачи и Макеты</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/css_zadachi.css' %}">
+</head>
+<body>
+{% block content %}
+<main>
+    <h1 style="text-align: center;">Актуальные макеты</h1>
+    
+    {% if active_task %}
+    <div class="active-task-banner">
+        <p>У вас есть активная задача: <strong>{{ active_task.title }}</strong></p>
+        <a href="{% url 'maket_info' active_task.photo.id %}" class="active-task-btn">Перейти к задаче</a>
+    </div>
+    {% endif %}
+
+    <div class="photo-display">
+        {% if photos %}
+        {% for photo in photos %}
+        {% if not photo.is_completed %}
+        <div class="photo-container {% if photo.has_active_task %}active-task{% endif %}">
+            <img src="{{ photo.image.url }}" alt="Фото" class="photo">
+            <div class="description-container">
+                <p><strong>Процент завершения:</strong> {{ photo.completion_percentage|floatformat:0 }}%</p>
+                <p><strong>Название макета:</strong>{{ photo.image_name }}</p>
+                <p><strong>Описание макета:</strong>{{ photo.description }}<p>
+                {% if photo.has_active_task %}
+                <div class="active-task-indicator">
+                    <span class="active-dot"></span>
+                    <span>Активная задача</span>
+                </div>
+                {% endif %}
+                <a href="{% url 'maket_info' photo.id %}" class="btn btn-primary">Подробнее</a>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <div class="no-photo-message">Актуальные Макеты отсутствуют</div>
+        {% endif %}
+    </div>
+
+    <div class="empty">
+    </div>
+</main>
+
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    margin: 0;
+    color: white;
+}
+
+main {
+    height: 100vh;
+    font-size: 10px;
+    overflow-y: auto;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    font-size: 28px;
+}
+
+.active-task-banner {
+    background-color: rgba(76, 175, 80, 0.2);
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.active-task-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.active-task-btn:hover {
+    background-color: #45a049;
+}
+
+.photo-display {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.description-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+}
+
+.photo {
+    box-shadow: 6px -4px 24px -2px rgba(0, 0, 0, 0.4);
+    padding-top: 5px;
+    width: 90%;
+    height: 90%;
+    border-radius: 10px;
+}
+
+.photo-container {
+    text-align: center;
+    width: 47%;
+    height: auto;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin: 3px;
+    transition: all 0.3s ease;
+}
+
+.photo-container.active-task {
+    border: 2px solid #4CAF50;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.active-task-indicator {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 5px 0;
+    color: #4CAF50;
+}
+
+.active-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.btn {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.no-photo-message {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+    margin: 20px;
+}
+
+@media (max-width: 768px) {
+    .photo-container {
+        width: 90%;
+    }
+    
+    .active-task-banner {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+</style>
+{% endblock %}
+</body>
+</html>

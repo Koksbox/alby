@@ -1,0 +1,230 @@
+{% extends 'director/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать профиль</title>
+    {% load static %}
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="{% static 'js/js.js' %}"></script>
+</head>
+<body>
+{% block content %}
+<main>
+    <div class="container profile-container fade-in-item">
+        <h2 class="text-center">Редактировать профиль</h2>
+        <form method="post" class="profile-form">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.full_name.label_tag }}
+                {{ form.full_name }}
+            </div>
+            <div class="form-group">
+                {{ form.phone_number.label_tag }}
+                {{ form.phone_number }}
+            </div>
+            <div class="form-group">
+                {{ form.date_of_birth.label_tag }}
+                <input
+                        type="date"
+                        name="date_of_birth"
+                        value="{{ user.date_of_birth|date:'Y-m-d'|default:'' }}"
+                        class="form-control"
+                        id="id_date_of_birth"
+                >
+            </div>
+            <div class="form-group">
+                {{ form.post_user.label_tag }}
+                {{ form.post_user }}
+            </div>
+            <div class="form-group">
+                {{ form.big_stavka.label_tag }}
+                {{ form.big_stavka }}
+                {% for error in form.big_stavka.errors %}
+                <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="form-group text-center">
+                <button type="submit" class="primary">Сохранить</button>
+            </div>
+        </form>
+    </div>
+    <div class="text-center mt-3 fade-in-item">
+        <a href="{% url 'profile_employee' user.id %}" class="btn">Назад</a>
+    </div>
+</main>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.getElementById('big_stavka').addEventListener('input', function() {
+        let value = this.value;
+        if (value < 0 || value > 250) {
+            alert("Пожалуйста, введите число от 0 до 250.");
+            this.value = '';
+        }
+    });
+    document.querySelectorAll('input, select').forEach(function(element) {
+        element.removeAttribute('required');
+    });
+</script>
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+        height: 100vh;
+        color: white;
+        margin: 0;
+    }
+
+    main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .profile-container {
+        background-color: rgba(0, 0, 0, 0.6);
+        border-radius: 10px;
+        width: 80%; /* Ширина контейнера */
+        max-width: 600px; /* Максимальная ширина для десктопов */
+        padding: 30px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+        font-size: 28px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+        text-align: left;
+        width: 100%; /* Форма занимает всю доступную ширину контейнера */
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-right: 15px;
+        width: 150px; /* Фиксированная ширина для меток */
+        display: inline-block;
+    }
+
+    .form-control {
+        width: 100%;
+        max-width: 300px; /* Максимальная ширина для полей ввода */
+        margin-top: 5px;
+        border: none;
+        border-bottom: 1px solid white;
+        background-color: transparent;
+        color: white;
+    }
+
+    input[type="date"] {
+        width: 100%;
+        padding: 10px 0px;
+    }
+
+    select {
+        background-color: white;
+        color: black;
+        border: none;
+        border-bottom: 1px solid white;
+        padding: 7px 0;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .primary {
+        background-color: white;
+        color: black;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 50px;
+        text-align: center;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 20px auto 0; /* Центрируем кнопку */
+        width: 80%; /* Занимает 80% ширины контейнера */
+    }
+
+    .primary:hover {
+        background-color: black;
+        color: white;
+    }
+
+    .btn {
+        background-color: white;
+        color: black;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 50px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 30px;
+        text-decoration: none;
+    }
+
+    .btn:hover {
+        background-color: black;
+        color: white;
+    }
+
+    /* Адаптация под мобильные устройства */
+    @media (max-width: 768px) {
+        .profile-container {
+            width: 90%; /* Для планшетов */
+        }
+
+        .form-group label {
+            width: 100%; /* Метки становятся полноразмерными */
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            max-width: 100%;
+            margin-top: 5px;
+        }
+
+        .primary, .btn {
+            width: 100%;
+            margin: 15px auto 0;
+        }
+    }
+
+    /* Анимации */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in-item {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    .fade-in-item:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in-item:nth-child(2) { animation-delay: 0.3s; }
+    .fade-in-item:nth-child(3) { animation-delay: 0.5s; }
+    .fade-in-item:nth-child(4) { animation-delay: 0.7s; }
+    .fade-in-item:nth-child(5) { animation-delay: 0.9s; }
+</style>
+{% endblock %}
+</body>
+</html>

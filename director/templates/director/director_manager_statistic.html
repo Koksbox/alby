@@ -1,0 +1,198 @@
+{% extends 'director/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статистика менеджера</title>
+</head>
+<body>
+    {% block content %}
+    <div class="main">
+        <h1>Статистика менеджер: <br><strong>{{user.full_name}}</strong></h1>
+
+        <!-- Форма выбора месяца -->
+        <form method="get">
+            <label for="month">Выберите месяц:</label>
+            <input
+                type="month"
+                id="month"
+                name="month"
+                value="{{ selected_month|date:'Y-m' }}"
+                min="2000-01"
+                max="{{ current_year }}-{{ current_month }}"
+            >
+            <button type="submit">Показать статистику</button>
+        </form>
+        <div class="table">
+        <!-- Отображение статистики -->
+            <h2>Статистика за: {{ start_date|date:"F Y" }}</h2>
+            <p>Количество часов : {{ total_shift_hours|floatformat:2 }}</p>
+            <p>Зарплата: {{ total_salary|floatformat:2 }} руб.</p>
+            <p>Проверено задач: {{ user_data.reviewed_tasks }}</p>
+            <p>Участвует в  макетах: {{ worked_photos }}</p>
+        </div>
+        <a href="/director/employee_director/" class="but">Назад к списку пользователей</a>
+    </div>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow-y: hidden;
+    color: white;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 2.0em;
+    font-weight: 400;
+}
+
+strong {
+    font-size: 24px;
+}
+
+/* Форма выбора месяца */
+form {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    padding: 15px 0px;
+}
+
+
+
+input[type="month"] {
+    padding: 15px;
+    width: 80%;
+    margin-bottom: 10px;
+    border: 1px solid white;
+    border-radius: 5px;
+    background: white;
+    color: black;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+input[type="month"]:focus {
+    border-color: white;
+    outline: none;
+}
+
+button {
+    padding: 10px;
+    border: 1px solid white;
+    border-radius: 5px;
+    color: white;
+    background-color: black;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 70%;
+}
+
+button:hover {
+    color: black;
+    background-color: white;
+}
+
+/* Статистика */
+.table {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid white;
+    border-radius: 20px;
+    height: 100%;
+    padding: 15px;
+}
+
+label {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    color: white;
+}
+
+h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+    font-weight: 500;
+}
+
+p {
+    margin-top: 35px;
+    font-size: 1em;
+    margin-right: 5px;
+    border-bottom: 1px solid white;
+}
+
+a {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: white;
+}
+
+.but {
+    margin-top: 20px;
+    background-color: white; /* Фоновый цвет кнопки */
+    color: black; /* Цвет текста на кнопке */
+    border-radius: 50px;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 0.3s, color 0.3s; /* Плавный переход */
+    display: inline-block; /* Делаем кнопки строчно-блочными */
+    text-align: center;
+}
+
+.btn:hover, .but:hover {
+    background-color: black; /* Прозрачный фон при наведении */
+    color: white; /* Белый текст при наведении */
+}
+
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.main > * {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.main > *:nth-child(1) { animation-delay: 0.1s; }
+.main > *:nth-child(2) { animation-delay: 0.3s; }
+.main > *:nth-child(3) { animation-delay: 0.5s; }
+.main > *:nth-child(4) { animation-delay: 0.7s; }
+.main > *:nth-child(5) { animation-delay: 0.9s; }
+</style>
+    {% endblock %}
+</body>
+</html>

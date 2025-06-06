@@ -1,0 +1,33 @@
+{% extends 'director/layout.html' %}
+{% load static %}
+<!DOCTYPE html>
+<body>
+{% block content %}
+<h2>Запросы на повышение</h2>
+<table>
+    <tr>
+        <th>Имя пользователя</th>
+        <th>Запрашиваемая должность</th>
+        <th>Статус</th>
+        <th>Действия</th>
+    </tr>
+    {% for request in requests %}
+    <tr>
+        <td>{{ request.user.full_name }}</td>
+        <td>{{ request.requested_post }}</td>
+        <td>{{ request.status }}</td>
+        <td>
+            <form method="post" action="{% url 'approve_request' request.id %}">
+                {% csrf_token %}
+                <button type="submit">Принять</button>
+            </form>
+            <form method="post" action="{% url 'reject_request' request.id %}">
+                {% csrf_token %}
+                <button type="submit">Отклонить</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+</body>

@@ -1,0 +1,182 @@
+{% extends 'manager2/layout.html' %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главный экран</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/css_man.css' %}">
+</head>
+<body>
+{% block content %}
+<main>
+<div class="container profile-container">
+    <h1 class="fade-in-item">Информация о макете</h1>
+    <div class="create-maket-container fade-in-item">
+        <a href="{% url 'upload_photo_manager' %}" class="btn-create-maket">Создать макет</a>
+        <a href="{% url 'task_monitoring' %}" class="btn-monitoring">
+            <i class="fas fa-clock-history"></i>
+            Мониторинг задач
+        </a>
+    </div>
+    <div class="scrollable-content">
+        {% if photos %}
+            {% for photo in photos %}
+                {% if not photo.is_completed %}
+                <div class="photo-card fade-in-item">
+                    <p>Ты назначен на макет</p>
+                    <p><strong>Название макета:</strong> {{ photo.image_name }}</p>
+                    {% if photo.assigned_manager != None %}
+                        <p><strong>Назначен менеджер:</strong> {{ photo.assigned_manager.full_name }}</p>
+                    {% endif %}
+                    <a href="{% url 'manager_maket' photo.id %}" class="btn btn-primary">Подробнее</a>
+                </div>
+                {%endif%}
+            {% endfor %}
+            {% if not photos|length %}
+                <p class="fade-in-item">У вас нет макетов, где вы назначены менеджером</p>
+            {% endif %}
+        {% else %}
+            <p class="fade-in-item">У вас нет макетов, где вы назначены менеджером</p>
+        {% endif %}
+    </div>
+</div>
+</main>
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    background-color: #1e1e1e;
+}
+
+.profile-container {
+    background-color: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.scrollable-content {
+    max-height: auto;
+    overflow-y: auto;
+    margin-top: 20px;
+    padding-right: 10px;
+}
+
+.photo-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 45px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+}
+
+@media (max-width: 380px) {
+    h1 {
+        font-size: 22px;
+    }
+
+    .profile-container {
+        padding: 10px;
+    }
+
+    .photo-card {
+        padding: 7px;
+    }
+}
+
+/* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-in-item:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-item:nth-child(2) { animation-delay: 0.3s; }
+.fade-in-item:nth-child(3) { animation-delay: 0.5s; }
+.fade-in-item:nth-child(4) { animation-delay: 0.7s; }
+.fade-in-item:nth-child(5) { animation-delay: 0.9s; }
+.fade-in-item:nth-child(6) { animation-delay: 1.1s; }
+.fade-in-item:nth-child(7) { animation-delay: 1.3s; }
+.fade-in-item:nth-child(8) { animation-delay: 1.5s; }
+.fade-in-item:nth-child(9) { animation-delay: 1.7s; }
+.fade-in-item:nth-child(10) { animation-delay: 1.9s; }
+
+.create-maket-container {
+    text-align: center;
+    margin: 20px 0;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-create-maket, .btn-monitoring {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    background-color: white;
+    color: black;
+    text-decoration: none;
+    border-radius: 45px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-create-maket:hover, .btn-monitoring:hover {
+    background-color: black;
+    color: white;
+    transform: scale(1.05);
+}
+
+.btn-monitoring i {
+    font-size: 18px;
+}
+
+@media (max-width: 480px) {
+    .create-maket-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-create-maket, .btn-monitoring {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,477 @@
+{% extends 'manager2/layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="monitoring-container">
+    <div class="header-container">
+        <a href="{% url 'task_list' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Назад
+        </a>
+        <div style="height: 35px;">
+        </div>
+        <h1>Мониторинг активных задач</h1>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab-button active" data-tab="active-tasks">Активные задачи</button>
+        <button class="tab-button" data-tab="tasks-for-review">На проверке</button>
+        <button class="tab-button" data-tab="task-history">История таймеров</button>
+    </div>
+
+    <div class="tab-content active" id="active-tasks">
+        {% if active_tasks %}
+            {% for task_info in active_tasks %}
+                <div class="task-card">
+                    <div class="task-header">
+                        <h3>{{ task_info.task.title }}</h3>
+                        <span class="status active">В работе</span>
+                    </div>
+                    <div class="task-details">
+                        <div class="detail-item">
+                            <i class="fas fa-image"></i>
+                            <span>Макет: {{ task_info.task.photo.image_name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-user"></i>
+                            <span>Сотрудник: {{ task_info.user.full_name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Начало: {{ task_info.start_time|time:"H:i" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-hourglass-half"></i>
+                            <span>Прошло времени: {{ task_info.elapsed_time }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-tasks">Нет активных задач</p>
+        {% endif %}
+    </div>
+
+    <div class="tab-content" id="tasks-for-review">
+        {% if tasks_for_review %}
+            {% for task in tasks_for_review %}
+                <div class="task-card review-card">
+                    <div class="task-header">
+                        <h3>{{ task.title }}</h3>
+                        <span class="status review">На проверке</span>
+                    </div>
+                    <div class="task-details">
+                        <div class="detail-item">
+                            <i class="fas fa-image"></i>
+                            <span>Макет: {{ task.photo.image_name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-user"></i>
+                            <span>Сотрудник: {{ task.assigned_to.full_name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Отправлено: {{ task.last_modified|date:"d.m.Y H:i" }}</span>
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <a href="{% url 'manager_maket' task.photo.id %}" class="review-button">
+                            <i class="fas fa-check-circle"></i>
+                            Проверить
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-tasks">Нет задач на проверке</p>
+        {% endif %}
+    </div>
+
+    <div class="tab-content" id="task-history">
+        {% if task_history %}
+            {% for history_item in task_history %}
+                <div class="history-card">
+                    <div class="history-header">
+                        <h3>{{ history_item.entry.task.title }}</h3>
+                        <span class="status completed">Завершено</span>
+                    </div>
+                    <div class="history-details">
+                        <div class="detail-item">
+                            <i class="fas fa-image"></i>
+                            <span>Макет: {{ history_item.entry.task.photo.image_name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-user"></i>
+                            <span>Сотрудник: {{ history_item.entry.user.full_name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Дата: {{ history_item.entry.start_time|date:"d.m.Y" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Начало: {{ history_item.entry.start_time|time:"H:i" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-stop-circle"></i>
+                            <span>Конец: {{ history_item.entry.end_time|time:"H:i" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-hourglass-end"></i>
+                            <span>Потрачено времени: {{ history_item.duration }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-tasks">История пуста</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.monitoring-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.header-container {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.back-button {
+    position: absolute;
+    left: 0;
+    top: 30%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.back-button i {
+    font-size: 18px;
+}
+
+h1 {
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tab-button {
+    padding: 12px 24px;
+    border: none;
+    background-color: #e0e0e0;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    min-width: 160px;
+}
+
+.tab-button.active {
+    background-color: #4CAF50;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.task-card, .history-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.task-card:hover, .history-card:hover {
+    transform: translateY(-2px);
+}
+
+.task-header, .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.task-header h3, .history-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+    flex: 1;
+}
+
+.status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.status.completed {
+    background-color: #2196F3;
+    color: white;
+}
+
+.status.review {
+    background-color: #FFA500;
+    color: white;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.detail-item i {
+    color: #666;
+    width: 20px;
+    text-align: center;
+}
+
+.detail-item span {
+    color: #444;
+    font-size: 15px;
+}
+
+.no-tasks {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin: 30px 0;
+    font-size: 16px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.review-card {
+    border-left: 4px solid #FFA500;
+}
+
+.task-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.review-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.review-button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.review-button i {
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .header-container {
+        margin-bottom: 20px;
+    }
+
+    .back-button {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .back-button i {
+        font-size: 16px;
+    }
+
+    .monitoring-container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .tab-button {
+        padding: 10px 20px;
+        font-size: 14px;
+        min-width: 140px;
+    }
+
+    .task-card, .history-card {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .task-header h3, .history-header h3 {
+        font-size: 16px;
+    }
+
+    .detail-item {
+        padding: 6px;
+        margin: 8px 0;
+    }
+
+    .detail-item span {
+        font-size: 14px;
+    }
+
+    .status {
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+
+    .review-button {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .review-button i {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-container {
+        margin-bottom: 15px;
+    }
+
+    .back-button {
+        padding: 5px 10px;
+        font-size: 13px;
+    }
+
+    .back-button i {
+        font-size: 14px;
+    }
+
+    .monitoring-container {
+        padding: 10px;
+    }
+
+    .tabs {
+        gap: 8px;
+    }
+
+    .tab-button {
+        padding: 8px 16px;
+        font-size: 13px;
+        min-width: 120px;
+    }
+
+    .task-header, .history-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .status {
+        align-self: flex-start;
+    }
+
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .detail-item i {
+        margin-bottom: 2px;
+    }
+
+    .task-actions {
+        justify-content: center;
+    }
+
+    .review-button {
+        width: 100%;
+        justify-content: center;
+        padding: 8px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Убираем активный класс у всех кнопок и контента
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Добавляем активный класс выбранной кнопке и соответствующему контенту
+            button.classList.add('active');
+            const tabId = button.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+});
+</script>
+{% endblock %} 

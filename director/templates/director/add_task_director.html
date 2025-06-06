@@ -1,0 +1,237 @@
+{% extends 'manager2/layout.html' %}
+{% block content %}
+<div class="task-container">
+    <div class="header">
+        <h1>Создание задачи</h1>
+        <a href="{% url 'maket_director' photo.id %}" class="back-button">Назад</a>
+    </div>
+
+    <div class="form-wrapper">
+        <a href="{% url 'task_templates_director' photo.id %}" class="template-button">Управление шаблонами задач</a>
+
+        {% if photo.image %}
+            <img src="{{ photo.image.url }}" alt="Фото макета" class="preview-image">
+        {% endif %}
+
+        <form method="post" class="task-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.template.id_for_label }}">Выберите шаблон:</label>
+                {{ form.template }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Название задачи:</label>
+                {{ form.title }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Описание:</label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.requirements.id_for_label }}">Требования:</label>
+                {{ form.requirements }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.max_assigned_users.id_for_label }}">Количество сотрудников:</label>
+                {{ form.max_assigned_users }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.due_date.id_for_label }}">Срок сдачи:</label>
+                {{ form.due_date }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.assigned_user.id_for_label }}">Назначить сотрудников:</label>
+                {{ form.assigned_user }}
+            </div>
+
+            <button type="submit" class="submit-button">Создать задачу</button>
+        </form>
+    </div>
+    <div style="height: 150px;">
+
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const templateSelect = document.querySelector('#id_template');
+    const titleInput = document.querySelector('#id_title');
+    const descriptionInput = document.querySelector('#id_description');
+    const requirementsInput = document.querySelector('#id_requirements');
+
+    templateSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value) {
+            fetch(`/director/get-template/${selectedOption.value}/`)
+                .then(response => response.json())
+                .then(data => {
+                    titleInput.value = data.title;
+                    descriptionInput.value = data.description;
+                    requirementsInput.value = data.requirements;
+                });
+        } else {
+            titleInput.value = '';
+            descriptionInput.value = '';
+            requirementsInput.value = '';
+        }
+    });
+});
+</script>
+
+<style>
+.task-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    margin: 0;
+    color: white;
+    font-size: 24px;
+}
+
+.back-button {
+    background: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.back-button:hover {
+    background: #444;
+}
+
+.form-wrapper {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.template-button {
+    display: block;
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: background 0.3s;
+}
+
+.template-button:hover {
+    background: #0056b3;
+}
+
+.preview-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: white;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 14px;
+}
+
+.form-group select {
+    background: white;
+    color: black;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.submit-button {
+    background: #28a745;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.submit-button:hover {
+    background: #218838;
+}
+
+@media (max-width: 768px) {
+    .task-container {
+        padding: 15px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .form-wrapper {
+        padding: 15px;
+    }
+
+    .task-form {
+        gap: 15px;
+    }
+
+    .preview-image {
+        max-height: 200px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        font-size: 16px;
+    }
+}
+</style>
+{% endblock %}

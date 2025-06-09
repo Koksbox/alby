@@ -42,7 +42,6 @@ django-tinymce==3.7.0
 django-summernote==0.8.20.0
 django-filebrowser==4.0.3
 django-grappelli==3.0.5
-django-jet-reboot==0.2.8
 django-jazzmin==2.6.0
 django-admin-rangefilter==0.12.0
 django-admin-list-filter-dropdown==1.0.3

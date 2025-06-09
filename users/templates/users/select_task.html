@@ -11,12 +11,25 @@
 <div class="main">
     <div class="form-container">
         <h2 class="fade-in-item">Выбор задачи</h2>
+
+        {% if messages %}
+        <div class="messages fade-in-item">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message|safe }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <form method="post" class="fade-in-item">
             {% csrf_token %}
             <label for="task" class="task fade-in-item">Выберите задачу:</label>
             <select name="task_id" id="task" required class="fade-in-item">
                 {% for task in tasks %}
-                    <option value="{{ task.id }}">{{ task }}</option>
+                    <option value="{{ task.id }}" {% if task in assigned_tasks %}class="assigned-task"{% endif %}>
+                        {{ task.title }} {% if task in assigned_tasks %}(Назначена вам){% endif %}
+                    </option>
                 {% endfor %}
             </select>
             <button type="submit" class="fade-in-item">Выбрать задачу</button>
@@ -38,8 +51,8 @@ body {
 
 .main {
     width: 100%;
-    max-width: 400px; /* Ограничиваем максимальную ширину */
-    margin: 20px; /* Отступы для мобильных устройств */
+    max-width: 400px;
+    margin: 20px;
     text-align: center;
     color: white;
 }
@@ -48,7 +61,45 @@ body {
     background-color: rgba(0, 0, 0, 0.6);
     color: white;
     border-radius: 15px;
-    padding: 20px; /* Внутренние отступы */
+    padding: 20px;
+}
+
+/* Стили для сообщений */
+.messages {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.alert-info {
+    background-color: rgba(23, 162, 184, 0.2);
+    border: 2px solid #17a2b8;
+    color: #17a2b8;
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.2);
+    border: 2px solid #ffc107;
+    color: #ffc107;
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    border: 2px solid #28a745;
+    color: #28a745;
+}
+
+.alert-error {
+    background-color: rgba(220, 53, 69, 0.2);
+    border: 2px solid #dc3545;
+    color: #dc3545;
 }
 
 label {
@@ -69,6 +120,11 @@ select {
     background-color: rgba(0, 0, 0, 0.0);
     color: white;
     font-size: 1rem;
+}
+
+select option.assigned-task {
+    background-color: rgba(23, 162, 184, 0.2);
+    color: #17a2b8;
 }
 
 button {

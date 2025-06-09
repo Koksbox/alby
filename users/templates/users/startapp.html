@@ -39,18 +39,20 @@
         <div class="salary" id="salaryDisplay">0 ₽</div>
     </div>
         <div class='mockup'>
-            {%if active_task %}
-            <p><strong>Активная задача - {{active_task}} </strong></p>
-            <p><small> (Не забудьте завершить задачу перед заверешением смены)</small></p>
-            {%else%}
-            <p><strong style="color: red;">"P.S" - Запустите таймер перед выбором задачи</strong></p>
-            {%endif%}
-            {% if photo %}
-        <p><strong>Название макета:</strong> {{ photo.image_name }}</p>
-        <p><strong>Описание макета:</strong> {{ photo.description }}</p>
-    {% else %}
-        <p></p>
-    {% endif %}
+            {% if active_task %}
+            <div class="active-task-info">
+                <p><strong>Текущая задача:</strong> {{ active_task.title }}</p>
+                <p><strong>Макет:</strong> {{ active_task.photo.image_name }}</p>
+                <p><strong>Описание макета:</strong> {{ active_task.photo.description }}</p>
+                <p class="task-warning"><small>(Не забудьте завершить задачу перед завершением смены)</small></p>
+            </div>
+            {% else %}
+            <div class="no-task-warning">
+                <p><strong style="color: #ff6b6b;">Внимание!</strong></p>
+                <p>У вас нет активной задачи. Пожалуйста, выберите задачу для работы.</p>
+                <p><small>P.S. - Запустите таймер перед выбором задачи</small></p>
+            </div>
+            {% endif %}
         </div>
         <div class="start-button">
     {% if request.session.timer_shift_started %}
@@ -274,6 +276,43 @@ button {
 .main > *:nth-child(3) { animation-delay: 0.5s; }
 .main > *:nth-child(4) { animation-delay: 0.7s; }
 .main > *:nth-child(5) { animation-delay: 0.9s; }
+
+.active-task-info {
+    background-color: rgba(40, 167, 69, 0.1);
+    border: 1px solid #28a745;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.no-task-warning {
+    background-color: rgba(255, 107, 107, 0.1);
+    border: 1px solid #ff6b6b;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.task-warning {
+    color: #ffc107;
+    margin-top: 10px;
+}
+
+.mockup {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.mockup p {
+    margin: 8px 0;
+    line-height: 1.4;
+}
+
+.mockup strong {
+    color: #17a2b8;
+}
 </style>
 
 <script>

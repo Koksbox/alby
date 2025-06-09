@@ -310,7 +310,7 @@ def refactor_profile(request):
 def startapp(request):
     # Получаем активную задачу пользователя
     active_task = Task.objects.filter(
-        submitted_by=request.user,
+        submitted_by__id=request.user.id,
         is_rated=False,
         is_submitted_for_review=False
     ).first()
@@ -388,7 +388,6 @@ def select_task(request, photo_id=None):
         submitted_by=current_user,
         is_rated=False,
         is_submitted_for_review = False
-        # Задача должна быть отправлена на проверку
     ).first()
 
     if active_task:
@@ -401,18 +400,25 @@ def select_task(request, photo_id=None):
             base_query = Task.objects.filter(completed=False)
             if photo:
                 base_query = base_query.filter(photo=photo)
-            tasks = [
-                task for task in base_query
-                if (
-                    not task.is_full() and
-                    # (
-                    #         current_user in task.submitted_by.all() #or
-                    #         # (not task.is_submitted_for_review or
-                    #         #  not task.submitted_by_users_for_review.exists())
-                    # ) and
-                    current_user not in task.completed_by_users.all()
-                )
-            ]
+            
+            # Получаем все задачи, на которые назначен пользователь
+            assigned_tasks = base_query.filter(assigned_user=current_user)
+            
+            # Если есть назначенные задачи, показываем только их
+            if assigned_tasks.exists():
+                tasks = assigned_tasks
+                messages.info(request, 'Вот задачи, на которые вы назначены:')
+            else:
+                # Если нет назначенных задач, показываем все доступные
+                tasks = [
+                    task for task in base_query
+                    if (
+                        not task.is_full() and
+                        current_user not in task.completed_by_users.all()
+                    )
+                ]
+                if tasks:
+                    messages.warning(request, 'Вы не назначены ни на одну из доступных задач. Пожалуйста, обратитесь к руководителю для назначения.')
 
         else:
             tasks = []
@@ -450,7 +456,12 @@ def select_task(request, photo_id=None):
             except ValueError:
                 message = "Invalid task ID"
                 selected_task = None
-    return render(request, 'users/select_task.html', {'tasks': tasks, 'photo': photo})
+
+    return render(request, 'users/select_task.html', {
+        'tasks': tasks, 
+        'photo': photo,
+        'assigned_tasks': assigned_tasks if 'assigned_tasks' in locals() else None
+    })
 
 
 
@@ -824,6 +835,24 @@ def photo_maket(request):
         is_rated=False,
         is_submitted_for_review=False
     ).first()
+
+    # Получаем все задачи, на которые назначен пользователь
+    assigned_tasks = Task.objects.filter(
+        assigned_user=request.user,
+        completed=False
+    ).select_related('photo')
+
+    # Если у пользователя нет назначенных задач, показываем предупреждение
+    if not assigned_tasks.exists() and not active_task:
+        messages.warning(request, "У вас нет назначенных задач. Пожалуйста, обратитесь к руководителю.")
+    else:
+        # Показываем информацию о назначенных задачах
+        for task in assigned_tasks:
+            messages.info(
+                request,
+                f'Вы назначены на задачу "{task.title}" в макете "{task.photo.image_name}". '
+                f'<a href="/maket_info/{task.photo.id}/" class="task-link">Перейти к макету</a>'
+            )
 
     # Логика отображения макетов
     photos = Photo.objects.prefetch_related('tasks').all()

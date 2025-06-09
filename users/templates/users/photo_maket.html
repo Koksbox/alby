@@ -13,6 +13,16 @@
 <main>
     <h1 style="text-align: center;">Актуальные макеты</h1>
     
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message|safe }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     {% if active_task %}
     <div class="active-task-banner">
         <p>У вас есть активная задача: <strong>{{ active_task.title }}</strong></p>
@@ -46,7 +56,8 @@
         {% endif %}
     </div>
 
-    <div class="empty">
+    <div style="height: 150px;">
+
     </div>
 </main>
 
@@ -56,6 +67,7 @@ body {
     height: 100vh;
     margin: 0;
     color: white;
+    overflow-y: auto;
 }
 
 main {
@@ -66,6 +78,7 @@ main {
     justify-content: flex-start;
     flex-direction: column;
     align-items: center;
+    height: 100%;
 }
 
 h1 {
@@ -205,6 +218,64 @@ h1 {
         flex-direction: column;
         gap: 10px;
     }
+}
+
+/* Стили для сообщений */
+.messages {
+    width: 90%;
+    max-width: 800px;
+    margin: 10px auto;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.alert-info {
+    background-color: rgba(23, 162, 184, 0.2);
+    border: 2px solid #17a2b8;
+    color: #17a2b8;
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.2);
+    border: 2px solid #ffc107;
+    color: #ffc107;
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    border: 2px solid #28a745;
+    color: #28a745;
+}
+
+.alert-error {
+    background-color: rgba(220, 53, 69, 0.2);
+    border: 2px solid #dc3545;
+    color: #dc3545;
+}
+
+.task-link {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #17a2b8;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 12px;
+    transition: background-color 0.3s;
+}
+
+.task-link:hover {
+    background-color: #138496;
+    color: white;
+    text-decoration: none;
 }
 </style>
 {% endblock %}

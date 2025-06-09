@@ -39,6 +39,7 @@ def add_task_director(request, photo_id):
                     return redirect('add_task_director', photo_id=photo_id)
 
                 task.assigned_user.add(*unique_users)
+                task.submitted_by.add(*unique_users)
                 logger.info(f'К задаче {task.id} добавлены пользователи: {[user.full_name for user in unique_users]}')
 
             if task.is_full():

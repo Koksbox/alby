@@ -1079,7 +1079,7 @@ def employee_shiftsdir(request, user_id):
     # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
-            selected_month = datetime.strptime(selected_month_str, '%Y-%m').date()
+            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
         except (ValueError, TypeError):
             selected_month = timezone.now().date()
     else:
@@ -1145,7 +1145,7 @@ def manager_shifts(request, user_id):
     # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
-            selected_month = datetime.strptime(selected_month_str, '%Y-%m').date()
+            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
         except (ValueError, TypeError):
             selected_month = timezone.now().date()
     else:

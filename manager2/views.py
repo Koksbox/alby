@@ -703,7 +703,7 @@ def my_statistic(request):
     selected_month = timezone.now().date()
     if selected_month_str:
         try:
-            selected_month = datetime.strptime(selected_month_str, '%Y-%m').date()
+            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
         except ValueError:
             pass
 
@@ -816,7 +816,7 @@ def manager_user_statistic(request, user_id):
     selected_month = timezone.now().date()
     if 'month' in request.GET:
         try:
-            selected_month = datetime.strptime(request.GET['month'], '%Y-%m').date()
+            selected_month = timezone.make_aware(datetime.strptime(request.GET['month'], '%Y-%m').date())
         except ValueError:
             pass
 
@@ -890,7 +890,7 @@ def my_maket_manager(request):
     if selected_month_str:
         try:
             # Преобразуем строку в дату (формат 'YYYY-MM')
-            selected_month = datetime.strptime(selected_month_str, '%Y-%m').date()
+            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
         except (ValueError, TypeError):
             # Если данные некорректны, используем текущий месяц
             selected_month = timezone.now().date()
@@ -968,7 +968,7 @@ def employee_shifts(request, user_id):
     # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
-            selected_month = datetime.strptime(selected_month_str, '%Y-%m').date()
+            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
         except (ValueError, TypeError):
             selected_month = timezone.now().date()
     else:

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, F, ExpressionWrapper, FloatField
+from django.db.models import Sum, F, ExpressionWrapper, FloatField, Q
 from django.utils import timezone
 from datetime import datetime, timedelta
 from users.models import CustomUser, TimeEntry
@@ -22,8 +22,9 @@ def time_report(request):
 
     try:
         if start_date and end_date:
-            start_date = datetime.strptime(start_date, '%Y-%m-%d')
-            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+            # Преобразуем строки в aware datetime объекты
+            start_date = timezone.make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
+            end_date = timezone.make_aware(datetime.strptime(end_date, '%Y-%m-%d'))
             end_date_plus_one = end_date + timedelta(days=1)
         else:
             start_date = None
@@ -92,8 +93,8 @@ def time_manager(request):
 
     try:
         if start_date and end_date:
-            start_date = datetime.strptime(start_date, '%Y-%m-%d')
-            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+            start_date = timezone.make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
+            end_date = timezone.make_aware(datetime.strptime(end_date, '%Y-%m-%d'))
             end_date_plus_one = end_date + timedelta(days=1)
         else:
             start_date = None

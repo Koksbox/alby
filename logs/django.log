@@ -5137,3 +5137,36 @@ INFO 2025-06-09 12:14:16,975 basehttp 6412 11784 "GET /task_history/ HTTP/1.1" 2
 INFO 2025-06-09 12:14:18,573 basehttp 6412 11784 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-06-09 12:14:23,042 basehttp 6412 11784 "GET /photo_maket/ HTTP/1.1" 200 11359
 INFO 2025-06-09 12:14:24,631 basehttp 6412 11784 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:14:50,431 basehttp 6412 11784 "GET /task_history/ HTTP/1.1" 200 10771
+INFO 2025-06-09 12:14:52,013 basehttp 6412 11784 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:15:29,802 autoreload 6412 7540 C:\Users\Student\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-09 12:15:30,639 autoreload 10972 10928 Watching for file changes with StatReloader
+WARNING 2025-06-09 12:41:04,059 basehttp 10972 10084 "GET /static/js/service.js HTTP/1.1" 404 179
+WARNING 2025-06-09 12:41:04,075 basehttp 10972 7400 "GET /static/css/style.css HTTP/1.1" 404 179
+WARNING 2025-06-09 12:41:04,082 basehttp 10972 8532 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-09 12:41:05,634 basehttp 10972 7400 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:41:28,607 basehttp 10972 7400 "GET /login/ HTTP/1.1" 302 0
+INFO 2025-06-09 12:41:28,624 basehttp 10972 7400 "GET /profile/ HTTP/1.1" 200 9997
+WARNING 2025-06-09 12:41:28,647 basehttp 10972 7400 "GET /media/avatars/%D0%BA%D0%BE%D1%82_9pmUFBa.jpg HTTP/1.1" 404 179
+INFO 2025-06-09 12:41:30,244 basehttp 10972 7400 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:41:32,738 basehttp 10972 7400 "GET /profile/ HTTP/1.1" 200 9997
+WARNING 2025-06-09 12:41:32,778 basehttp 10972 7400 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-09 12:41:33,652 basehttp 10972 7400 "GET /logout/ HTTP/1.1" 200 2457
+WARNING 2025-06-09 12:41:33,673 basehttp 10972 7400 "GET /static/css/styles.css HTTP/1.1" 404 179
+WARNING 2025-06-09 12:41:33,689 basehttp 10972 7400 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+WARNING 2025-06-09 12:41:34,794 basehttp 10972 7400 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+WARNING 2025-06-09 12:41:34,797 basehttp 10972 10084 "GET /static/css/style.css HTTP/1.1" 404 179
+WARNING 2025-06-09 12:41:34,816 basehttp 10972 9412 "GET /static/js/service.js HTTP/1.1" 404 179
+WARNING 2025-06-09 12:41:34,864 basehttp 10972 8532 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-09 12:41:35,235 basehttp 10972 9412 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:41:36,502 basehttp 10972 9412 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:42:16,014 autoreload 10972 10928 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 12:42:16,847 autoreload 11756 11192 Watching for file changes with StatReloader
+INFO 2025-06-09 12:42:31,543 autoreload 11756 11192 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 12:42:32,281 autoreload 11432 4616 Watching for file changes with StatReloader
+INFO 2025-06-09 12:48:49,162 autoreload 11432 4616 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 12:48:49,810 autoreload 7928 10680 Watching for file changes with StatReloader
+INFO 2025-06-09 12:49:32,837 autoreload 7928 10680 C:\Users\Student\PycharmProjects\alby\manager2\views.py changed, reloading.
+INFO 2025-06-09 12:49:33,482 autoreload 9236 12828 Watching for file changes with StatReloader
+INFO 2025-06-09 12:49:52,342 autoreload 9236 12828 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-09 12:49:53,014 autoreload 2800 1476 Watching for file changes with StatReloader

@@ -47,8 +47,7 @@
 
                 <div class="assigned-tasks">
                     <h4>Ваши задачи в этом макете:</h4>
-                    {% for task in assigned_tasks %}
-                        {% if task.photo_id == photo.id %}
+                    {% for task in photo.assigned_tasks %}
                         <div class="task-item {% if task == active_task %}active{% endif %}">
                             <p><strong>{{ task.title }}</strong></p>
                             <p class="task-status">
@@ -62,8 +61,12 @@
                                     <span class="status-pending">Ожидает</span>
                                 {% endif %}
                             </p>
+                            {% if task == active_task %}
+                                <a href="{% url 'select_task' photo.id %}" class="btn btn-primary btn-sm">Продолжить работу</a>
+                            {% endif %}
                         </div>
-                        {% endif %}
+                    {% empty %}
+                        <p class="no-tasks">Нет назначенных задач</p>
                     {% endfor %}
                 </div>
 
@@ -249,11 +252,11 @@ h1 {
 }
 
 .task-item {
-    padding: 8px;
-    margin: 5px 0;
-    border-radius: 5px;
     background-color: rgba(255, 255, 255, 0.05);
-    transition: background-color 0.3s ease;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
 }
 
 .task-item:hover {
@@ -261,41 +264,44 @@ h1 {
 }
 
 .task-item.active {
-    background-color: rgba(40, 167, 69, 0.2);
-    border: 1px solid #28a745;
+    border-left: 3px solid #28a745;
 }
 
 .task-status {
-    font-size: 12px;
-    margin-top: 5px;
-    display: flex;
-    align-items: center;
-}
-
-.task-status span {
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 11px;
+    margin: 5px 0;
 }
 
 .status-active {
     color: #28a745;
-    background-color: rgba(40, 167, 69, 0.1);
+    font-weight: 500;
 }
 
 .status-review {
-    color: #fd7e14;
-    background-color: rgba(253, 126, 20, 0.1);
+    color: #ffc107;
+    font-weight: 500;
 }
 
 .status-completed {
     color: #17a2b8;
-    background-color: rgba(23, 162, 184, 0.1);
+    font-weight: 500;
 }
 
 .status-pending {
-    color: #ffc107;
-    background-color: rgba(255, 193, 7, 0.1);
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.no-tasks {
+    color: #6c757d;
+    font-style: italic;
+    text-align: center;
+    padding: 10px;
 }
 
 .btn {

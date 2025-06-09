@@ -777,22 +777,8 @@ def upload_avatar_users(request):
     return render(request, 'users/upload_avatar_users.html', {'form': form})
 
 
+@login_required
 def photo_maket(request):
-    # Проверяем, авторизован ли пользователь
-    if not request.user.is_authenticated:
-        messages.error(request, "Вы не авторизованы!")
-        return redirect('login')
-
-    # Проверяем, запущен ли таймер смены
-    active_entry = TimeEntry.objects.filter(
-        user=request.user,
-        timer_type='shift',
-        end_time__isnull=True
-    ).first()
-    if not active_entry:
-        messages.warning(request, "Таймер смены не запущен. Начните смену, чтобы получить доступ к макетам.")
-        return redirect('startapp')
-
     # Получаем активную задачу пользователя
     active_task = Task.objects.filter(
         submitted_by__id=request.user.id,
@@ -836,6 +822,9 @@ def photo_maket(request):
 
         # Проверяем, есть ли у пользователя активная задача для этого макета
         photo.has_active_task = active_task and active_task.photo_id == photo.id
+
+        # Добавляем информацию о назначенных задачах для этого макета
+        photo.assigned_tasks = assigned_tasks.filter(photo=photo)
 
     return render(request, 'users/photo_maket.html', {
         'photos': assigned_photos,
@@ -1005,10 +994,21 @@ def task_history(request):
         date = task.created_at.date()
         if date not in tasks_by_date:
             tasks_by_date[date] = []
+        
+        # Добавляем информацию о времени выполнения
+        if task.completed and task.completion_time:
+            task.completion_time_str = str(task.completion_time)
+        else:
+            task.completion_time_str = "Не завершена"
+            
         tasks_by_date[date].append(task)
 
     # Сортируем даты в обратном порядке
     sorted_dates = sorted(tasks_by_date.keys(), reverse=True)
+
+    # Сортируем задачи внутри каждой даты по времени создания (новые сверху)
+    for date in tasks_by_date:
+        tasks_by_date[date].sort(key=lambda x: x.created_at, reverse=True)
 
     context = {
         'tasks_by_date': tasks_by_date,

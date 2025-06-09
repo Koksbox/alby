@@ -4,15 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Задачи и Макеты</title>
+    <title>Макеты</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/css_zadachi.css' %}">
 </head>
 <body>
 {% block content %}
 <main>
-    <h1 style="text-align: center;">Актуальные макеты</h1>
-    
+    <h1 style="text-align: center;">Макеты</h1>
+
+    <div class="history-button-container">
+        <a href="{% url 'task_history' %}" class="history-button">
+            <i class="fas fa-history"></i> История задач
+        </a>
+    </div>
+
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
@@ -23,42 +29,55 @@
     </div>
     {% endif %}
 
-    {% if active_task %}
-    <div class="active-task-banner">
-        <p>У вас есть активная задача: <strong>{{ active_task.title }}</strong></p>
-        <a href="{% url 'maket_info' active_task.photo.id %}" class="active-task-btn">Перейти к задаче</a>
-    </div>
-    {% endif %}
-
     <div class="photo-display">
         {% if photos %}
         {% for photo in photos %}
-        {% if not photo.is_completed %}
         <div class="photo-container {% if photo.has_active_task %}active-task{% endif %}">
             <img src="{{ photo.image.url }}" alt="Фото" class="photo">
             <div class="description-container">
                 <p><strong>Процент завершения:</strong> {{ photo.completion_percentage|floatformat:0 }}%</p>
-                <p><strong>Название макета:</strong>{{ photo.image_name }}</p>
-                <p><strong>Описание макета:</strong>{{ photo.description }}<p>
+                <p><strong>Название макета:</strong> {{ photo.image_name }}</p>
+                <p><strong>Описание макета:</strong> {{ photo.description }}</p>
+                
                 {% if photo.has_active_task %}
                 <div class="active-task-indicator">
                     <span class="active-dot"></span>
                     <span>Активная задача</span>
                 </div>
                 {% endif %}
+
+                <div class="assigned-tasks">
+                    <h4>Ваши задачи в этом макете:</h4>
+                    {% for task in assigned_tasks %}
+                        {% if task.photo_id == photo.id %}
+                        <div class="task-item {% if task == active_task %}active{% endif %}">
+                            <p><strong>{{ task.title }}</strong></p>
+                            <p class="task-status">
+                                {% if task == active_task %}
+                                    <span class="status-active">В работе</span>
+                                {% elif task.is_submitted_for_review %}
+                                    <span class="status-review">Отправлено на проверку</span>
+                                {% elif task.completed %}
+                                    <span class="status-completed">Завершена</span>
+                                {% else %}
+                                    <span class="status-pending">Ожидает</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
                 <a href="{% url 'maket_info' photo.id %}" class="btn btn-primary">Подробнее</a>
             </div>
         </div>
-        {% endif %}
         {% endfor %}
         {% else %}
-        <div class="no-photo-message">Актуальные Макеты отсутствуют</div>
+        <div class="no-photo-message">Актуальные макеты отсутствуют</div>
         {% endif %}
     </div>
 
-    <div style="height: 150px;">
-
-    </div>
+    <div style="height: 150px;"></div>
 </main>
 
 <style>
@@ -85,146 +104,10 @@ h1 {
     font-size: 28px;
 }
 
-.active-task-banner {
-    background-color: rgba(76, 175, 80, 0.2);
-    border: 2px solid #4CAF50;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 10px 0;
-    width: 90%;
-    max-width: 600px;
-    text-align: center;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.active-task-btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
-.active-task-btn:hover {
-    background-color: #45a049;
-}
-
-.photo-display {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.description-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    padding: 10px;
-    font-size: 13px;
-}
-
-.photo {
-    box-shadow: 6px -4px 24px -2px rgba(0, 0, 0, 0.4);
-    padding-top: 5px;
-    width: 90%;
-    height: 90%;
-    border-radius: 10px;
-}
-
-.photo-container {
-    text-align: center;
-    width: 47%;
-    height: auto;
-    color: white;
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    margin: 3px;
-    transition: all 0.3s ease;
-}
-
-.photo-container.active-task {
-    border: 2px solid #4CAF50;
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-.active-task-indicator {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin: 5px 0;
-    color: #4CAF50;
-}
-
-.active-dot {
-    width: 8px;
-    height: 8px;
-    background-color: #4CAF50;
-    border-radius: 50%;
-    display: inline-block;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.2);
-        opacity: 0.7;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.btn {
-    background-color: #007bff;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 5px;
-    text-decoration: none;
-    margin-top: 10px;
-    transition: background-color 0.3s;
-}
-
-.btn:hover {
-    background-color: #0056b3;
-}
-
-.no-photo-message {
-    text-align: center;
-    font-size: 18px;
-    color: #666;
-    margin: 20px;
-}
-
-@media (max-width: 768px) {
-    .photo-container {
-        width: 90%;
-    }
-    
-    .active-task-banner {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
-
-/* Стили для сообщений */
 .messages {
-    width: 90%;
+    width: 100%;
     max-width: 800px;
-    margin: 10px auto;
+    margin: 20px auto;
 }
 
 .alert {
@@ -248,34 +131,212 @@ h1 {
     color: #ffc107;
 }
 
-.alert-success {
-    background-color: rgba(40, 167, 69, 0.2);
+.task-link {
+    color: #17a2b8;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.task-link:hover {
+    text-decoration: underline;
+}
+
+.photo-display {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.photo-container {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    padding: 15px;
+    width: 300px;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.photo-container:hover {
+    transform: translateY(-5px);
+}
+
+.photo-container.active-task {
     border: 2px solid #28a745;
+}
+
+.photo {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.description-container {
+    color: white;
+    font-size: 14px;
+}
+
+.description-container p {
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.active-task-indicator {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
     color: #28a745;
 }
 
-.alert-error {
-    background-color: rgba(220, 53, 69, 0.2);
-    border: 2px solid #dc3545;
-    color: #dc3545;
+.active-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #28a745;
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: pulse 2s infinite;
 }
 
-.task-link {
+.assigned-tasks {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.assigned-tasks h4 {
+    margin: 0 0 10px 0;
+    color: #17a2b8;
+    font-size: 16px;
+}
+
+.task-item {
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.05);
+    transition: background-color 0.3s ease;
+}
+
+.task-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.task-item.active {
+    background-color: rgba(40, 167, 69, 0.2);
+    border: 1px solid #28a745;
+}
+
+.task-status {
+    font-size: 12px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.task-status span {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+}
+
+.status-active {
+    color: #28a745;
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+.status-review {
+    color: #fd7e14;
+    background-color: rgba(253, 126, 20, 0.1);
+}
+
+.status-completed {
+    color: #17a2b8;
+    background-color: rgba(23, 162, 184, 0.1);
+}
+
+.status-pending {
+    color: #ffc107;
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.btn {
     display: inline-block;
-    margin-left: 10px;
-    padding: 5px 10px;
+    padding: 8px 16px;
     background-color: #17a2b8;
     color: white;
     text-decoration: none;
     border-radius: 5px;
-    font-size: 12px;
-    transition: background-color 0.3s;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
 }
 
-.task-link:hover {
+.btn:hover {
     background-color: #138496;
+}
+
+.no-photo-message {
+    text-align: center;
+    color: #6c757d;
+    font-size: 18px;
+    margin-top: 50px;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .photo-display {
+        padding: 10px;
+    }
+
+    .photo-container {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+.history-button-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.history-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #17a2b8;
     color: white;
     text-decoration: none;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid #17a2b8;
+}
+
+.history-button:hover {
+    background-color: transparent;
+    color: #17a2b8;
+}
+
+.history-button i {
+    margin-right: 8px;
 }
 </style>
 {% endblock %}

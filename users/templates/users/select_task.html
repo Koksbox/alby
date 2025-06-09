@@ -26,10 +26,19 @@
             {% csrf_token %}
             <label for="task" class="task fade-in-item">Выберите задачу:</label>
             <select name="task_id" id="task" required class="fade-in-item">
+                <option value="">Выберите задачу</option>
                 {% for task in tasks %}
-                    <option value="{{ task.id }}" {% if task in assigned_tasks %}class="assigned-task"{% endif %}>
-                        {{ task.title }} {% if task in assigned_tasks %}(Назначена вам){% endif %}
-                    </option>
+                    {% if not task.is_submitted_for_review %}
+                        <option value="{{ task.id }}" 
+                                {% if task in assigned_tasks %}class="assigned-task"{% endif %}>
+                            {{ task.title }}
+                            {% if task in assigned_tasks %}(Назначена вам){% endif %}
+                        </option>
+                    {% else %}
+                        <option value="" disabled class="review-task">
+                            {{ task.title }} (Отправлена на проверку)
+                        </option>
+                    {% endif %}
                 {% endfor %}
             </select>
             <button type="submit" class="fade-in-item">Выбрать задачу</button>
@@ -122,9 +131,26 @@ select {
     font-size: 1rem;
 }
 
+select option {
+    background-color: #1e1e1e;
+    color: white;
+}
+
+select option:disabled {
+    background-color: rgba(253, 126, 20, 0.2);
+    color: #fd7e14;
+    font-style: italic;
+}
+
 select option.assigned-task {
     background-color: rgba(23, 162, 184, 0.2);
     color: #17a2b8;
+}
+
+select option.review-task {
+    background-color: rgba(253, 126, 20, 0.2);
+    color: #fd7e14;
+    cursor: not-allowed;
 }
 
 button {

@@ -81,6 +81,9 @@
                 {% else %}
                     <p class="no-photos">У вас нет назначенных макетов</p>
                 {% endif %}
+                <div style="height:50px;">
+
+                </div>
             </div>
             <div class="start-button">
     {% if request.session.timer_started %}
@@ -207,7 +210,7 @@ html, body {
 .mockup {
     border: 2px solid white;
     padding: 5px;
-    width: 80%;
+    width: 85%;
     height: 300px;
     border-radius: 40px;
     margin: 0 auto 5px;
@@ -216,6 +219,7 @@ html, body {
     justify-content: flex-start;
     align-items: center;
     font-size: 10px;
+    overflow-x: auto;
 }
 
 .mockup h2 {
@@ -312,7 +316,7 @@ button:hover {
 .main > *:nth-child(5) { animation-delay: 0.9s; }
 
 .photo-container {
-    width: 100%;
+    width: 90%;
     margin: 10px 0;
     padding: 15px;
     background: rgba(255, 255, 255, 0.1);

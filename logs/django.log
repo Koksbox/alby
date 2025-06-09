@@ -4880,3 +4880,5 @@ INFO 2025-06-09 11:38:00,687 basehttp 7164 10076 "GET /photo_maket/ HTTP/1.1" 20
 INFO 2025-06-09 11:38:02,306 basehttp 7164 10076 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-06-09 11:38:04,290 basehttp 7164 10076 "GET /photo_maket/ HTTP/1.1" 200 12389
 WARNING 2025-06-09 11:38:04,319 basehttp 7164 10076 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12578
+INFO 2025-06-09 11:38:34,891 autoreload 7164 7924 C:\Users\Student\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-09 11:38:36,385 autoreload 5368 12424 Watching for file changes with StatReloader

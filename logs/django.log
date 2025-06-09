@@ -4951,3 +4951,189 @@ INFO 2025-06-09 11:45:29,556 basehttp 5368 11436 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-06-09 11:46:12,336 basehttp 5368 11436 "GET /manager/upload/ HTTP/1.1" 200 18581
 WARNING 2025-06-09 11:46:12,368 basehttp 5368 11436 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
 INFO 2025-06-09 11:46:13,944 basehttp 5368 11436 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:47:55,843 basehttp 5368 12616 "GET /photo_maket/ HTTP/1.1" 302 0
+INFO 2025-06-09 11:47:55,861 basehttp 5368 12616 "GET /startapp/ HTTP/1.1" 200 15635
+INFO 2025-06-09 11:47:55,889 basehttp 5368 12616 "GET /api/check-active-timer/ HTTP/1.1" 200 17
+INFO 2025-06-09 11:47:57,197 basehttp 5368 12616 "POST /api/start-timer/ HTTP/1.1" 200 21
+INFO 2025-06-09 11:47:57,453 basehttp 5368 12616 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:47:59,134 basehttp 5368 12616 "GET /photo_maket/ HTTP/1.1" 200 10757
+INFO 2025-06-09 11:48:00,731 basehttp 5368 12616 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:48:02,222 basehttp 5368 12616 "GET /photo_maket/ HTTP/1.1" 200 10547
+INFO 2025-06-09 11:48:03,786 basehttp 5368 12616 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:48:04,650 basehttp 5368 12616 "GET /photo_maket/ HTTP/1.1" 200 10547
+WARNING 2025-06-09 11:48:04,675 basehttp 5368 12616 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-09 11:48:16,721 basehttp 5368 12616 "GET /photo_maket/ HTTP/1.1" 200 10547
+WARNING 2025-06-09 11:48:16,765 basehttp 5368 12616 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-09 11:48:17,403 basehttp 5368 12616 "GET /startapp/ HTTP/1.1" 200 15635
+WARNING 2025-06-09 11:48:17,445 basehttp 5368 12616 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-09 11:48:17,519 basehttp 5368 12616 "GET /api/check-active-timer/ HTTP/1.1" 200 43
+INFO 2025-06-09 11:48:18,783 basehttp 5368 12616 "GET /profile/ HTTP/1.1" 200 9997
+WARNING 2025-06-09 11:48:18,821 basehttp 5368 12616 "GET /media/avatars/%D0%BA%D0%BE%D1%82_9pmUFBa.jpg HTTP/1.1" 404 179
+WARNING 2025-06-09 11:48:18,835 basehttp 5368 12036 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-09 11:48:19,039 basehttp 5368 12036 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:48:20,429 basehttp 5368 12036 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:48:32,717 basehttp 5368 12036 "GET /photo_maket/ HTTP/1.1" 200 10547
+WARNING 2025-06-09 11:48:32,773 basehttp 5368 12036 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-09 11:48:34,334 basehttp 5368 12036 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:48:39,474 basehttp 5368 12036 "GET /maket_info/3/ HTTP/1.1" 200 9261
+WARNING 2025-06-09 11:48:39,523 basehttp 5368 12036 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-09 11:48:41,109 basehttp 5368 12036 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:48:41,384 basehttp 5368 12036 "GET /select_task/3/?photo_id=3 HTTP/1.1" 302 0
+INFO 2025-06-09 11:48:41,405 basehttp 5368 12036 "GET /work_on_task/7/ HTTP/1.1" 200 16603
+WARNING 2025-06-09 11:48:41,482 basehttp 5368 12036 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-09 11:48:43,052 basehttp 5368 12036 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:48:43,935 basehttp 5368 12036 "GET /photo_maket/ HTTP/1.1" 200 10719
+WARNING 2025-06-09 11:48:43,988 basehttp 5368 12036 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-09 11:48:45,584 basehttp 5368 12036 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:50:30,447 basehttp 5368 12036 "GET /photo_maket/ HTTP/1.1" 200 10547
+WARNING 2025-06-09 11:50:30,529 basehttp 5368 12036 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-09 11:50:32,384 basehttp 5368 12036 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:50:43,040 basehttp 5368 12036 "GET /startapp/ HTTP/1.1" 200 15635
+INFO 2025-06-09 11:50:43,066 basehttp 5368 12036 "GET /api/check-active-timer/ HTTP/1.1" 200 44
+INFO 2025-06-09 11:50:44,636 basehttp 5368 12036 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:50:45,340 basehttp 5368 12036 "GET /photo_maket/ HTTP/1.1" 200 10547
+INFO 2025-06-09 11:50:46,928 basehttp 5368 12036 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:50:47,546 basehttp 5368 12036 "GET /maket_info/3/ HTTP/1.1" 200 9261
+INFO 2025-06-09 11:50:49,113 basehttp 5368 12036 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-09 11:52:18,553 basehttp 5368 12036 "GET /photo_maket/ HTTP/1.1" 500 145
+INFO 2025-06-09 11:52:20,096 basehttp 5368 12036 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:52:57,120 autoreload 5368 12424 C:\Users\Student\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-09 11:52:57,827 autoreload 7484 11884 Watching for file changes with StatReloader
+ERROR 2025-06-09 11:52:58,285 basehttp 7484 12796 "GET /photo_maket/ HTTP/1.1" 500 158336
+INFO 2025-06-09 11:52:58,894 basehttp 7484 12796 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:52:59,929 basehttp 7484 12796 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-09 11:53:05,110 basehttp 7484 12796 "GET /photo_maket/ HTTP/1.1" 500 158350
+INFO 2025-06-09 11:53:06,750 basehttp 7484 12796 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:53:23,426 autoreload 7484 11884 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 11:53:24,136 autoreload 4552 10068 Watching for file changes with StatReloader
+INFO 2025-06-09 11:53:35,145 autoreload 4552 10068 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 11:53:35,936 autoreload 12000 2304 Watching for file changes with StatReloader
+INFO 2025-06-09 11:54:28,490 autoreload 12000 2304 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 11:54:29,123 autoreload 8256 10080 Watching for file changes with StatReloader
+INFO 2025-06-09 11:55:34,901 autoreload 8256 10080 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 11:55:36,087 autoreload 13248 10232 Watching for file changes with StatReloader
+INFO 2025-06-09 11:55:40,040 basehttp 13248 8940 "GET /photo_maket/ HTTP/1.1" 200 11300
+INFO 2025-06-09 11:55:41,690 basehttp 13248 8940 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:55:42,214 basehttp 13248 8940 "GET /photo_maket/ HTTP/1.1" 200 10547
+INFO 2025-06-09 11:55:43,773 basehttp 13248 8940 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-09 11:57:05,853 basehttp 13248 8940 "GET /photo_maket/ HTTP/1.1" 500 157894
+INFO 2025-06-09 11:57:07,551 basehttp 13248 8940 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:58:09,393 autoreload 13248 10232 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 11:58:11,165 autoreload 9708 5648 Watching for file changes with StatReloader
+INFO 2025-06-09 11:58:53,874 autoreload 9708 5648 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 11:58:54,670 autoreload 10836 1508 Watching for file changes with StatReloader
+INFO 2025-06-09 11:58:57,508 basehttp 10836 4364 "GET /photo_maket/ HTTP/1.1" 200 10989
+INFO 2025-06-09 11:58:59,102 basehttp 10836 4364 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-09 11:58:59,584 basehttp 10836 4364 "GET /task_history/ HTTP/1.1" 500 71887
+INFO 2025-06-09 11:59:01,176 basehttp 10836 4364 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 11:59:25,713 autoreload 10836 1508 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 11:59:26,596 autoreload 10328 8380 Watching for file changes with StatReloader
+INFO 2025-06-09 12:00:28,062 autoreload 10328 8380 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 12:00:28,747 autoreload 6524 11772 Watching for file changes with StatReloader
+INFO 2025-06-09 12:00:34,825 autoreload 6524 11772 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 12:00:35,497 autoreload 9588 680 Watching for file changes with StatReloader
+INFO 2025-06-09 12:01:13,550 autoreload 9588 680 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 12:01:15,404 autoreload 12856 12404 Watching for file changes with StatReloader
+INFO 2025-06-09 12:01:17,124 basehttp 12856 8392 "GET /photo_maket/ HTTP/1.1" 200 10343
+INFO 2025-06-09 12:01:18,708 basehttp 12856 8392 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:01:27,891 basehttp 12856 11704 "GET /manager/ HTTP/1.1" 200 9104
+WARNING 2025-06-09 12:01:27,934 basehttp 12856 11704 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12578
+INFO 2025-06-09 12:01:29,505 basehttp 12856 11704 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:01:32,921 basehttp 12856 8392 "GET /maket_info/3/ HTTP/1.1" 200 9261
+INFO 2025-06-09 12:01:34,508 basehttp 12856 8392 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:01:35,381 basehttp 12856 8392 "GET /select_task/3/?photo_id=3 HTTP/1.1" 302 0
+INFO 2025-06-09 12:01:35,412 basehttp 12856 8392 "GET /work_on_task/7/ HTTP/1.1" 200 16603
+INFO 2025-06-09 12:01:37,049 basehttp 12856 8392 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:01:38,108 basehttp 12856 8392 "GET /photo_maket/ HTTP/1.1" 200 10515
+INFO 2025-06-09 12:01:39,696 basehttp 12856 8392 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:01:40,368 basehttp 12856 8392 "GET /photo_maket/ HTTP/1.1" 200 10343
+INFO 2025-06-09 12:01:41,962 basehttp 12856 8392 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:02:04,262 autoreload 12856 12404 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 12:02:05,635 autoreload 5776 8292 Watching for file changes with StatReloader
+INFO 2025-06-09 12:03:06,340 autoreload 5776 8292 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 12:03:07,001 autoreload 1944 5932 Watching for file changes with StatReloader
+INFO 2025-06-09 12:03:14,116 autoreload 1944 5932 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 12:03:14,800 autoreload 13296 10104 Watching for file changes with StatReloader
+INFO 2025-06-09 12:03:28,252 autoreload 13296 10104 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 12:03:28,989 autoreload 5348 7984 Watching for file changes with StatReloader
+INFO 2025-06-09 12:03:29,470 basehttp 5348 12672 "GET /photo_maket/ HTTP/1.1" 200 10343
+INFO 2025-06-09 12:03:31,050 basehttp 5348 12672 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:03:31,472 basehttp 5348 12672 "GET /startapp/ HTTP/1.1" 200 15635
+INFO 2025-06-09 12:03:31,498 basehttp 5348 12672 "GET /api/check-active-timer/ HTTP/1.1" 200 44
+INFO 2025-06-09 12:03:32,558 basehttp 5348 12672 "POST /api/stop-timer/ HTTP/1.1" 200 21
+INFO 2025-06-09 12:03:33,061 basehttp 5348 12672 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:03:33,590 basehttp 5348 12672 "POST /api/start-timer/ HTTP/1.1" 200 21
+INFO 2025-06-09 12:03:34,818 basehttp 5348 12672 "GET /photo_maket/ HTTP/1.1" 200 10343
+INFO 2025-06-09 12:03:36,403 basehttp 5348 12672 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-09 12:04:31,932 basehttp 5348 6828 "GET /photo_maket/ HTTP/1.1" 500 170972
+INFO 2025-06-09 12:04:33,575 basehttp 5348 6828 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:04:46,102 autoreload 5348 7984 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 12:04:46,865 autoreload 8108 9956 Watching for file changes with StatReloader
+INFO 2025-06-09 12:04:53,658 autoreload 8108 9956 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 12:04:54,330 autoreload 11440 5452 Watching for file changes with StatReloader
+INFO 2025-06-09 12:05:20,940 autoreload 11440 5452 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 12:05:21,664 autoreload 9064 4936 Watching for file changes with StatReloader
+INFO 2025-06-09 12:05:21,955 basehttp 9064 5708 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:05:48,985 basehttp 9064 5708 "GET /photo_maket/ HTTP/1.1" 200 10343
+INFO 2025-06-09 12:05:51,918 basehttp 9064 5708 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-09 12:06:58,303 basehttp 9064 5708 "GET /photo_maket/ HTTP/1.1" 500 170972
+INFO 2025-06-09 12:06:59,990 basehttp 9064 5708 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:07:14,911 autoreload 9064 4936 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 12:07:15,668 autoreload 6988 10556 Watching for file changes with StatReloader
+INFO 2025-06-09 12:07:34,475 autoreload 6988 10556 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 12:07:35,219 autoreload 11132 7060 Watching for file changes with StatReloader
+INFO 2025-06-09 12:07:40,946 basehttp 11132 364 "GET /photo_maket/ HTTP/1.1" 200 12011
+INFO 2025-06-09 12:07:42,523 basehttp 11132 364 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:07:43,661 basehttp 11132 364 "GET /photo_maket/ HTTP/1.1" 200 12011
+INFO 2025-06-09 12:07:44,152 basehttp 11132 364 "GET /photo_maket/ HTTP/1.1" 200 12011
+INFO 2025-06-09 12:07:44,360 basehttp 11132 364 "GET /photo_maket/ HTTP/1.1" 200 12011
+INFO 2025-06-09 12:07:44,557 basehttp 11132 364 "GET /photo_maket/ HTTP/1.1" 200 12011
+INFO 2025-06-09 12:07:44,759 basehttp 11132 364 "GET /photo_maket/ HTTP/1.1" 200 12011
+INFO 2025-06-09 12:07:44,946 basehttp 11132 364 "GET /photo_maket/ HTTP/1.1" 200 12011
+INFO 2025-06-09 12:07:46,535 basehttp 11132 364 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:07:48,791 basehttp 11132 364 "GET /photo_maket/ HTTP/1.1" 200 12011
+WARNING 2025-06-09 12:07:48,812 basehttp 11132 364 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-09 12:08:12,545 autoreload 11132 7060 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 12:08:13,567 autoreload 2140 2860 Watching for file changes with StatReloader
+INFO 2025-06-09 12:08:56,303 autoreload 2140 2860 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 12:08:57,026 autoreload 11028 4432 Watching for file changes with StatReloader
+INFO 2025-06-09 12:09:03,886 autoreload 11028 4432 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 12:09:04,629 autoreload 1944 8220 Watching for file changes with StatReloader
+INFO 2025-06-09 12:09:32,192 autoreload 1944 8220 C:\Users\Student\PycharmProjects\alby\users\templatetags\custom_filters.py changed, reloading.
+INFO 2025-06-09 12:09:32,891 autoreload 1996 9736 Watching for file changes with StatReloader
+INFO 2025-06-09 12:09:43,211 autoreload 1996 9736 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 12:09:44,511 autoreload 7308 4028 Watching for file changes with StatReloader
+ERROR 2025-06-09 12:09:45,385 basehttp 7308 12316 "GET /photo_maket/ HTTP/1.1" 500 170649
+WARNING 2025-06-09 12:09:45,427 basehttp 7308 12316 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12578
+INFO 2025-06-09 12:09:47,190 basehttp 7308 12316 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:10:02,265 autoreload 7308 4028 C:\Users\Student\PycharmProjects\alby\users\urls.py changed, reloading.
+INFO 2025-06-09 12:10:03,031 autoreload 13084 10164 Watching for file changes with StatReloader
+INFO 2025-06-09 12:10:07,374 basehttp 13084 6772 "GET /photo_maket/ HTTP/1.1" 200 10383
+INFO 2025-06-09 12:10:08,974 basehttp 13084 6772 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:10:10,393 basehttp 13084 6772 "GET /photo_maket/ HTTP/1.1" 200 10383
+INFO 2025-06-09 12:10:11,999 basehttp 13084 6772 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:10:13,310 basehttp 13084 6772 "GET /photo_maket/ HTTP/1.1" 200 10383
+WARNING 2025-06-09 12:10:13,340 basehttp 13084 6772 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-09 12:10:21,794 basehttp 13084 6772 "GET /photo_maket/ HTTP/1.1" 200 10361
+WARNING 2025-06-09 12:10:21,843 basehttp 13084 6772 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-09 12:10:23,398 basehttp 13084 6772 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:11:52,243 basehttp 13084 6772 "GET /photo_maket/ HTTP/1.1" 200 11359
+WARNING 2025-06-09 12:11:52,312 basehttp 13084 6772 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-09 12:11:53,857 basehttp 13084 6772 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-09 12:11:54,760 basehttp 13084 6772 "GET /task_history/ HTTP/1.1" 500 71392
+WARNING 2025-06-09 12:11:54,804 basehttp 13084 6772 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-09 12:11:56,446 basehttp 13084 6772 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:12:27,441 autoreload 13084 10164 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 12:12:28,328 autoreload 604 12832 Watching for file changes with StatReloader
+ERROR 2025-06-09 12:12:30,799 basehttp 604 11488 "GET /task_history/ HTTP/1.1" 500 268143
+INFO 2025-06-09 12:12:32,430 basehttp 604 11488 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:13:55,497 autoreload 604 12832 C:\Users\Student\PycharmProjects\alby\users\templatetags\__init__.py changed, reloading.
+INFO 2025-06-09 12:13:56,349 autoreload 4224 3396 Watching for file changes with StatReloader
+INFO 2025-06-09 12:14:01,405 autoreload 4224 3396 C:\Users\Student\PycharmProjects\alby\users\templatetags\custom_filters.py changed, reloading.
+INFO 2025-06-09 12:14:02,585 autoreload 6412 7540 Watching for file changes with StatReloader
+ERROR 2025-06-09 12:14:03,100 basehttp 6412 11784 "GET /task_history/ HTTP/1.1" 500 268143
+INFO 2025-06-09 12:14:04,780 basehttp 6412 11784 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:14:16,975 basehttp 6412 11784 "GET /task_history/ HTTP/1.1" 200 10771
+INFO 2025-06-09 12:14:18,573 basehttp 6412 11784 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-09 12:14:23,042 basehttp 6412 11784 "GET /photo_maket/ HTTP/1.1" 200 11359
+INFO 2025-06-09 12:14:24,631 basehttp 6412 11784 "GET /sw.js HTTP/1.1" 200 1081

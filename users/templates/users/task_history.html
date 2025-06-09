@@ -1,4 +1,5 @@
 {% extends 'users/layout.html' %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,62 +10,58 @@
 <body>
 {% block content %}
 <div class="main">
-    <div class="form-container">
+    <div class="header">
         <h2 class="fade-in-item">История задач</h2>
-
-        <div class="back-button-container fade-in-item">
-            <a href="{% url 'photo_maket' %}" class="back-button">
-                <i class="fas fa-arrow-left"></i> Назад к макетам
-            </a>
-        </div>
-
-        {% if task_history %}
-        <div class="history-container fade-in-item">
-            {% for task in task_history %}
-            <div class="history-item">
-                <div class="history-header">
-                    <h3>{{ task.title }}</h3>
-                    <span class="history-date">{{ task.created_at|date:"d.m.Y H:i" }}</span>
-                </div>
-                <div class="history-details">
-                    <div class="history-info">
-                        <p><strong>Макет:</strong> 
-                            {% if task.layout and task.layout != 'default_value' %}
-                                {{ task.layout }}
-                            {% elif task.photo %}
-                                {{ task.photo.title }}
-                            {% else %}
-                                Макет не указан
-                            {% endif %}
-                        </p>
-                        <p><strong>Время выполнения:</strong> {{ task.completion_time }}</p>
-                        <p><strong>Статус:</strong> 
-                            {% if task.is_submitted_for_review %}
-                                <span class="status-review">Отправлено на проверку</span>
-                            {% elif task.completed %}
-                                <span class="status-completed">Выполнено</span>
-                            {% else %}
-                                <span class="status-pending">В процессе</span>
-                            {% endif %}
-                        </p>
-                    </div>
-                    <div class="history-actions">
-                        {% if task.photo %}
-                            <a href="{% url 'maket_info' task.photo.id %}" class="view-maket-button">
-                                <i class="fas fa-eye"></i> Просмотр макета
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="no-history fade-in-item">
-            <p>История задач пуста</p>
-        </div>
-        {% endif %}
+        <a href="{% url 'photo_maket' %}" class="back-button fade-in-item">
+            <i class="fas fa-arrow-left"></i> Назад к макетам
+        </a>
     </div>
+
+    {% if not sorted_dates %}
+    <div class="no-tasks fade-in-item">
+        <p>У вас пока нет выполненных задач</p>
+    </div>
+    {% else %}
+    <div class="history-container fade-in-item">
+        {% for date in sorted_dates %}
+        <div class="date-section">
+            <h3 class="date-header">{{ date|date:"d.m.Y" }}</h3>
+            <div class="tasks-list">
+                {% for task in tasks_by_date|get_item:date %}
+                <div class="task-card">
+                    <div class="task-header">
+                        <h4>{{ task.title }}</h4>
+                        <span class="task-status {% if task.completed %}completed{% elif task.is_submitted_for_review %}review{% else %}in-progress{% endif %}">
+                            {% if task.completed %}
+                                Завершена
+                            {% elif task.is_submitted_for_review %}
+                                На проверке
+                            {% else %}
+                                В работе
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="task-info">
+                        <p class="maket-name">
+                            <i class="fas fa-image"></i>
+                            Макет: <a href="{% url 'maket_info' task.photo.id %}">{{ task.photo.title }}</a>
+                        </p>
+                        <p class="task-time">
+                            <i class="fas fa-clock"></i>
+                            Время выполнения: {{ task.completion_time|default:"Не завершена" }}
+                        </p>
+                        <p class="task-date">
+                            <i class="fas fa-calendar"></i>
+                            Создана: {{ task.created_at|date:"H:i" }}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>
 
 <style>
@@ -81,121 +78,138 @@ body {
 
 .main {
     width: 100%;
-    max-width: 800px;
+    max-width: 1200px;
     margin: 20px;
     text-align: center;
     color: white;
 }
 
-.form-container {
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    border-radius: 15px;
-    padding: 20px;
-}
-
-.back-button-container {
-    margin: 20px 0;
-    text-align: left;
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .back-button {
-    display: inline-block;
-    padding: 10px 20px;
     background-color: #6c757d;
     color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
     text-decoration: none;
-    border-radius: 25px;
-    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     transition: all 0.3s ease;
-    border: 2px solid #6c757d;
 }
 
 .back-button:hover {
-    background-color: transparent;
-    color: #6c757d;
+    background-color: #5a6268;
+    transform: translateY(-2px);
 }
 
 .back-button i {
-    margin-right: 8px;
+    font-size: 16px;
+}
+
+.no-tasks {
+    background-color: rgba(108, 117, 125, 0.2);
+    border: 2px solid #6c757d;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
 }
 
 .history-container {
-    margin-top: 20px;
-}
-
-.history-item {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 15px;
     text-align: left;
 }
 
-.history-header {
+.date-section {
+    margin-bottom: 30px;
+}
+
+.date-header {
+    color: #17a2b8;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid rgba(23, 162, 184, 0.3);
+}
+
+.tasks-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.task-card {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    padding: 20px;
+    transition: transform 0.3s ease;
+}
+
+.task-card:hover {
+    transform: translateY(-5px);
+}
+
+.task-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 15px;
 }
 
-.history-header h3 {
+.task-header h4 {
     margin: 0;
-    color: #17a2b8;
+    color: white;
+    font-size: 16px;
 }
 
-.history-date {
-    color: #6c757d;
-    font-size: 0.9em;
+.task-status {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
 }
 
-.history-details {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.history-info p {
-    margin: 5px 0;
-}
-
-.status-review {
-    color: #fd7e14;
-}
-
-.status-completed {
+.task-status.completed {
+    background-color: rgba(40, 167, 69, 0.2);
     color: #28a745;
 }
 
-.status-pending {
-    color: #ffc107;
+.task-status.review {
+    background-color: rgba(253, 126, 20, 0.2);
+    color: #fd7e14;
 }
 
-.view-maket-button {
-    display: inline-block;
-    padding: 8px 16px;
-    background-color: #17a2b8;
-    color: white;
-    text-decoration: none;
-    border-radius: 20px;
-    font-size: 0.9em;
-    transition: all 0.3s ease;
-    border: 2px solid #17a2b8;
-}
-
-.view-maket-button:hover {
-    background-color: transparent;
+.task-status.in-progress {
+    background-color: rgba(23, 162, 184, 0.2);
     color: #17a2b8;
 }
 
-.view-maket-button i {
-    margin-right: 5px;
+.task-info {
+    font-size: 14px;
+    color: #ccc;
 }
 
-.no-history {
-    text-align: center;
-    padding: 40px;
-    color: #6c757d;
+.task-info p {
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.task-info i {
+    width: 16px;
+    color: #17a2b8;
+}
+
+.task-info a {
+    color: #17a2b8;
+    text-decoration: none;
+}
+
+.task-info a:hover {
+    text-decoration: underline;
 }
 
 /* Анимация */
@@ -223,27 +237,25 @@ body {
 .fade-in-item:nth-child(5) { animation-delay: 0.9s; }
 
 /* Адаптация для смартфонов */
-@media (max-width: 600px) {
+@media (max-width: 380px) {
     .main {
         margin: 10px;
     }
 
-    .form-container {
+    .tasks-list {
+        grid-template-columns: 1fr;
+    }
+
+    .task-card {
         padding: 15px;
     }
 
-    .history-details {
-        flex-direction: column;
-        align-items: flex-start;
+    .task-header h4 {
+        font-size: 14px;
     }
 
-    .history-actions {
-        margin-top: 15px;
-    }
-
-    .view-maket-button {
-        width: 100%;
-        text-align: center;
+    .task-info {
+        font-size: 12px;
     }
 }
 </style>

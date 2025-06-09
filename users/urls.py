@@ -23,8 +23,7 @@ urlpatterns = [
     path('now_user', views.now_user, name='now_user'),
     path('api/', UserPostDetail.as_view(), name='user_post_detail'),
     path('completed_task_user', views.completed_task_user, name='completed_task_user'),
-    path('select_task', views.select_task, name='select_task'),
-    path('select_task/<int:photo_id>/', views.select_task, name='select_task_with_photo'),
+    path('select_task/<int:photo_id>/', views.select_task, name='select_task'),
     path('work_on_task/<int:task_id>/', views.work_on_task, name='work_on_task'),
     path('task/<int:task_id>/start/', views.start_timer, name='start_timer'),
     path('task/<int:task_id>/stop/', views.stop_timer, name='stop_timer'),
@@ -43,4 +42,5 @@ urlpatterns = [
     path('api/stop-timer/', views.api_stop_timer, name='api_stop_timer'),
     path('my_maket', views.my_maket, name='my_maket'),
     path('complete_maket/<int:photo_id>/', views.complete_maket, name='complete_maket'),
+    path('task_history/', views.task_history, name='task_history'),
 ]

@@ -3,7 +3,7 @@ from django.contrib.auth import logout, authenticate, login
 import random
 import string
 
-from django.db.models import Count, F
+from django.db.models import Count, F, Q, Sum
 from django.http import HttpResponseRedirect
 
 from .forms import CustomUserCreationForm, PasswordResetCodeForm
@@ -14,7 +14,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from manager2.models import Photo, Task, Review, TaskReview
 import traceback
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 from django.views.generic import TemplateView
 
@@ -385,77 +385,41 @@ def select_task(request, photo_id=None):
 
     # Проверяем, есть ли у пользователя активная задача, которая ещё не отправлена на проверку
     active_task = Task.objects.filter(
-        submitted_by=current_user,
+        submitted_by__id=current_user.id,
         is_rated=False,
-        is_submitted_for_review = False
+        is_submitted_for_review=False
     ).first()
 
     if active_task:
         # Если есть активная задача, показываем только её
         messages.warning(request, 'Вы уже работаете над задачей. Завершите её сначала.')
         return redirect('work_on_task', task_id=active_task.id)
+
+    # Получаем все задачи для выбранного макета
+    if photo:
+        tasks = Task.objects.filter(photo=photo)
     else:
-        # Если нет активной задачи, показываем все доступные задачи
-        if request.user.is_authenticated:
-            base_query = Task.objects.filter(completed=False)
-            if photo:
-                base_query = base_query.filter(photo=photo)
-            
-            # Получаем все задачи, на которые назначен пользователь
-            assigned_tasks = base_query.filter(assigned_user=current_user)
-            
-            # Если есть назначенные задачи, показываем только их
-            if assigned_tasks.exists():
-                tasks = assigned_tasks
-                messages.info(request, 'Вот задачи, на которые вы назначены:')
-            else:
-                # Если нет назначенных задач, показываем все доступные
-                tasks = [
-                    task for task in base_query
-                    if (
-                        not task.is_full() and
-                        current_user not in task.completed_by_users.all()
-                    )
-                ]
-                if tasks:
-                    messages.warning(request, 'Вы не назначены ни на одну из доступных задач. Пожалуйста, обратитесь к руководителю для назначения.')
+        tasks = Task.objects.all()
 
-        else:
-            tasks = []
+    # Получаем задачи, назначенные пользователю
+    assigned_tasks = Task.objects.filter(
+        assigned_user=current_user,
+        completed=False
+    )
 
-    # Обработка POST-запроса для выбора задачи
-    if request.method == 'POST':
-        task_id = request.POST.get('task_id')
-        if task_id is not None:
-            try:
-                task_id = int(task_id)
-                selected_task = get_object_or_404(Task, id=task_id, completed=False)
+    # Если у пользователя есть назначенные задачи, показываем только их
+    if assigned_tasks.exists():
+        tasks = assigned_tasks
+        messages.info(request, 'Показаны задачи, назначенные вам.')
+    else:
+        messages.warning(request, 'У вас нет назначенных задач. Пожалуйста, обратитесь к руководителю для назначения задачи.')
 
-                # Проверяем, принадлежит ли задача указанному макету
-                if photo and selected_task.photo != photo:
-                    messages.error(request, 'Эта задача не относится к выбранному макету.')
-                    return redirect('select_task', photo_id=photo_id)
-
-                # Проверяем, является ли пользователь уже назначенным или работавшим над задачей
-                if current_user in selected_task.submitted_by.all():
-                    messages.info(request, 'Вы уже выбрали эту задачу ранее.')
-                    return redirect('work_on_task', task_id=selected_task.id)
-
-                # Проверяем, есть ли свободные места для новых пользователей
-                if not selected_task.is_full():
-                    selected_task.submitted_by.add(current_user)
-                    selected_task.save()
-
-                    message = f'Вы успешно выбрали задачу: {selected_task.title}'
-                    messages.success(request, message)
-                    return redirect('work_on_task', task_id=selected_task.id)
-                else:
-                    messages.error(request, 'Задача достигла максимального количества пользователей для рецензирования.')
-                    return redirect('select_task')
-
-            except ValueError:
-                message = "Invalid task ID"
-                selected_task = None
+    # Добавляем информацию о статусе задач
+    for task in tasks:
+        if task.is_submitted_for_review:
+            messages.info(request, f'Задача "{task.title}" отправлена на проверку.')
+        elif task.completed:
+            messages.info(request, f'Задача "{task.title}" завершена.')
 
     return render(request, 'users/select_task.html', {
         'tasks': tasks, 
@@ -831,7 +795,7 @@ def photo_maket(request):
 
     # Получаем активную задачу пользователя
     active_task = Task.objects.filter(
-        submitted_by=request.user,
+        submitted_by__id=request.user.id,
         is_rated=False,
         is_submitted_for_review=False
     ).first()
@@ -848,15 +812,20 @@ def photo_maket(request):
     else:
         # Показываем информацию о назначенных задачах
         for task in assigned_tasks:
+            status = "ожидает проверки" if task.is_submitted_for_review else "в работе"
             messages.info(
                 request,
-                f'Вы назначены на задачу "{task.title}" в макете "{task.photo.image_name}". '
+                f'Вы назначены на задачу "{task.title}" в макете "{task.photo.image_name}" (статус: {status}). '
                 f'<a href="/maket_info/{task.photo.id}/" class="task-link">Перейти к макету</a>'
             )
 
-    # Логика отображения макетов
-    photos = Photo.objects.prefetch_related('tasks').all()
-    for photo in photos:
+    # Получаем все макеты, к которым относятся назначенные задачи
+    assigned_photos = Photo.objects.filter(
+        tasks__in=assigned_tasks
+    ).distinct().prefetch_related('tasks')
+
+    # Добавляем информацию о процентах завершения для каждого макета
+    for photo in assigned_photos:
         total_tasks = Task.objects.filter(photo=photo).count()
         completed_tasks_count = Task.objects.filter(photo=photo, completed=True).count()
 
@@ -868,11 +837,10 @@ def photo_maket(request):
         # Проверяем, есть ли у пользователя активная задача для этого макета
         photo.has_active_task = active_task and active_task.photo_id == photo.id
 
-    tasks = Task.objects.all()
     return render(request, 'users/photo_maket.html', {
-        'photos': photos, 
-        'tasks': tasks,
-        'active_task': active_task
+        'photos': assigned_photos,
+        'active_task': active_task,
+        'assigned_tasks': assigned_tasks
     })
 
 def maket_info(request, photo_id):
@@ -1023,3 +991,27 @@ def my_maket(request):
 def complete_maket(request, photo_id):
     photo = get_object_or_404(Photo, id=photo_id)
     return render(request, 'users/complete_maket.html', {'photo':photo})
+
+@login_required
+def task_history(request):
+    # Получаем все задачи пользователя, отсортированные по дате создания
+    tasks = Task.objects.filter(
+        Q(assigned_user=request.user) | Q(submitted_by=request.user)
+    ).select_related('photo').order_by('-created_at')
+
+    # Группируем задачи по дате
+    tasks_by_date = {}
+    for task in tasks:
+        date = task.created_at.date()
+        if date not in tasks_by_date:
+            tasks_by_date[date] = []
+        tasks_by_date[date].append(task)
+
+    # Сортируем даты в обратном порядке
+    sorted_dates = sorted(tasks_by_date.keys(), reverse=True)
+
+    context = {
+        'tasks_by_date': tasks_by_date,
+        'sorted_dates': sorted_dates,
+    }
+    return render(request, 'users/task_history.html', context)

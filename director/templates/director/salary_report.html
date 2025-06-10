@@ -50,23 +50,21 @@
                     <select name="post_user" id="post_user" class="form-select">
                         <option value="">Все роли</option>
                         {% for role_value, role_name in post_user_choices %}
-                        {% if role_value == selected_post_user %}
-                        <option value="asc" {% if sort_by == 'asc' %}selected{% endif %}>По возрастанию ставки</option>
-                            {{ role_name }}
-                        </option>
-                        {% endif %}
+                            <option value="{{ role_value }}" {% if role_value == selected_post_user %}selected{% endif %}>
+                                {{ role_name }}
+                            </option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="sort_by">Сортировка:</label>
                     <select name="sort_by" id="sort_by" class="form-select">
-                    <option value="asc" {% if sort_by == 'asc' %}selected{% endif %}>По возрастанию ставки</option>
-                    <option value="desc" {% if sort_by == 'desc' %}selected{% endif %}>По убыванию ставки</option>
-                    <option value="wasc" {% if sort_by == 'wasc' %}selected{% endif %}>По возрастанию рейтинга</option>
-                    <option value="wdesc" {% if sort_by == 'wdesc' %}selected{% endif %}>По убыванию рейтинга</option>
-                    <option value="task" {% if sort_by == 'task' %}selected{% endif %}>По возрастанию завершенных задач</option>
-                    <option value="anti_task" {% if sort_by == 'anti_task' %}selected{% endif %}>По убыванию завершенных задач</option>
+                        <option value="asc" {% if sort_by == 'asc' %}selected{% endif %}>По возрастанию ставки</option>
+                        <option value="desc" {% if sort_by == 'desc' %}selected{% endif %}>По убыванию ставки</option>
+                        <option value="wasc" {% if sort_by == 'wasc' %}selected{% endif %}>По возрастанию рейтинга</option>
+                        <option value="wdesc" {% if sort_by == 'wdesc' %}selected{% endif %}>По убыванию рейтинга</option>
+                        <option value="task" {% if sort_by == 'task' %}selected{% endif %}>По возрастанию завершенных задач</option>
+                        <option value="anti_task" {% if sort_by == 'anti_task' %}selected{% endif %}>По убыванию завершенных задач</option>
                     </select>
                 </div>
                 <div class="col-md-2">

@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+import datetime as dt
+from datetime import timedelta
 
 from users.models import CustomUser, PrizeHistory
 from django.shortcuts import render, get_object_or_404, redirect
@@ -490,8 +491,55 @@ def completed_maket(request, photo_id):
 
 
 def director_prize(request):
-    users = CustomUser.objects.exclude(post_user='unapproved')
-    return render(request, "director/director_prize.html", {'users': users})
+    post_user = request.GET.get('post_user')
+    sort_by = request.GET.get('sort_by', 'alphabetical_asc') # По умолчанию сортировка по алфавиту
+    min_stavka = request.GET.get('min_stavka')
+    max_stavka = request.GET.get('max_stavka')
+
+    # Получаем всех пользователей, исключая неутвержденных
+    users = CustomUser.objects.filter(is_active=True).exclude(post_user='unapproved')
+
+    # Применяем фильтр по должности
+    if post_user:
+        users = users.filter(post_user=post_user)
+
+    # Применяем фильтр по ставке
+    if min_stavka:
+        try:
+            min_stavka = float(min_stavka)
+            users = users.filter(big_stavka__gte=min_stavka)
+        except ValueError:
+            pass # Игнорируем некорректное значение
+
+    if max_stavka:
+        try:
+            max_stavka = float(max_stavka)
+            users = users.filter(big_stavka__lte=max_stavka)
+        except ValueError:
+            pass # Игнорируем некорректное значение
+
+    # Применяем сортировку
+    if sort_by == 'alphabetical_asc':
+        users = users.order_by('full_name')
+    elif sort_by == 'alphabetical_desc':
+        users = users.order_by('-full_name')
+    elif sort_by == 'stavka_asc':
+        users = users.order_by('big_stavka')
+    elif sort_by == 'stavka_desc':
+        users = users.order_by('-big_stavka')
+
+    # Получаем доступные роли для фильтра (исключая неутвержденных)
+    post_user_choices = [choice for choice in CustomUser.USER_TYPE_CHOICES if choice[0] != 'unapproved']
+
+    context = {
+        'users': users,
+        'post_user_choices': post_user_choices,
+        'selected_post_user': post_user,
+        'sort_by': sort_by,
+        'min_stavka': min_stavka,
+        'max_stavka': max_stavka,
+    }
+    return render(request, "director/director_prize.html", context)
 
 
 def set_prize(request, user_id):
@@ -521,11 +569,9 @@ def set_prize(request, user_id):
     return redirect('director_prize')
 
 
-
 from django.shortcuts import render
 from django.utils import timezone
 from django.db.models import Sum
-from datetime import datetime
 from users.models import PrizeHistory  # Импортируем вашу модель PrizeHistory
 
 def prize_history(request):
@@ -533,7 +579,7 @@ def prize_history(request):
 
     if selected_month_str:
         try:
-            selected_month = datetime.strptime(selected_month_str, '%Y-%m').date()
+            selected_month = dt.datetime.strptime(selected_month_str, '%Y-%m').date()
         except (ValueError, TypeError):
             selected_month = timezone.now().date()
     else:
@@ -570,7 +616,6 @@ def prize_history(request):
 
 
 from django.db.models import Sum, F, ExpressionWrapper, FloatField, fields
-from datetime import datetime, timedelta
 from django.shortcuts import render
 from users.models import TimeEntry, CustomUser
 from django.db import models
@@ -583,24 +628,33 @@ from django.db.models import Value, FloatField
 
 def salary_report(request):
     # Получаем параметры из GET-запроса
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
     post_user = request.GET.get('post_user')  # Фильтр по роли
     sort_by = request.GET.get('sort_by', 'desc')  # Сортировка (по умолчанию убывание)
 
-    # Преобразуем строки в объекты datetime
-    try:
-        if start_date and end_date:
-            start_date = datetime.strptime(start_date, '%Y-%m-%d')
-            end_date = datetime.strptime(end_date, '%Y-%m-%d')
-            # Включаем сегодняшний день в диапазон
-            end_date_plus_one = end_date + timedelta(days=1)
-        else:
+    # Инициализируем start_date и end_date как None
+    start_date = None
+    end_date = None
+    end_date_plus_one = None
+
+    # Преобразуем строки в объекты datetime.date
+    if start_date_str:
+        try:
+            start_date = dt.datetime.strptime(start_date_str, '%Y-%m-%d').date()
+        except ValueError:
             start_date = None
+
+    if end_date_str:
+        try:
+            end_date = dt.datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            end_date_plus_one = end_date + timedelta(days=1)
+        except ValueError:
+            end_date = None
             end_date_plus_one = None
-    except ValueError:
-        start_date = None
-        end_date_plus_one = None
+
+    # Получаем базовый список всех активных пользователей
+    users = CustomUser.objects.filter(is_active=True)
 
     # Подсчитываем количество завершенных задач для каждого пользователя через Subquery
     completed_tasks_subquery = TaskReview.objects.filter(
@@ -608,7 +662,7 @@ def salary_report(request):
         task__completed=True  # Учитываем только завершенные задачи
     )
 
-    # Добавляем фильтрацию по датам, если они указаны
+    # Добавляем фильтрацию по датам для подзапроса, если они указаны
     if start_date and end_date_plus_one:
         completed_tasks_subquery = completed_tasks_subquery.filter(
             task__created_at__gte=start_date,
@@ -619,12 +673,7 @@ def salary_report(request):
     ).values('count')
 
     # Аннотируем средний рейтинг и количество завершенных задач
-    users = CustomUser.objects.filter(is_active=True).annotate(
-        average_ratings=Avg('reviews_user__rating', filter=Q(reviews_user__rating__isnull=False)),
-        completed_tasks_count=Subquery(completed_tasks_subquery, output_field=models.IntegerField())
-    )
-
-    users = CustomUser.objects.filter(is_active=True).annotate(
+    users = users.annotate(
         average_ratings=Avg('reviews_user__rating', filter=Q(reviews_user__rating__isnull=False)),
         completed_tasks_count=Subquery(completed_tasks_subquery, output_field=models.IntegerField())
     )
@@ -672,38 +721,26 @@ def salary_report(request):
         ]
         user_worked_photos[user.id] = ', '.join(set(photo_names)) if photo_names else 'Нет макетов'
 
-
     if start_date and end_date_plus_one:
         try:
-            # Аннотируем общую зарплату за период для сотрудников
-            users = users.annotate(
-                total_salary=Sum(ExpressionWrapper(
-                    ((F('timeentry__end_time') - F('timeentry__start_time')) / timedelta(hours=1)) * F('big_stavka'),
-                    output_field=FloatField()
-                ), filter=models.Q(timeentry__start_time__gte=start_date, timeentry__end_time__lt=end_date_plus_one))
-            )
             # Рассчитываем общую зарплату за период через метод модели
             total_salary = TimeEntry.total_salary_users_money_user(start_date=start_date, end_date=end_date_plus_one)
             # Рассчитываем индивидуальную зарплату для каждого сотрудника
             individual_salaries = TimeEntry.total_salary_for_each_user_user(start_date=start_date, end_date=end_date_plus_one)
         except ValueError:
-            # Если дата указана некорректно
-            users = CustomUser.objects.filter(is_active=True).annotate(
-                average_ratings=Avg('reviews_user__rating', filter=models.Q(reviews_user__rating__isnull=False))
-            )
             total_salary = 0
             individual_salaries = {}
     else:
-        # Если период не выбран, показываем только сотрудников без зарплаты
+        # Если период не выбран, зарплата и индивидуальные зарплаты будут пустыми
         total_salary = None
         individual_salaries = {}
 
-    # Исключаем менеджеров из списка сотрудников
-    users = users.exclude(post_user='manager')
-
     # Применяем фильтр по роли
     if post_user:
-        users = users.filter(post_user=post_user)
+        if post_user not in ['unapproved', 'manager']:
+            users = users.filter(post_user=post_user)
+    else:
+        users = users.exclude(post_user__in=['unapproved', 'manager'])
 
     # Применяем сортировку
     if sort_by == 'asc':
@@ -720,15 +757,26 @@ def salary_report(request):
         users = users.order_by('-completed_tasks_count')  # По убыванию количества завершенных задач
 
     # Передаем данные в шаблон
+    filtered_roles = [choice for choice in CustomUser.USER_TYPE_CHOICES if choice[0] not in ['unapproved', 'manager']]
+
+    # Форматируем даты для передачи в шаблон, явно проверяя их тип
+    formatted_start_date = ''
+    if isinstance(start_date, dt.date):
+        formatted_start_date = start_date.strftime('%Y-%m-%d')
+
+    formatted_end_date = ''
+    if isinstance(end_date, dt.date):
+        formatted_end_date = end_date.strftime('%Y-%m-%d')
+
     context = {
         'users': users,  # Список сотрудников
         'total_salary': total_salary,  # Общая зарплата за период
         'individual_salaries': individual_salaries,  # Зарплата для каждого сотрудника
-        'post_user_choices': CustomUser.USER_TYPE_CHOICES,  # Выпадающий список ролей
+        'post_user_choices': filtered_roles,  # Выпадающий список ролей без неутвержденных и менеджеров
         'selected_post_user': post_user,  # Выбранная роль
         'sort_by': sort_by,  # Текущий порядок сортировки
-        'start_date': start_date.strftime('%Y-%m-%d') if start_date else '',
-        'end_date': end_date.strftime('%Y-%m-%d') if end_date else '',
+        'start_date': formatted_start_date,
+        'end_date': formatted_end_date,
         'user_worked_photos': user_worked_photos
     }
     return render(request, 'director/salary_report.html', context)
@@ -738,22 +786,30 @@ from manager2.models import TimeManger
 
 def salary_manager(request):
     # Получаем параметры из GET-запроса
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    post_user = request.GET.get('post_user')  # Фильтр по роли
-    sort_by = request.GET.get('sort_by', 'desc')  # Сортировка (по умолчанию убывание)
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+    manager_id = request.GET.get('manager')
+    sort_by = request.GET.get('sort_by', 'id')
 
-    try:
-        if start_date and end_date:
-            start_date = datetime.strptime(start_date, '%Y-%m-%d')
-            end_date = datetime.strptime(end_date, '%Y-%m-%d')
-            end_date_plus_one = end_date + timedelta(days=1)  # Включаем последний день в диапазон
-        else:
+    start_date = None
+    end_date = None
+
+    if start_date_str:
+        try:
+            start_date = dt.datetime.strptime(start_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            messages.error(request, "Неверный формат начальной даты.")
             start_date = None
-            end_date_plus_one = None
-    except ValueError:
-        start_date = None
-        end_date_plus_one = None
+
+    if end_date_str:
+        try:
+            end_date = dt.datetime.strptime(end_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            messages.error(request, "Неверный формат конечной даты.")
+            end_date = None
+
+    # Получаем базовый список всех активных менеджеров
+    users = CustomUser.objects.filter(is_active=True, post_user='manager')
 
     # Подсчитываем количество завершенных задач для каждого менеджера через Subquery
     completed_tasks_subquery = Task.objects.filter(
@@ -761,10 +817,10 @@ def salary_manager(request):
         completed=True  # Учитываем только завершенные задачи
     )
 
-    if start_date and end_date_plus_one:
+    if start_date and end_date:
         completed_tasks_subquery = completed_tasks_subquery.filter(
             created_at__gte=start_date,
-            created_at__lt=end_date_plus_one
+            created_at__lt=end_date
         )
 
     completed_tasks_subquery = completed_tasks_subquery.values('created_by').annotate(
@@ -772,12 +828,12 @@ def salary_manager(request):
     ).values('count')
 
     # Аннотируем средний рейтинг, количество завершенных задач и зарплату
-    users = CustomUser.objects.filter(is_active=True, post_user='manager').annotate(
+    users = users.annotate(
         completed_tasks_count=Subquery(completed_tasks_subquery, output_field=models.IntegerField())
     )
 
     # Аннотируем общую зарплату за период для менеджеров
-    if start_date and end_date_plus_one:
+    if start_date and end_date:
         try:
             users = users.annotate(
                 total_salary=Coalesce(
@@ -788,17 +844,17 @@ def salary_manager(request):
                             output_field=FloatField()
                         ),
                         filter=Q(timemanger_set__start_time__gte=start_date,
-                                 timemanger_set__end_time__lt=end_date_plus_one)
+                                 timemanger_set__end_time__lt=end_date)
                     ),
                     Value(0.0),
                     output_field=FloatField()
                 )
             )
             # Рассчитываем общую зарплату за период через метод модели
-            total_salary = TimeManger.total_salary_users_money(start_date=start_date, end_date=end_date_plus_one)
+            total_salary = TimeManger.total_salary_users_money(start_date=start_date, end_date=end_date)
             # Рассчитываем индивидуальную зарплату для каждого менеджера
             individual_salaries = TimeManger.total_salary_for_each_user(start_date=start_date,
-                                                                        end_date=end_date_plus_one)
+                                                                        end_date=end_date)
         except ValueError:
             total_salary = 0
             individual_salaries = {}
@@ -807,14 +863,14 @@ def salary_manager(request):
         individual_salaries = {}
 
     # Аннотируем список макетов, созданных менеджером
-    if start_date and end_date_plus_one:
+    if start_date and end_date:
         users = users.prefetch_related(
             Prefetch(
                 'user_muser',  # related_name для задач, созданных менеджером
                 queryset=Task.objects.filter(
                     completed=True,  # Только завершенные задачи
                     created_at__gte=start_date,  # Фильтр по дате начала
-                    created_at__lt=end_date_plus_one  # Фильтр по дате окончания
+                    created_at__lt=end_date  # Фильтр по дате окончания
                 ).select_related('photo'),  # Предварительно загружаем связанные макеты
                 to_attr='published_tasks'  # Сохраняем результат в атрибуте published_tasks
             )
@@ -840,10 +896,6 @@ def salary_manager(request):
         ]
         user_published_photos[user.id] = ', '.join(set(photo_names)) if photo_names else 'Нет макетов'
 
-    # Применяем фильтр по роли (если указан)
-    if post_user:
-        users = users.filter(post_user=post_user)
-
     # Применяем сортировку
     if sort_by == 'asc':
         users = users.order_by('big_stavka')  # По возрастанию ставки
@@ -859,15 +911,28 @@ def salary_manager(request):
         users = users.order_by('-completed_tasks_count')  # По убыванию количества завершенных задач
 
     # Передаем данные в шаблон
+    # Отладочный вывод для проверки типа и значения dt и dt.date
+    print(f"[DEBUG] Type of dt: {type(dt)}, Value of dt: {dt}")
+    if hasattr(dt, 'date'):
+        print(f"[DEBUG] Type of dt.date: {type(dt.date)}, Value of dt.date: {dt.date}")
+    else:
+        print("[DEBUG] dt does not have 'date' attribute.")
+
+    formatted_start_date = ''
+    if isinstance(start_date, dt.date):
+        formatted_start_date = start_date.strftime('%Y-%m-%d')
+
+    formatted_end_date = ''
+    if isinstance(end_date, dt.date):
+        formatted_end_date = end_date.strftime('%Y-%m-%d')
+
     context = {
         'users': users,  # Список менеджеров
         'total_salary': total_salary,  # Общая зарплата за период
         'individual_salaries': individual_salaries,  # Зарплата для каждого менеджера
-        'post_user_choices': CustomUser.USER_TYPE_CHOICES,  # Выпадающий список ролей
-        'selected_post_user': post_user,  # Выбранная роль
         'sort_by': sort_by,  # Текущий порядок сортировки
-        'start_date': start_date.strftime('%Y-%m-%d') if start_date else '',
-        'end_date': end_date.strftime('%Y-%m-%d') if end_date else '',
+        'start_date': formatted_start_date,
+        'end_date': formatted_end_date,
         'user_published_photos': user_published_photos  # Словарь с макетами, созданными менеджером
     }
 
@@ -882,7 +947,7 @@ def director_user_statistic(request, user_id):
     selected_month = timezone.now().date()
     if 'month' in request.GET:
         try:
-            selected_month = datetime.strptime(request.GET['month'], '%Y-%m').date()
+            selected_month = dt.datetime.strptime(request.GET['month'], '%Y-%m').date()
         except ValueError:
             pass
 
@@ -954,7 +1019,7 @@ def director_manager_statistic(request, user_id):
     selected_month = timezone.now().date()
     if selected_month_str:
         try:
-            selected_month = datetime.strptime(selected_month_str, '%Y-%m').date()
+            selected_month = dt.datetime.strptime(selected_month_str, '%Y-%m').date()
         except ValueError:
             pass
 
@@ -1079,7 +1144,7 @@ def employee_shiftsdir(request, user_id):
     # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
-            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
+            selected_month = timezone.make_aware(dt.datetime.strptime(selected_month_str, '%Y-%m').date())
         except (ValueError, TypeError):
             selected_month = timezone.now().date()
     else:
@@ -1145,7 +1210,7 @@ def manager_shifts(request, user_id):
     # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
-            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
+            selected_month = timezone.make_aware(dt.datetime.strptime(selected_month_str, '%Y-%m').date())
         except (ValueError, TypeError):
             selected_month = timezone.now().date()
     else:

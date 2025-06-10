@@ -27,9 +27,14 @@
             <p><strong>Время выполнения :</strong>{{ photo.estimated_time|date:"Y-m-d H:i" }}</p>
             <p><strong>Срок сдачи :</strong>{{ photo.due_date|date:"Y-m-d H:i" }}</p>
             <p><strong>Назначенный менеджер :</strong>{{ photo.assigned_manager.full_name }}</p>
-<div class="empty">
-
-</div>
+            <p><strong>Процент завершения :</strong>{{ photo.completion_percentage|floatformat:0 }}%</p>
+            {% if photo.is_completed %}
+            <p class="status-completed"><strong>Статус :</strong> <span style="color: #4CAF50;">✓ Завершен</span></p>
+            {% else %}
+            <p class="status-in-progress"><strong>Статус :</strong> <span style="color: #FFA500;">⟳ В процессе</span></p>
+            {% endif %}
+        </div>
+    </div>
 </main>
 <style>
 /* Общие стили */

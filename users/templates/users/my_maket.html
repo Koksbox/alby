@@ -37,6 +37,11 @@
                 <p><strong>Процент завершения:</strong> {{ photo.completion_percentage|floatformat:0 }}%</p>
                 <p><strong>Название макета:</strong>{{ photo.image_name }}</p>
                 <p><strong>Описание макета:</strong>{{ photo.description }}<p>
+                {% if photo.is_completed %}
+                <p class="completed-status"><strong>Статус:</strong> <span style="color: #4CAF50;">✓ Завершен</span></p>
+                {% else %}
+                <p class="completed-status"><strong>Статус:</strong> <span style="color: #FFA500;">⟳ В процессе</span></p>
+                {% endif %}
 
                 <!-- Кнопка "Подробнее" -->
                 <a href="{% url 'complete_maket' photo.id %}" class="btn btn-primary">Подробнее</a>

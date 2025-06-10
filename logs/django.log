@@ -5172,3 +5172,559 @@ INFO 2025-06-09 12:49:52,342 autoreload 9236 12828 C:\Users\Student\PycharmProje
 INFO 2025-06-09 12:49:53,014 autoreload 2800 1476 Watching for file changes with StatReloader
 INFO 2025-06-09 12:53:25,076 autoreload 2800 1476 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
 INFO 2025-06-09 12:53:25,714 autoreload 1896 11192 Watching for file changes with StatReloader
+INFO 2025-06-10 07:54:18,265 autoreload 9668 6588 Watching for file changes with StatReloader
+INFO 2025-06-10 07:54:20,427 basehttp 9668 9680 "GET /static/css/style.css HTTP/1.1" 200 1396
+INFO 2025-06-10 07:54:20,533 basehttp 9668 256 "GET /static/js/service.js HTTP/1.1" 200 350
+WARNING 2025-06-10 07:54:20,617 basehttp 9668 9680 "GET /favicon.ico HTTP/1.1" 404 12192
+INFO 2025-06-10 07:54:20,675 basehttp 9668 6724 "GET /static/manifest.json HTTP/1.1" 200 490
+INFO 2025-06-10 07:54:21,580 basehttp 9668 9680 "GET /login/ HTTP/1.1" 200 4865
+INFO 2025-06-10 07:54:21,923 basehttp 9668 9680 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:54:23,366 autoreload 9668 6588 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 07:54:24,531 autoreload 3736 5136 Watching for file changes with StatReloader
+WARNING 2025-06-10 07:54:25,185 basehttp 3736 13136 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:54:25,207 basehttp 3736 6616 "GET /login/ HTTP/1.1" 200 4865
+INFO 2025-06-10 07:54:26,103 basehttp 3736 6168 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-06-10 07:54:26,131 basehttp 3736 6168 "GET /profile/ HTTP/1.1" 200 9997
+WARNING 2025-06-10 07:54:26,207 basehttp 3736 6168 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:54:26,300 basehttp 3736 6616 "GET /media/avatars/%D0%BA%D0%BE%D1%82_9pmUFBa.jpg HTTP/1.1" 200 125993
+INFO 2025-06-10 07:54:27,625 basehttp 3736 6616 "GET /startapp/ HTTP/1.1" 200 15635
+WARNING 2025-06-10 07:54:27,684 basehttp 3736 6616 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:54:27,801 basehttp 3736 6616 "GET /api/check-active-timer/ HTTP/1.1" 200 46
+INFO 2025-06-10 07:54:29,308 basehttp 3736 6616 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:54:32,176 autoreload 3736 5136 C:\Users\Student\PycharmProjects\alby\manager2\views.py changed, reloading.
+INFO 2025-06-10 07:54:32,904 autoreload 10524 668 Watching for file changes with StatReloader
+INFO 2025-06-10 07:54:33,224 basehttp 10524 4132 "POST /api/stop-timer/ HTTP/1.1" 200 21
+INFO 2025-06-10 07:54:34,505 basehttp 10524 4132 "POST /api/start-timer/ HTTP/1.1" 200 21
+INFO 2025-06-10 07:54:35,998 basehttp 10524 4132 "GET /photo_maket/ HTTP/1.1" 200 11371
+WARNING 2025-06-10 07:54:36,089 basehttp 10524 4132 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:54:37,650 basehttp 10524 4132 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:54:38,149 basehttp 10524 4132 "GET /task_history/ HTTP/1.1" 200 10771
+WARNING 2025-06-10 07:54:38,217 basehttp 10524 4132 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:54:39,777 basehttp 10524 4132 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:54:46,170 basehttp 10524 4132 "GET /photo_maket/ HTTP/1.1" 200 11371
+WARNING 2025-06-10 07:54:46,222 basehttp 10524 4132 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:54:47,792 basehttp 10524 4132 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:54:55,578 basehttp 10524 4132 "GET /task_history/ HTTP/1.1" 200 10771
+WARNING 2025-06-10 07:54:55,622 basehttp 10524 4132 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:54:57,192 basehttp 10524 4132 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:55:00,366 basehttp 10524 4132 "GET /photo_maket/ HTTP/1.1" 200 11371
+WARNING 2025-06-10 07:55:00,422 basehttp 10524 4132 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:55:01,976 basehttp 10524 4132 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:56:08,439 basehttp 10524 4132 "GET /photo_maket/ HTTP/1.1" 200 11350
+WARNING 2025-06-10 07:56:08,516 basehttp 10524 4132 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:56:10,050 basehttp 10524 4132 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:56:15,703 basehttp 10524 4132 "GET /photo_maket/ HTTP/1.1" 200 11370
+WARNING 2025-06-10 07:56:15,788 basehttp 10524 4132 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:56:17,301 basehttp 10524 4132 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:56:19,266 basehttp 10524 4132 "GET /photo_maket/ HTTP/1.1" 200 11370
+WARNING 2025-06-10 07:56:19,355 basehttp 10524 4132 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:56:20,871 basehttp 10524 4132 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:56:55,109 basehttp 10524 4132 "GET /photo_maket/ HTTP/1.1" 200 11370
+WARNING 2025-06-10 07:56:55,210 basehttp 10524 4132 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:56:55,667 basehttp 10524 4132 "GET /photo_maket/ HTTP/1.1" 200 11368
+WARNING 2025-06-10 07:56:55,768 basehttp 10524 4132 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:56:55,837 basehttp 10524 4132 "GET /photo_maket/ HTTP/1.1" 200 11368
+WARNING 2025-06-10 07:56:55,921 basehttp 10524 4132 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:56:55,961 basehttp 10524 9624 "GET /photo_maket/ HTTP/1.1" 200 11368
+WARNING 2025-06-10 07:56:56,031 basehttp 10524 9624 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:56:57,586 basehttp 10524 9624 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-10 07:57:14,408 basehttp 10524 9624 "GET /maket_info/3/ HTTP/1.1" 500 158417
+WARNING 2025-06-10 07:57:14,461 basehttp 10524 9624 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:57:16,255 basehttp 10524 9624 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:57:23,666 autoreload 10524 668 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 07:57:24,353 autoreload 12216 2528 Watching for file changes with StatReloader
+INFO 2025-06-10 07:57:58,419 basehttp 12216 11468 "GET /maket_info/3/ HTTP/1.1" 200 9261
+INFO 2025-06-10 07:58:00,008 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:58:02,361 basehttp 12216 11468 "GET /select_task/3/?photo_id=3 HTTP/1.1" 302 0
+INFO 2025-06-10 07:58:02,383 basehttp 12216 11468 "GET /work_on_task/7/ HTTP/1.1" 200 16566
+INFO 2025-06-10 07:58:03,993 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:58:06,511 basehttp 12216 11468 "GET /photo_maket/ HTTP/1.1" 200 11540
+INFO 2025-06-10 07:58:08,145 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:58:08,507 basehttp 12216 11468 "GET /photo_maket/ HTTP/1.1" 200 11368
+INFO 2025-06-10 07:58:10,108 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:58:16,098 basehttp 12216 11468 "GET /photo_maket/ HTTP/1.1" 200 11368
+WARNING 2025-06-10 07:58:16,119 basehttp 12216 11468 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:58:51,087 basehttp 12216 11468 "GET /photo_maket/ HTTP/1.1" 200 11368
+WARNING 2025-06-10 07:58:51,136 basehttp 12216 11468 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:58:52,713 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:58:55,405 basehttp 12216 11468 "GET /photo_maket/ HTTP/1.1" 200 11368
+WARNING 2025-06-10 07:58:55,454 basehttp 12216 11468 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:58:57,105 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 07:59:27,188 basehttp 12216 11468 "GET /task_history/ HTTP/1.1" 200 10771
+WARNING 2025-06-10 07:59:27,264 basehttp 12216 11468 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 07:59:28,815 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:04,148 basehttp 12216 11468 "GET /task_history/ HTTP/1.1" 200 10799
+WARNING 2025-06-10 08:01:04,211 basehttp 12216 11468 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:05,470 basehttp 12216 11468 "GET /task_history/ HTTP/1.1" 200 10799
+WARNING 2025-06-10 08:01:05,568 basehttp 12216 11468 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:05,739 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:07,061 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:07,690 basehttp 12216 11468 "GET /photo_maket/ HTTP/1.1" 200 11369
+WARNING 2025-06-10 08:01:07,823 basehttp 12216 11468 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:09,329 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:30,465 basehttp 12216 11468 "GET /select_task/3/ HTTP/1.1" 302 0
+INFO 2025-06-10 08:01:30,491 basehttp 12216 11468 "GET /work_on_task/7/ HTTP/1.1" 200 16566
+WARNING 2025-06-10 08:01:30,556 basehttp 12216 11468 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:32,212 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:33,373 basehttp 12216 11468 "GET /profile/ HTTP/1.1" 200 9997
+WARNING 2025-06-10 08:01:33,481 basehttp 12216 11468 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:35,007 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:35,527 basehttp 12216 11468 "GET /photo_maket/ HTTP/1.1" 200 11541
+WARNING 2025-06-10 08:01:35,583 basehttp 12216 11468 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:37,098 basehttp 12216 11468 "GET /select_task/3/ HTTP/1.1" 302 0
+INFO 2025-06-10 08:01:37,120 basehttp 12216 11468 "GET /work_on_task/7/ HTTP/1.1" 200 16566
+WARNING 2025-06-10 08:01:37,168 basehttp 12216 11468 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:37,179 basehttp 12216 5388 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:38,763 basehttp 12216 5388 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:41,431 basehttp 12216 5388 "GET /photo_maket/ HTTP/1.1" 200 11541
+WARNING 2025-06-10 08:01:41,491 basehttp 12216 5388 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:42,982 basehttp 12216 5388 "GET /startapp/ HTTP/1.1" 200 15635
+WARNING 2025-06-10 08:01:43,036 basehttp 12216 5388 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:43,074 basehttp 12216 5388 "GET /api/check-active-timer/ HTTP/1.1" 200 43
+INFO 2025-06-10 08:01:43,095 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:44,611 basehttp 12216 11468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:45,546 basehttp 12216 11468 "POST /api/stop-timer/ HTTP/1.1" 200 21
+INFO 2025-06-10 08:01:47,061 basehttp 12216 11468 "GET /statistic HTTP/1.1" 301 0
+INFO 2025-06-10 08:01:47,123 basehttp 12216 5388 "GET /statistic/ HTTP/1.1" 200 10547
+WARNING 2025-06-10 08:01:47,193 basehttp 12216 5388 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:48,763 basehttp 12216 5388 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:49,450 basehttp 12216 5388 "GET /startapp/ HTTP/1.1" 200 15635
+WARNING 2025-06-10 08:01:49,507 basehttp 12216 5388 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:49,569 basehttp 12216 5388 "GET /api/check-active-timer/ HTTP/1.1" 200 17
+INFO 2025-06-10 08:01:50,263 basehttp 12216 5388 "GET /photo_maket/ HTTP/1.1" 200 11369
+WARNING 2025-06-10 08:01:50,322 basehttp 12216 5388 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:51,912 basehttp 12216 5388 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:52,134 basehttp 12216 5388 "GET /photo_maket/ HTTP/1.1" 200 11369
+WARNING 2025-06-10 08:01:52,201 basehttp 12216 5388 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:53,295 basehttp 12216 5388 "GET /photo_maket/ HTTP/1.1" 200 11369
+WARNING 2025-06-10 08:01:53,364 basehttp 12216 5388 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:53,732 basehttp 12216 5388 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:54,609 basehttp 12216 5388 "GET /maket_info/3/ HTTP/1.1" 302 0
+INFO 2025-06-10 08:01:54,624 basehttp 12216 5388 "GET /startapp/ HTTP/1.1" 200 15635
+WARNING 2025-06-10 08:01:54,681 basehttp 12216 5388 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:54,741 basehttp 12216 5388 "GET /api/check-active-timer/ HTTP/1.1" 200 17
+INFO 2025-06-10 08:01:54,889 basehttp 12216 5388 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:56,303 basehttp 12216 5388 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:56,526 basehttp 12216 5388 "GET /photo_maket/ HTTP/1.1" 200 11579
+WARNING 2025-06-10 08:01:56,581 basehttp 12216 5388 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:58,092 basehttp 12216 5388 "GET /select_task/3/ HTTP/1.1" 302 0
+INFO 2025-06-10 08:01:58,115 basehttp 12216 5388 "GET /work_on_task/7/ HTTP/1.1" 200 16566
+WARNING 2025-06-10 08:01:58,170 basehttp 12216 5388 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:58,184 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:01:59,663 basehttp 12216 7712 "GET /photo_maket/ HTTP/1.1" 200 11541
+WARNING 2025-06-10 08:01:59,730 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:01:59,784 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:01,313 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:02,076 basehttp 12216 7712 "GET /statistic/ HTTP/1.1" 200 10547
+WARNING 2025-06-10 08:02:02,127 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:02:03,724 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:04,514 basehttp 12216 7712 "GET /my_maket HTTP/1.1" 200 10745
+WARNING 2025-06-10 08:02:04,568 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:02:06,190 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:09,772 basehttp 12216 7712 "GET /statistic/ HTTP/1.1" 200 10547
+WARNING 2025-06-10 08:02:09,843 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:02:11,414 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:16,089 basehttp 12216 7712 "GET /my_maket HTTP/1.1" 200 10745
+WARNING 2025-06-10 08:02:16,167 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:02:17,417 basehttp 12216 7712 "GET /complete_maket/4/ HTTP/1.1" 200 8753
+WARNING 2025-06-10 08:02:17,470 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:02:17,726 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:19,036 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:20,576 basehttp 12216 7712 "GET /my_maket HTTP/1.1" 200 10745
+WARNING 2025-06-10 08:02:20,640 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:02:21,769 basehttp 12216 7712 "GET /complete_maket/3/ HTTP/1.1" 200 8772
+WARNING 2025-06-10 08:02:21,824 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:02:22,219 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:23,395 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:25,400 basehttp 12216 7712 "GET /my_maket HTTP/1.1" 200 10745
+WARNING 2025-06-10 08:02:25,462 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:02:27,063 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:29,374 basehttp 12216 7712 "GET /photo_maket/ HTTP/1.1" 200 11369
+WARNING 2025-06-10 08:02:29,432 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:02:31,005 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:31,049 basehttp 12216 7712 "GET /statistic/ HTTP/1.1" 200 10547
+WARNING 2025-06-10 08:02:31,103 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:02:32,716 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:02:33,344 basehttp 12216 7712 "GET /my_maket HTTP/1.1" 200 10745
+WARNING 2025-06-10 08:02:33,398 basehttp 12216 7712 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:02:34,979 basehttp 12216 7712 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:03:43,057 autoreload 12216 2528 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 08:03:44,079 autoreload 9368 2440 Watching for file changes with StatReloader
+INFO 2025-06-10 08:03:46,739 autoreload 9368 2440 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 08:03:47,503 autoreload 12684 3512 Watching for file changes with StatReloader
+INFO 2025-06-10 08:04:09,374 basehttp 12684 3764 "GET /my_maket HTTP/1.1" 200 11093
+WARNING 2025-06-10 08:04:09,451 basehttp 12684 3764 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:04:10,988 basehttp 12684 3764 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:04:13,219 basehttp 12684 3764 "GET /complete_maket/4/ HTTP/1.1" 200 8753
+WARNING 2025-06-10 08:04:13,274 basehttp 12684 3764 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:04:14,855 basehttp 12684 3764 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:04:52,860 autoreload 12684 3512 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 08:04:53,590 autoreload 2184 9960 Watching for file changes with StatReloader
+INFO 2025-06-10 08:05:25,550 autoreload 2184 9960 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 08:05:26,323 autoreload 3360 4884 Watching for file changes with StatReloader
+INFO 2025-06-10 08:05:28,741 basehttp 3360 4284 "GET /complete_maket/4/ HTTP/1.1" 200 8993
+WARNING 2025-06-10 08:05:28,787 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:05:30,317 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:05:32,487 basehttp 3360 4284 "GET /my_maket HTTP/1.1" 200 11093
+WARNING 2025-06-10 08:05:32,543 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:05:34,125 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:05:34,338 basehttp 3360 4284 "GET /statistic/ HTTP/1.1" 200 10547
+WARNING 2025-06-10 08:05:34,400 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:05:35,974 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:05:43,473 basehttp 3360 4284 "GET /my_maket HTTP/1.1" 200 11093
+WARNING 2025-06-10 08:05:43,532 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:05:45,138 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:05:51,272 basehttp 3360 4284 "GET /photo_maket/ HTTP/1.1" 200 11369
+WARNING 2025-06-10 08:05:51,330 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:05:52,924 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:05:53,900 basehttp 3360 4284 "GET /profile/ HTTP/1.1" 200 9997
+WARNING 2025-06-10 08:05:53,954 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:05:55,537 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:05:57,262 basehttp 3360 4284 "GET /money/ HTTP/1.1" 200 15050
+WARNING 2025-06-10 08:05:57,311 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:05:58,919 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:01,590 basehttp 3360 4284 "GET /startapp/ HTTP/1.1" 200 15635
+WARNING 2025-06-10 08:06:01,638 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:01,668 basehttp 3360 4284 "GET /api/check-active-timer/ HTTP/1.1" 200 17
+INFO 2025-06-10 08:06:03,222 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:03,794 basehttp 3360 4284 "GET /startapp/ HTTP/1.1" 200 15635
+INFO 2025-06-10 08:06:03,832 basehttp 3360 4284 "GET /api/check-active-timer/ HTTP/1.1" 200 17
+WARNING 2025-06-10 08:06:03,851 basehttp 3360 5644 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:05,394 basehttp 3360 5644 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:10,218 basehttp 3360 5644 "GET /startapp/ HTTP/1.1" 200 15635
+INFO 2025-06-10 08:06:10,251 basehttp 3360 5644 "GET /api/check-active-timer/ HTTP/1.1" 200 17
+WARNING 2025-06-10 08:06:10,274 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:11,142 basehttp 3360 4284 "GET /statistic/ HTTP/1.1" 200 10547
+WARNING 2025-06-10 08:06:11,194 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:12,795 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:13,698 basehttp 3360 4284 "GET /profile/ HTTP/1.1" 200 9997
+WARNING 2025-06-10 08:06:13,754 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:15,343 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:15,521 basehttp 3360 4284 "GET /refactor_profile/ HTTP/1.1" 200 8466
+WARNING 2025-06-10 08:06:15,583 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:17,389 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:18,179 basehttp 3360 4284 "GET /upload-avatar_users/ HTTP/1.1" 200 8028
+WARNING 2025-06-10 08:06:18,239 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:19,820 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:21,368 basehttp 3360 4284 "GET /refactor_profile/ HTTP/1.1" 200 8466
+WARNING 2025-06-10 08:06:21,434 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:22,029 basehttp 3360 4284 "GET /photo_maket/ HTTP/1.1" 200 11369
+WARNING 2025-06-10 08:06:22,079 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:23,682 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:23,746 basehttp 3360 4284 "GET /maket_info/3/ HTTP/1.1" 302 0
+INFO 2025-06-10 08:06:23,759 basehttp 3360 4284 "GET /startapp/ HTTP/1.1" 200 15635
+WARNING 2025-06-10 08:06:23,810 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:23,851 basehttp 3360 4284 "GET /api/check-active-timer/ HTTP/1.1" 200 17
+INFO 2025-06-10 08:06:25,415 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:25,512 basehttp 3360 4284 "POST /api/start-timer/ HTTP/1.1" 200 21
+INFO 2025-06-10 08:06:26,120 basehttp 3360 4284 "GET /photo_maket/ HTTP/1.1" 200 11579
+WARNING 2025-06-10 08:06:26,221 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:27,348 basehttp 3360 4284 "GET /maket_info/3/ HTTP/1.1" 200 9261
+WARNING 2025-06-10 08:06:27,471 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:27,778 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:28,994 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:29,355 basehttp 3360 4284 "GET /select_task/3/?photo_id=3 HTTP/1.1" 302 0
+INFO 2025-06-10 08:06:29,379 basehttp 3360 4284 "GET /work_on_task/7/ HTTP/1.1" 200 16566
+WARNING 2025-06-10 08:06:29,427 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:31,035 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:35,528 basehttp 3360 4284 "POST /task/7/start/ HTTP/1.1" 302 0
+INFO 2025-06-10 08:06:35,550 basehttp 3360 4284 "GET /work_on_task/7/ HTTP/1.1" 200 16284
+WARNING 2025-06-10 08:06:35,603 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:37,414 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:40,970 basehttp 3360 4284 "POST /task/7/stop/ HTTP/1.1" 302 0
+INFO 2025-06-10 08:06:40,991 basehttp 3360 4284 "GET /work_on_task/7/ HTTP/1.1" 200 17341
+WARNING 2025-06-10 08:06:41,062 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:42,692 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:47,460 basehttp 3360 4284 "GET /startapp/ HTTP/1.1" 200 15635
+WARNING 2025-06-10 08:06:47,518 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:06:47,590 basehttp 3360 4284 "GET /api/check-active-timer/ HTTP/1.1" 200 43
+INFO 2025-06-10 08:06:49,115 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:06:58,875 basehttp 3360 4284 "POST /api/stop-timer/ HTTP/1.1" 200 21
+INFO 2025-06-10 08:07:00,344 basehttp 3360 4284 "GET /profile/ HTTP/1.1" 200 9997
+WARNING 2025-06-10 08:07:00,409 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:07:01,985 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:07:02,107 basehttp 3360 4284 "GET /logout/ HTTP/1.1" 200 2457
+WARNING 2025-06-10 08:07:02,153 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+WARNING 2025-06-10 08:07:02,156 basehttp 3360 5644 "GET /static/css/styles.css HTTP/1.1" 404 1856
+WARNING 2025-06-10 08:07:03,264 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:07:03,702 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:07:04,178 basehttp 3360 4284 "GET /login/ HTTP/1.1" 200 4865
+WARNING 2025-06-10 08:07:04,258 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:07:05,903 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:07:07,904 basehttp 3360 4284 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-06-10 08:07:07,945 basehttp 3360 4284 "GET /director/ HTTP/1.1" 200 9977
+WARNING 2025-06-10 08:07:07,992 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:07:09,581 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:07:10,827 basehttp 3360 4284 "GET /director/salary_report/ HTTP/1.1" 200 14001
+WARNING 2025-06-10 08:07:10,875 basehttp 3360 4284 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:07:12,509 basehttp 3360 4284 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:09:08,041 autoreload 3360 4884 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:09:08,710 autoreload 4628 8552 Watching for file changes with StatReloader
+INFO 2025-06-10 08:09:30,676 basehttp 4628 8724 "GET /director/salary_report/ HTTP/1.1" 200 14741
+WARNING 2025-06-10 08:09:30,719 basehttp 4628 8724 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:09:32,280 basehttp 4628 8724 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:09:49,960 basehttp 4628 8724 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date=2025-06-11 HTTP/1.1" 200 14314
+WARNING 2025-06-10 08:09:50,000 basehttp 4628 8724 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:09:51,654 basehttp 4628 8724 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:10:23,903 basehttp 4628 8724 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date=2025-06-11 HTTP/1.1" 200 14314
+WARNING 2025-06-10 08:10:23,962 basehttp 4628 8724 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:10:25,494 basehttp 4628 8724 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:10:35,391 basehttp 4628 8724 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=2025-04-01&end_date=2025-06-11 HTTP/1.1" 200 14314
+WARNING 2025-06-10 08:10:35,440 basehttp 4628 8724 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:10:37,076 basehttp 4628 8724 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:10:45,957 basehttp 4628 8724 "GET /director/salary_report/?start_date=2025-04-01&end_date=2025-06-11&post_user=&sort_by=desc HTTP/1.1" 200 14977
+WARNING 2025-06-10 08:10:46,005 basehttp 4628 8724 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:10:47,641 basehttp 4628 8724 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:11:13,450 basehttp 4628 8724 "GET /director/salary_report/?post_user=&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-08&end_date=2025-06-11 HTTP/1.1" 200 14974
+WARNING 2025-06-10 08:11:13,502 basehttp 4628 8724 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:11:15,109 basehttp 4628 8724 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:11:31,431 autoreload 4628 8552 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:11:32,314 autoreload 2588 1048 Watching for file changes with StatReloader
+INFO 2025-06-10 08:11:39,697 autoreload 2588 1048 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:11:40,620 autoreload 8644 2636 Watching for file changes with StatReloader
+INFO 2025-06-10 08:11:48,742 autoreload 8644 2636 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:11:49,555 autoreload 5740 7084 Watching for file changes with StatReloader
+ERROR 2025-06-10 08:12:09,136 basehttp 5740 2356 "GET /director/salary_report/?post_user=&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-08&end_date=2025-06-11 HTTP/1.1" 500 311041
+WARNING 2025-06-10 08:12:09,167 basehttp 5740 2356 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:12:10,877 basehttp 5740 2356 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:12:24,168 autoreload 5740 7084 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:12:24,860 autoreload 5660 9972 Watching for file changes with StatReloader
+INFO 2025-06-10 08:12:34,071 autoreload 5660 9972 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:12:34,965 autoreload 5060 8668 Watching for file changes with StatReloader
+INFO 2025-06-10 08:13:37,241 basehttp 5060 13144 "GET /director/salary_report/?post_user=&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-08&end_date=2025-06-11 HTTP/1.1" 200 14627
+INFO 2025-06-10 08:13:38,852 basehttp 5060 13144 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:13:39,834 basehttp 5060 13144 "GET /director/salary_report/?post_user=&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-08&end_date=2025-06-11 HTTP/1.1" 200 14627
+WARNING 2025-06-10 08:13:39,845 basehttp 5060 13144 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:13:49,656 basehttp 5060 13144 "GET /director/ HTTP/1.1" 200 9977
+WARNING 2025-06-10 08:13:49,707 basehttp 5060 13144 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:13:51,263 basehttp 5060 13144 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:13:51,284 basehttp 5060 13144 "GET /director/salary_manager/ HTTP/1.1" 200 12602
+WARNING 2025-06-10 08:13:51,326 basehttp 5060 13144 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:13:52,933 basehttp 5060 13144 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:14:15,883 basehttp 5060 13144 "GET /director/salary_manager/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date=2025-06-09 HTTP/1.1" 200 11604
+WARNING 2025-06-10 08:14:15,930 basehttp 5060 13144 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:14:17,543 basehttp 5060 13144 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:14:30,111 basehttp 5060 13144 "GET /director/ HTTP/1.1" 200 9977
+WARNING 2025-06-10 08:14:30,172 basehttp 5060 13144 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:14:31,753 basehttp 5060 13144 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:14:32,239 basehttp 5060 13144 "GET /director/salary_report/ HTTP/1.1" 200 14394
+WARNING 2025-06-10 08:14:32,275 basehttp 5060 13144 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:14:33,890 basehttp 5060 13144 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:15:27,376 autoreload 5060 8668 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:15:28,083 autoreload 6208 5440 Watching for file changes with StatReloader
+INFO 2025-06-10 08:16:28,791 basehttp 6208 8264 "GET /director/salary_report/ HTTP/1.1" 200 14394
+WARNING 2025-06-10 08:16:28,853 basehttp 6208 8264 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:16:30,373 basehttp 6208 8264 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:16:40,735 basehttp 6208 8264 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date=2025-06-30 HTTP/1.1" 200 13967
+WARNING 2025-06-10 08:16:40,782 basehttp 6208 8264 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:16:42,403 basehttp 6208 8264 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:17:53,382 autoreload 6208 5440 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:17:54,077 autoreload 1732 2296 Watching for file changes with StatReloader
+INFO 2025-06-10 08:18:13,084 autoreload 1732 2296 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:18:13,738 autoreload 6732 6304 Watching for file changes with StatReloader
+INFO 2025-06-10 08:19:18,763 basehttp 6732 6672 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date=2025-06-30 HTTP/1.1" 200 13967
+WARNING 2025-06-10 08:19:18,822 basehttp 6732 6672 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:19:20,353 basehttp 6732 6672 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:19:22,089 basehttp 6732 6672 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date=2025-06-30 HTTP/1.1" 200 13967
+WARNING 2025-06-10 08:19:22,125 basehttp 6732 6672 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:19:22,284 basehttp 6732 6672 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date=2025-06-30 HTTP/1.1" 200 13967
+WARNING 2025-06-10 08:19:22,315 basehttp 6732 6672 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:19:23,925 basehttp 6732 6672 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:19:25,650 basehttp 6732 6672 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date=2025-06-30 HTTP/1.1" 200 13967
+WARNING 2025-06-10 08:19:25,711 basehttp 6732 6672 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:19:27,230 basehttp 6732 6672 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:19:37,589 basehttp 6732 6672 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date=2025-06-10 HTTP/1.1" 200 13967
+WARNING 2025-06-10 08:19:37,645 basehttp 6732 6672 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:19:39,248 basehttp 6732 6672 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-10 08:19:44,531 basehttp 6732 6672 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=&end_date=2025-06-10 HTTP/1.1" 500 71954
+WARNING 2025-06-10 08:19:44,570 basehttp 6732 6672 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:19:46,294 basehttp 6732 6672 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:20:16,606 autoreload 6732 6304 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:20:17,325 autoreload 9616 8316 Watching for file changes with StatReloader
+INFO 2025-06-10 08:20:56,063 autoreload 9616 8316 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:20:56,718 autoreload 3020 2264 Watching for file changes with StatReloader
+INFO 2025-06-10 08:21:24,505 autoreload 3020 2264 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:21:25,157 autoreload 6688 716 Watching for file changes with StatReloader
+INFO 2025-06-10 08:21:55,081 autoreload 6688 716 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:21:55,765 autoreload 5404 5184 Watching for file changes with StatReloader
+INFO 2025-06-10 08:22:49,688 basehttp 5404 8272 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=&end_date=2025-06-10 HTTP/1.1" 200 13763
+INFO 2025-06-10 08:22:50,818 autoreload 5404 5184 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:22:51,505 autoreload 6596 1896 Watching for file changes with StatReloader
+INFO 2025-06-10 08:22:51,778 basehttp 6596 2384 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:22:52,540 basehttp 6596 2384 "GET /director/salary_report/?post_user=None&sort_by=desc&min_rating=&max_rating=&start_date=&end_date=2025-06-10 HTTP/1.1" 200 13763
+WARNING 2025-06-10 08:22:52,551 basehttp 6596 11048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:23:11,805 basehttp 6596 11048 "GET /director/salary_report/?start_date=&end_date=2025-06-10&post_user=&sort_by=desc HTTP/1.1" 200 14420
+WARNING 2025-06-10 08:23:11,855 basehttp 6596 11048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:23:13,456 basehttp 6596 11048 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:23:23,945 basehttp 6596 11048 "GET /director/salary_report/?post_user=&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date=2025-06-10 HTTP/1.1" 200 14629
+WARNING 2025-06-10 08:23:23,996 basehttp 6596 11048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:23:25,603 basehttp 6596 11048 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:23:33,379 autoreload 6596 1896 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:23:34,115 autoreload 5684 2972 Watching for file changes with StatReloader
+INFO 2025-06-10 08:23:39,087 basehttp 5684 4912 "GET /director/task_list_director/ HTTP/1.1" 200 10991
+WARNING 2025-06-10 08:23:39,150 basehttp 5684 4912 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:23:40,750 basehttp 5684 4912 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:23:40,837 basehttp 5684 4912 "GET /director/ HTTP/1.1" 200 9977
+WARNING 2025-06-10 08:23:40,872 basehttp 5684 4912 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:23:42,455 basehttp 5684 4912 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:23:44,570 autoreload 5684 2972 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:23:45,279 autoreload 11736 8260 Watching for file changes with StatReloader
+INFO 2025-06-10 08:23:45,601 basehttp 11736 12128 "GET /director/salary_manager/ HTTP/1.1" 200 12602
+WARNING 2025-06-10 08:23:45,658 basehttp 11736 12128 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:23:47,233 basehttp 11736 12128 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:23:56,857 autoreload 11736 8260 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:23:57,554 autoreload 1944 1328 Watching for file changes with StatReloader
+INFO 2025-06-10 08:24:35,852 autoreload 1944 1328 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:24:36,530 autoreload 6688 4696 Watching for file changes with StatReloader
+ERROR 2025-06-10 08:24:46,284 basehttp 6688 3424 "GET /director/salary_manager/ HTTP/1.1" 500 70159
+WARNING 2025-06-10 08:24:46,317 basehttp 6688 3424 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:24:47,952 basehttp 6688 3424 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:25:08,073 autoreload 6688 4696 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:25:08,906 autoreload 7060 12688 Watching for file changes with StatReloader
+ERROR 2025-06-10 08:25:14,605 basehttp 7060 13172 "GET /director/salary_manager/ HTTP/1.1" 500 70670
+INFO 2025-06-10 08:25:16,232 basehttp 7060 13172 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:25:30,459 autoreload 7060 12688 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:25:31,206 autoreload 5108 2888 Watching for file changes with StatReloader
+INFO 2025-06-10 08:25:33,207 basehttp 5108 8796 "GET /director/salary_manager/ HTTP/1.1" 200 12598
+INFO 2025-06-10 08:25:34,966 basehttp 5108 8796 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:25:51,149 autoreload 5108 2888 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:25:51,856 autoreload 1044 2380 Watching for file changes with StatReloader
+INFO 2025-06-10 08:26:31,182 autoreload 1044 2380 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:26:31,852 autoreload 10700 1244 Watching for file changes with StatReloader
+ERROR 2025-06-10 08:27:06,340 basehttp 10700 6696 "GET /director/salary_manager/ HTTP/1.1" 500 70670
+INFO 2025-06-10 08:27:08,123 basehttp 10700 6696 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-10 08:27:28,894 basehttp 10700 6696 "GET /director/salary_manager/ HTTP/1.1" 500 70670
+ERROR 2025-06-10 08:27:29,342 basehttp 10700 6696 "GET /director/salary_manager/ HTTP/1.1" 500 70670
+ERROR 2025-06-10 08:27:29,494 basehttp 10700 6696 "GET /director/salary_manager/ HTTP/1.1" 500 70670
+ERROR 2025-06-10 08:27:29,644 basehttp 10700 6696 "GET /director/salary_manager/ HTTP/1.1" 500 70670
+INFO 2025-06-10 08:27:31,270 basehttp 10700 6696 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:27:38,290 autoreload 10700 1244 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:27:39,034 autoreload 384 6372 Watching for file changes with StatReloader
+INFO 2025-06-10 08:27:44,001 autoreload 384 6372 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:27:44,768 autoreload 9540 11252 Watching for file changes with StatReloader
+INFO 2025-06-10 08:28:01,817 autoreload 9540 11252 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:28:02,507 autoreload 1052 5416 Watching for file changes with StatReloader
+ERROR 2025-06-10 08:28:42,912 basehttp 1052 11432 "GET /director/salary_manager/ HTTP/1.1" 500 70670
+ERROR 2025-06-10 08:28:43,793 basehttp 1052 11432 "GET /director/salary_manager/ HTTP/1.1" 500 70670
+ERROR 2025-06-10 08:28:43,958 basehttp 1052 11432 "GET /director/salary_manager/ HTTP/1.1" 500 70670
+ERROR 2025-06-10 08:28:44,109 basehttp 1052 11432 "GET /director/salary_manager/ HTTP/1.1" 500 70670
+INFO 2025-06-10 08:28:45,997 basehttp 1052 11432 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:28:48,369 basehttp 1052 11432 "GET /director/ HTTP/1.1" 200 9977
+ERROR 2025-06-10 08:28:49,585 basehttp 1052 11432 "GET /director/salary_manager/ HTTP/1.1" 500 70533
+INFO 2025-06-10 08:28:49,946 basehttp 1052 11432 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:28:51,185 basehttp 1052 11432 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:29:10,139 autoreload 1052 5416 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:29:10,986 autoreload 2068 2888 Watching for file changes with StatReloader
+INFO 2025-06-10 08:29:41,908 autoreload 2068 2888 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:29:42,618 autoreload 5576 4264 Watching for file changes with StatReloader
+ERROR 2025-06-10 08:30:23,641 basehttp 5576 5492 "GET /director/salary_manager/ HTTP/1.1" 500 70670
+INFO 2025-06-10 08:30:25,279 basehttp 5576 5492 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:30:28,401 autoreload 5576 4264 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:30:29,068 autoreload 5384 6844 Watching for file changes with StatReloader
+INFO 2025-06-10 08:30:57,704 autoreload 5384 6844 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:30:58,421 autoreload 3212 8536 Watching for file changes with StatReloader
+ERROR 2025-06-10 08:31:01,572 basehttp 3212 3264 "GET /director/salary_manager/ HTTP/1.1" 500 70465
+INFO 2025-06-10 08:31:03,183 basehttp 3212 3264 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:31:30,587 autoreload 3212 8536 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:31:31,427 autoreload 6784 5608 Watching for file changes with StatReloader
+INFO 2025-06-10 08:31:44,919 autoreload 6784 5608 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:31:45,607 autoreload 2184 8312 Watching for file changes with StatReloader
+INFO 2025-06-10 08:32:39,404 basehttp 2184 10456 "GET /director/salary_manager/ HTTP/1.1" 200 12598
+INFO 2025-06-10 08:32:40,964 basehttp 2184 10456 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:32:41,795 basehttp 2184 10456 "GET /director/salary_manager/ HTTP/1.1" 200 12598
+WARNING 2025-06-10 08:32:41,831 basehttp 2184 10456 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:32:48,903 basehttp 2184 10456 "GET /director/salary_manager/?post_user=&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date= HTTP/1.1" 200 12628
+WARNING 2025-06-10 08:32:48,957 basehttp 2184 10456 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:32:50,543 basehttp 2184 10456 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:34:36,112 basehttp 2184 12344 "GET /director/salary_manager/?post_user=&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date= HTTP/1.1" 200 13862
+WARNING 2025-06-10 08:34:36,197 basehttp 2184 12344 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:34:37,716 basehttp 2184 12344 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:34:46,560 basehttp 2184 12344 "GET /director/salary_manager/?post_user=&sort_by=desc&min_rating=&max_rating=&start_date=2025-06-01&end_date= HTTP/1.1" 200 12628
+WARNING 2025-06-10 08:34:46,620 basehttp 2184 12344 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:34:48,139 basehttp 2184 12344 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:34:48,285 basehttp 2184 12344 "GET /director/ HTTP/1.1" 200 9977
+WARNING 2025-06-10 08:34:48,334 basehttp 2184 12344 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:34:49,889 basehttp 2184 12344 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:34:50,150 basehttp 2184 12344 "GET /director/director_prize/ HTTP/1.1" 200 11979
+WARNING 2025-06-10 08:34:50,203 basehttp 2184 12344 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:34:51,757 basehttp 2184 12344 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:36:57,559 basehttp 2184 12344 "GET /director/director_prize/ HTTP/1.1" 200 11979
+WARNING 2025-06-10 08:36:57,602 basehttp 2184 12344 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:36:59,138 basehttp 2184 12344 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:36:59,454 basehttp 2184 12344 "GET /director/director_prize/ HTTP/1.1" 200 11979
+WARNING 2025-06-10 08:36:59,516 basehttp 2184 12344 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:37:00,469 basehttp 2184 12344 "GET /director/director_prize/ HTTP/1.1" 200 11979
+WARNING 2025-06-10 08:37:00,504 basehttp 2184 12344 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:37:01,020 basehttp 2184 12344 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:37:02,070 basehttp 2184 12344 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:37:07,218 basehttp 2184 12344 "GET /director/director_prize/ HTTP/1.1" 200 11979
+WARNING 2025-06-10 08:37:07,283 basehttp 2184 12344 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:37:08,793 basehttp 2184 12344 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:37:44,332 autoreload 2184 8312 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:37:45,019 autoreload 2512 3572 Watching for file changes with StatReloader
+INFO 2025-06-10 08:40:01,365 autoreload 2512 3572 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:40:02,018 autoreload 10928 1944 Watching for file changes with StatReloader
+INFO 2025-06-10 08:40:43,738 autoreload 10928 1944 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:40:44,406 autoreload 8476 4844 Watching for file changes with StatReloader
+INFO 2025-06-10 08:41:13,115 basehttp 8476 4736 "GET /director/director_prize/ HTTP/1.1" 200 14452
+WARNING 2025-06-10 08:41:13,199 basehttp 8476 4736 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:41:14,711 basehttp 8476 4736 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:41:43,405 basehttp 8476 4736 "GET /director/ HTTP/1.1" 200 9977
+WARNING 2025-06-10 08:41:43,446 basehttp 8476 4736 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:41:45,008 basehttp 8476 4736 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:41:45,077 basehttp 8476 4736 "GET /director/salary_manager/ HTTP/1.1" 200 12598
+WARNING 2025-06-10 08:41:45,116 basehttp 8476 4736 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:41:46,427 basehttp 8476 4736 "GET /director/ HTTP/1.1" 200 9977
+WARNING 2025-06-10 08:41:46,471 basehttp 8476 4736 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:41:46,720 basehttp 8476 4736 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-10 08:41:47,959 basehttp 8476 4736 "GET /director/salary_report/ HTTP/1.1" 500 70469
+WARNING 2025-06-10 08:41:47,994 basehttp 8476 4736 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:41:48,079 basehttp 8476 4736 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:41:49,653 basehttp 8476 4736 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:42:08,008 autoreload 8476 4844 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:42:08,676 autoreload 7496 5132 Watching for file changes with StatReloader
+INFO 2025-06-10 08:42:30,345 autoreload 7496 5132 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:42:31,106 autoreload 10376 2888 Watching for file changes with StatReloader
+INFO 2025-06-10 08:42:48,143 autoreload 10376 2888 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:42:48,862 autoreload 4280 10092 Watching for file changes with StatReloader
+ERROR 2025-06-10 08:42:50,668 basehttp 4280 7288 "GET /director/salary_report/ HTTP/1.1" 500 70606
+WARNING 2025-06-10 08:42:50,708 basehttp 4280 7288 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:42:53,148 basehttp 4280 7288 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-10 08:43:47,719 basehttp 4280 7288 "GET /director/salary_report/ HTTP/1.1" 500 70606
+WARNING 2025-06-10 08:43:47,758 basehttp 4280 7288 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 08:43:49,617 basehttp 4280 7288 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:43:51,890 basehttp 4280 7288 "GET /director/director_prize/ HTTP/1.1" 200 14452
+INFO 2025-06-10 08:43:53,472 basehttp 4280 7288 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:43:56,053 basehttp 4280 7288 "GET /director/director_prize/?post_user=improver&min_stavka=&max_stavka=&sort_by=alphabetical_asc HTTP/1.1" 200 11259
+INFO 2025-06-10 08:43:57,633 basehttp 4280 7288 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:43:59,844 basehttp 4280 7288 "GET /director/director_prize/?post_user=manager&min_stavka=&max_stavka=&sort_by=alphabetical_asc HTTP/1.1" 200 13178
+INFO 2025-06-10 08:44:01,408 basehttp 4280 7288 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:44:01,965 basehttp 4280 7288 "GET /director/director/prize_history/ HTTP/1.1" 200 7163
+INFO 2025-06-10 08:44:03,541 basehttp 4280 7288 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:44:03,594 basehttp 4280 7288 "GET /director/ HTTP/1.1" 200 9977
+INFO 2025-06-10 08:44:05,160 basehttp 4280 7288 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-10 08:44:06,063 basehttp 4280 7288 "GET /director/salary_report/ HTTP/1.1" 500 70980
+INFO 2025-06-10 08:44:07,673 basehttp 4280 7288 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:44:25,733 autoreload 4280 10092 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:44:26,453 autoreload 1788 9632 Watching for file changes with StatReloader
+INFO 2025-06-10 08:44:34,568 autoreload 1788 9632 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:44:35,320 autoreload 11748 4644 Watching for file changes with StatReloader
+INFO 2025-06-10 08:44:44,471 autoreload 11748 4644 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:44:45,324 autoreload 8992 9972 Watching for file changes with StatReloader
+INFO 2025-06-10 08:45:17,475 basehttp 8992 5868 "GET /director/salary_report/ HTTP/1.1" 200 14394
+INFO 2025-06-10 08:45:19,067 basehttp 8992 5868 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:45:28,767 autoreload 8992 9972 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:45:29,578 autoreload 10252 7828 Watching for file changes with StatReloader
+INFO 2025-06-10 08:46:22,378 autoreload 10252 7828 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:46:23,100 autoreload 12864 5124 Watching for file changes with StatReloader
+INFO 2025-06-10 08:46:41,972 autoreload 12864 5124 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:46:42,657 autoreload 13092 5024 Watching for file changes with StatReloader
+INFO 2025-06-10 08:47:04,380 basehttp 13092 10720 "GET /director/salary_report/ HTTP/1.1" 200 14394
+INFO 2025-06-10 08:47:05,355 basehttp 13092 10720 "GET /director/ HTTP/1.1" 200 9977
+INFO 2025-06-10 08:47:06,950 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:47:07,398 basehttp 13092 10720 "GET /director/employee_director/ HTTP/1.1" 200 9907
+INFO 2025-06-10 08:47:08,996 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:47:09,963 basehttp 13092 10720 "GET /director/director_dashboard/ HTTP/1.1" 200 8934
+INFO 2025-06-10 08:47:11,526 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:47:11,763 basehttp 13092 10720 "GET /director/task_list_director/ HTTP/1.1" 200 10991
+INFO 2025-06-10 08:47:13,389 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081

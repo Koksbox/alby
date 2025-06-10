@@ -179,6 +179,11 @@ class Task(models.Model):
         auto_now_add=True,
         verbose_name=_('Дата создания')
     )
+    completion_time = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name=_('Время завершения')
+    )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,

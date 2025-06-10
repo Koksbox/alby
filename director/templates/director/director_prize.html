@@ -13,6 +13,45 @@
 <div class="main">
     <h2>Список пользователей</h2>
     <a href="{% url 'prize_history' %}" class="btn  mb-3">Истории премии</a>
+
+    <form method="get" class="mb-3">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="post_user">Фильтр по должности:</label>
+                <select name="post_user" id="post_user" class="form-control">
+                    <option value="">Все должности</option>
+                    {% for role_value, role_name in post_user_choices %}
+                        <option value="{{ role_value }}" {% if role_value == selected_post_user %}selected{% endif %}>
+                            {{ role_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="min_stavka">Минимальная ставка:</label>
+                <input type="number" name="min_stavka" id="min_stavka" class="form-control" value="{{ min_stavka|default_if_none:'' }}">
+            </div>
+            <div class="col-md-4">
+                <label for="max_stavka">Максимальная ставка:</label>
+                <input type="number" name="max_stavka" id="max_stavka" class="form-control" value="{{ max_stavka|default_if_none:'' }}">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="sort_by">Сортировка:</label>
+                <select name="sort_by" id="sort_by" class="form-control">
+                    <option value="alphabetical_asc" {% if sort_by == 'alphabetical_asc' %}selected{% endif %}>По алфавиту (А-Я)</option>
+                    <option value="alphabetical_desc" {% if sort_by == 'alphabetical_desc' %}selected{% endif %}>По алфавиту (Я-А)</option>
+                    <option value="stavka_asc" {% if sort_by == 'stavka_asc' %}selected{% endif %}>По ставке (возр.)</option>
+                    <option value="stavka_desc" {% if sort_by == 'stavka_desc' %}selected{% endif %}>По ставке (убыв.)</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-primary mt-4">Применить фильтры</button>
+            </div>
+        </div>
+    </form>
+
     <table class="table table-bordered">
         <thead>
         <tr>

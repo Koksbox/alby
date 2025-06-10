@@ -955,15 +955,18 @@ def my_maket(request):
     # Получаем уникальные макеты (Photo), связанные с этими задачами
     photos = Photo.objects.filter(tasks__in=user_tasks).distinct().prefetch_related('tasks')
 
-    # Добавляем информацию о процентах завершения для каждого макета
+    # Добавляем информацию о процентах завершения и статусе для каждого макета
     for photo in photos:
         total_tasks = Task.objects.filter(photo=photo).count()
         completed_tasks_count = Task.objects.filter(photo=photo, completed=True).count()
 
         if total_tasks > 0:
             photo.completion_percentage = (completed_tasks_count / total_tasks) * 100
+            # Добавляем статус завершения макета
+            photo.is_completed = photo.completion_percentage == 100
         else:
             photo.completion_percentage = 0
+            photo.is_completed = False
 
     # Фильтруем только завершенные макеты
     completed_photos = photos.filter().distinct()
@@ -979,7 +982,19 @@ def my_maket(request):
 
 def complete_maket(request, photo_id):
     photo = get_object_or_404(Photo, id=photo_id)
-    return render(request, 'users/complete_maket.html', {'photo':photo})
+    
+    # Рассчитываем процент завершения макета
+    total_tasks = Task.objects.filter(photo=photo).count()
+    completed_tasks_count = Task.objects.filter(photo=photo, completed=True).count()
+    
+    if total_tasks > 0:
+        photo.completion_percentage = (completed_tasks_count / total_tasks) * 100
+        photo.is_completed = photo.completion_percentage == 100
+    else:
+        photo.completion_percentage = 0
+        photo.is_completed = False
+    
+    return render(request, 'users/complete_maket.html', {'photo': photo})
 
 @login_required
 def task_history(request):
@@ -997,7 +1012,7 @@ def task_history(request):
         
         # Добавляем информацию о времени выполнения
         if task.completed and task.completion_time:
-            task.completion_time_str = str(task.completion_time)
+            task.completion_time_str = task.completion_time.strftime('%H:%M:%S')
         else:
             task.completion_time_str = "Не завершена"
             

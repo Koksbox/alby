@@ -419,6 +419,7 @@ def rated_tasks(request, photo_id):
                     messages.warning(request, f"Задача \"{task.title}\" уже завершена.")
                 else:
                     task.completed = True  # Завершаем задачу
+                    task.completion_time = timezone.now()  # Устанавливаем время завершения
                     task.save()
                     messages.success(request, f"Задача \"{task.title}\" успешно завершена.")
 

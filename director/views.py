@@ -1346,11 +1346,21 @@ def create_template_director(request, photo_id):
     })
 
 def task_monitoring(request):
+    # Получаем параметры фильтрации
+    selected_photo = request.GET.get('photo')
+    selected_task = request.GET.get('task')
+
     # Получаем все активные задачи (с запущенным таймером)
     active_time_entries = TimeEntry.objects.filter(
         end_time__isnull=True,
         timer_type='task'
     ).select_related('task', 'user', 'task__photo')
+
+    # Применяем фильтры к активным задачам
+    if selected_photo:
+        active_time_entries = active_time_entries.filter(task__photo__id=selected_photo)
+    if selected_task:
+        active_time_entries = active_time_entries.filter(task__id=selected_task)
 
     # Формируем список активных задач с дополнительной информацией
     active_tasks = []
@@ -1373,6 +1383,12 @@ def task_monitoring(request):
         is_rated=False
     ).select_related('photo', 'assigned_to').order_by('-last_modified')
 
+    # Применяем фильтры к задачам на проверке
+    if selected_photo:
+        tasks_for_review = tasks_for_review.filter(photo__id=selected_photo)
+    if selected_task:
+        tasks_for_review = tasks_for_review.filter(id=selected_task)
+
     # Получаем историю таймеров за последние 7 дней
     week_ago = timezone.now() - timezone.timedelta(days=7)
     task_history = TimeEntry.objects.filter(
@@ -1380,6 +1396,12 @@ def task_monitoring(request):
         end_time__isnull=False,
         start_time__gte=week_ago
     ).select_related('task', 'user', 'task__photo').order_by('-start_time')
+
+    # Применяем фильтры к истории
+    if selected_photo:
+        task_history = task_history.filter(task__photo__id=selected_photo)
+    if selected_task:
+        task_history = task_history.filter(task__id=selected_task)
 
     # Создаем список для хранения истории с отформатированной длительностью
     formatted_history = []
@@ -1394,10 +1416,18 @@ def task_monitoring(request):
             'duration': duration_str
         })
 
+    # Получаем список всех макетов и задач для фильтров
+    all_photos = Photo.objects.all().order_by('image_name')
+    all_tasks = Task.objects.all().order_by('title')
+
     context = {
         'active_tasks': active_tasks,
         'task_history': formatted_history,
-        'tasks_for_review': tasks_for_review
+        'tasks_for_review': tasks_for_review,
+        'all_photos': all_photos,
+        'all_tasks': all_tasks,
+        'selected_photo': selected_photo,
+        'selected_task': selected_task
     }
     
     return render(request, 'director/task_monitoring.html', context)

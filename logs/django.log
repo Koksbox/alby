@@ -5728,3 +5728,24 @@ INFO 2025-06-10 08:47:09,963 basehttp 13092 10720 "GET /director/director_dashbo
 INFO 2025-06-10 08:47:11,526 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-06-10 08:47:11,763 basehttp 13092 10720 "GET /director/task_list_director/ HTTP/1.1" 200 10991
 INFO 2025-06-10 08:47:13,389 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:47:47,752 basehttp 13092 10720 "GET /director/task_list_director_completed/ HTTP/1.1" 200 9234
+INFO 2025-06-10 08:47:48,910 basehttp 13092 10720 "GET /director/task_list_director/ HTTP/1.1" 200 10991
+INFO 2025-06-10 08:47:49,319 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:47:49,923 basehttp 13092 10720 "GET /director/upload_director/ HTTP/1.1" 200 11654
+INFO 2025-06-10 08:47:50,486 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:47:51,454 basehttp 13092 10720 "GET /director/task_list_director/ HTTP/1.1" 200 10991
+INFO 2025-06-10 08:47:51,502 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:47:52,252 basehttp 13092 10720 "GET /director/task-monitoring/ HTTP/1.1" 200 28175
+INFO 2025-06-10 08:47:53,820 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:48:03,374 basehttp 13092 10720 "GET /director/task_list_director/ HTTP/1.1" 200 10991
+INFO 2025-06-10 08:48:04,939 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:48:05,522 basehttp 13092 10720 "GET /director/task-monitoring/ HTTP/1.1" 200 28175
+INFO 2025-06-10 08:48:07,102 basehttp 13092 10720 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:49:20,243 autoreload 13092 5024 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 08:49:21,144 autoreload 12932 7432 Watching for file changes with StatReloader
+INFO 2025-06-10 08:49:53,062 basehttp 12932 12144 "GET /director/task-monitoring/ HTTP/1.1" 200 31669
+INFO 2025-06-10 08:49:54,628 basehttp 12932 12144 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:49:58,747 basehttp 12932 12144 "GET /director/task-monitoring/?photo=3&task= HTTP/1.1" 200 19308
+INFO 2025-06-10 08:50:00,389 basehttp 12932 12144 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 08:50:03,225 basehttp 12932 12144 "GET /director/task_list_director/ HTTP/1.1" 200 10991
+INFO 2025-06-10 08:50:04,795 basehttp 12932 12144 "GET /sw.js HTTP/1.1" 200 1081

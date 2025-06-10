@@ -665,7 +665,7 @@ def user_statistic(request):
     if selected_month_str:
         try:
             # Преобразуем строку в дату (формат 'YYYY-MM')
-            selected_month = datetime.strptime(selected_month_str, '%Y-%m').date()
+            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
         except (ValueError, TypeError):
             # Если данные некорректны, используем текущий месяц
             selected_month = timezone.now().date()

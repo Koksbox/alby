@@ -52,7 +52,7 @@ def prize_history(request):
 
     if selected_month_str:
         try:
-            selected_month = datetime.strptime(selected_month_str, '%Y-%m').date()
+            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
         except (ValueError, TypeError):
             logger.error(f'Некорректный формат месяца: {selected_month_str}')
             pass
@@ -95,8 +95,8 @@ def salary_report(request):
 
     try:
         if start_date and end_date:
-            start_date = datetime.strptime(start_date, '%Y-%m-%d')
-            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+            start_date = timezone.make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
+            end_date = timezone.make_aware(datetime.strptime(end_date, '%Y-%m-%d'))
             end_date_plus_one = end_date + timedelta(days=1)
         else:
             start_date = None
@@ -190,8 +190,8 @@ def salary_manager(request):
 
     try:
         if start_date and end_date:
-            start_date = datetime.strptime(start_date, '%Y-%m-%d')
-            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+            start_date = timezone.make_aware(datetime.strptime(start_date, '%Y-%m-%d'))
+            end_date = timezone.make_aware(datetime.strptime(end_date, '%Y-%m-%d'))
             end_date_plus_one = end_date + timedelta(days=1)
         else:
             start_date = None

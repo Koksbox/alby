@@ -5170,3 +5170,5 @@ INFO 2025-06-09 12:49:32,837 autoreload 7928 10680 C:\Users\Student\PycharmProje
 INFO 2025-06-09 12:49:33,482 autoreload 9236 12828 Watching for file changes with StatReloader
 INFO 2025-06-09 12:49:52,342 autoreload 9236 12828 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
 INFO 2025-06-09 12:49:53,014 autoreload 2800 1476 Watching for file changes with StatReloader
+INFO 2025-06-09 12:53:25,076 autoreload 2800 1476 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-09 12:53:25,714 autoreload 1896 11192 Watching for file changes with StatReloader

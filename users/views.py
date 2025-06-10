@@ -18,30 +18,32 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from django.views.generic import TemplateView
 
+from django.contrib import messages
+from django.conf import settings
+from .forms import CustomUserCreationForm
+from .models import CustomUser
 
 User = get_user_model()
-
-
-from django.core.mail import send_mail
-import random
-import string
 
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-            user.save()
-
+            # Проверяем, не существует ли уже пользователь с таким email
             email = form.cleaned_data.get('email')
-            if not email:
-                messages.error(request, 'Email не может быть пустым')
+            if CustomUser.objects.filter(email=email).exists():
+                messages.error(request, 'Пользователь с таким email уже существует.')
                 return render(request, 'users/register.html', {'form': form})
 
-            # Отправка кода на почту
             try:
+                # Создаем пользователя
+                user = form.save(commit=False)
+                user.is_active = False
+                user.confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+                user.confirmation_sent_at = timezone.now()  # Сохраняем время отправки кода
+                user.save()
+
+                # Отправка кода на почту
                 subject = 'Код подтверждения регистрации'
                 message = f'Ваш код подтверждения: {user.confirmation_code}'
                 from_email = settings.DEFAULT_FROM_EMAIL
@@ -57,51 +59,65 @@ def register(request):
                     recipient_list,
                     fail_silently=False,
                 )
-                print(f'[DEBUG] Код подтверждения: {user.confirmation_code}')
-                print(f'[DEBUG] Отправка на email: {email}')
 
+                # Сохраняем email в сессии
+                request.session['registration_email'] = email
                 messages.success(request, 'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации.')
                 return redirect('confirm')
 
             except Exception as e:
                 print(f"[EMAIL ERROR]: {str(e)}")
                 print(f"[DEBUG] Traceback: {traceback.format_exc()}")
-                messages.error(request, 'Не удалось отправить письмо. Пожалуйста, проверьте правильность email адреса и попробуйте позже.')
+                messages.error(request, 'Произошла ошибка при регистрации. Пожалуйста, попробуйте позже.')
                 return render(request, 'users/register.html', {'form': form})
-
+        else:
+            # Если форма не валидна, показываем ошибки
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field}: {error}')
     else:
         form = CustomUserCreationForm()
 
     return render(request, 'users/register.html', {'form': form})
-
 
 from .models import User, PrizeHistory, TimeEntry, CustomUser  # Импортируем вашу модель пользователя
 
 def confirm_registration(request):
     if request.method == 'POST':
         confirmation_code = request.POST.get('confirmation_code')
+        email = request.POST.get('email')
 
-        if not confirmation_code:
-            messages.error(request, 'Код подтверждения не может быть пустым.')
+        if not confirmation_code or not email:
+            messages.error(request, 'Пожалуйста, заполните все поля.')
             return render(request, 'users/confirm.html')
 
         try:
-            user = User.objects.get(confirmation_code=confirmation_code)
-        except User.DoesNotExist:
-            messages.error(request, 'Неверный код подтверждения.\n Пожалуйста, проверьте и введите правильный код.')
+            user = CustomUser.objects.get(email=email, confirmation_code=confirmation_code)
+            
+            # Проверяем, не истек ли срок действия кода
+            if user.is_expired():
+                messages.error(request, 'Срок действия кода подтверждения истек. Пожалуйста, зарегистрируйтесь заново.')
+                return redirect('register')
+
+            if user.is_active:
+                messages.info(request, 'Ваш аккаунт уже активирован.')
+                return redirect('login')
+
+            # Если код подтверждения корректный
+            user.is_active = True
+            user.save()
+            messages.success(request, 'Аккаунт успешно активирован. Вы можете войти в систему.')
+            return redirect('login')
+
+        except CustomUser.DoesNotExist:
+            messages.error(request, 'Неверный код подтверждения или email.')
             return render(request, 'users/confirm.html')
 
-        if user.is_active:
-            messages.info(request, 'Ваш аккаунт уже активирован.')
-            return render(request, 'users/confirm.html')
-
-        # Если код подтверждения корректный
-        user.is_active = True
-        user.save()
-        logout(request)
-        messages.success(request, 'Аккаунт успешно активирован. Вы можете войти в систему.')
-        return redirect('login')
-
+    # Если это GET запрос, проверяем наличие email в сессии
+    email = request.session.get('registration_email')
+    if email:
+        return render(request, 'users/confirm.html', {'email': email})
+    
     return render(request, 'users/confirm.html')
 
 

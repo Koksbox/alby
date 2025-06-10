@@ -12,7 +12,18 @@
     <div class="registration-form">
         <h1>Создать</h1>
         <h2>учётную запись</h2>
-        <form method="post" action="{% url 'register' %}">
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'register' %}" id="registrationForm">
             {% csrf_token %}
             <div class="form-group">
                 {{ form.full_name }}
@@ -39,12 +50,18 @@
                 {% endif %}
             </div>
             <div class="form-group">
-                <input type="password" name="password1" class="form-control" placeholder="Пароль" autocomplete="new-password" aria-describedby="id_password1_helptext" id="id_password1">
-                
+                <input type="password" name="password1" class="form-control" placeholder="Пароль" autocomplete="new-password" required minlength="8">
+                {% if form.password1.errors %}
+                <div class="error-message">{{ form.password1.errors|join:", " }}</div>
+                {% endif %}
+                <div class="help-text">{{ form.password1.help_text }}</div>
             </div>
             <div class="form-group">
-                <input type="password" name="password2" class="form-control" placeholder="Подтвердите пароль" autocomplete="new-password" aria-describedby="id_password2_helptext" id="id_password2">
-                
+                <input type="password" name="password2" class="form-control" placeholder="Подтвердите пароль" autocomplete="new-password" required minlength="8">
+                {% if form.password2.errors %}
+                <div class="error-message">{{ form.password2.errors|join:", " }}</div>
+                {% endif %}
+                <div class="help-text">{{ form.password2.help_text }}</div>
             </div>
             <div class="error-container">
                 {% if form.non_field_errors %}
@@ -90,6 +107,19 @@ html, body {
     height: 100%;
     color: white;
     position: relative;
+    padding: 20px;
+}
+
+.registration-form {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    margin: auto;
+    overflow-y: auto;
+    max-height: 90vh;
 }
 
 .registration-form h1, .registration-form h2 {
@@ -97,184 +127,164 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0;
+    padding: 10px 0;
 }
 
 .registration-form h1 {
-    margin-top: -10%;
-    margin-bottom: -5%;
     font-size: 35px;
 }
 
 .registration-form h2 {
-    margin-bottom: 60px;
     font-size: 35px;
-}
-
-.registration-form {
-    width: 80%;
+    margin-bottom: 20px;
 }
 
 .form-group {
-    width: 100%;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin-bottom: 15px;
+    position: relative;
 }
 
 .form-control {
-    padding: 15px;
     width: 100%;
+    padding: 12px;
     border: none;
-    border-radius: 0;
     border-bottom: 2px solid white;
-    background-color: rgba(0, 0, 0, 0.0);
+    background: transparent;
     color: white;
+    font-size: 16px;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
     outline: none;
+    border-bottom-color: #4CAF50;
 }
 
 .form-control::placeholder {
-    color: white;
-}
-
-/* Стили для полей пароля */
-input[type="password"] {
-    padding: 15px;
-    width: 100%;
-    border: none;
-    border-radius: 0;
-    border-bottom: 2px solid white;
-    background-color: rgba(0, 0, 0, 0.0);
-    color: white;
-    outline: none;
-}
-
-input[type="password"]::placeholder {
-    color: white;
-    opacity: 1;
-}
-
-/* Стили для Firefox */
-input[type="password"]::-moz-placeholder {
-    color: white;
-    opacity: 1;
-}
-
-/* Стили для IE */
-input[type="password"]:-ms-input-placeholder {
-    color: white;
-    opacity: 1;
-}
-
-/* Стили для Edge */
-input[type="password"]::-ms-input-placeholder {
-    color: white;
-    opacity: 1;
-}
-
-/* Стили для всех плейсхолдеров */
-::placeholder {
-    color: rgba(255, 255, 255, 0.8);
-    opacity: 1;
-}
-
-.error-container {
-    height: 50px;
-    overflow: hidden;
-    margin: 10px 0;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .error-message {
-    font-size: 14px;
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: left;
+}
+
+.help-text {
+    color: #aaa;
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: left;
+}
+
+.messages {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+}
+
+.alert-error {
+    background-color: rgba(255, 0, 0, 0.2);
+}
+
+.alert-success {
+    background-color: rgba(0, 255, 0, 0.2);
 }
 
 .submit-btn {
-    margin-top: -30%;
     background-color: white;
     color: black;
     border: none;
-    width: 100%;
-    padding: 13px;
-    border-radius: 30px;
-    font-size: 20px;
+    border-radius: 20px;
+    padding: 15px;
+    margin: 20px 0;
+    font-size: 16px;
     cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    margin-bottom: 20px; /* Увеличиваем отступ снизу для появления надписи */
+    width: 100%;
+    transition: all 0.3s ease;
 }
 
 .submit-btn:hover {
-    background-color: black;
+    background-color: #4CAF50;
     color: white;
 }
 
 .login-section {
-    text-align: center; /* Обеспечиваем центрирование текста */
+    margin-top: 20px;
 }
 
 .login-link {
     color: white;
-    font-size: 16px;
-    margin-bottom: 5px; /* Уменьшаем отступ снизу */
+    font-size: 14px;
 }
 
 .btn {
-    font-size: 16px;
-    text-decoration: underline;
-    color: white;
+    display: inline-block;
+    background-color: white;
+    color: black;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-top: 10px;
+    transition: all 0.3s ease;
 }
 
 .btn:hover {
-    color: black;
+    background-color: #4CAF50;
+    color: white;
 }
 
-/* Анимация */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.main > * { /* Применяем анимацию ко всем дочерним элементам main */
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeIn 0.5s ease forwards;
-}
-
-.main > :nth-child(1) { animation-delay: 0.1s; }
-
-@media (max-width: 380px) {
-    .main {
-        margin-top: 70px;
+/* Медиа-запросы для адаптивности */
+@media (max-width: 480px) {
+    .registration-form {
+        width: 95%;
         padding: 15px;
+        margin: 10px;
     }
-
-    .registration-form h1, .registration-form h2 {
+    
+    .registration-form h1,
+    .registration-form h2 {
         font-size: 28px;
     }
 
     .form-control {
-        padding: 8px;
+        padding: 10px;
+        font-size: 14px;
     }
 
     .submit-btn {
-        padding: 10px;
-        font-size: 18px;
-    }
-
-    .error-message {
-        font-size: 12px;
-    }
-
-    .login-link, .btn {
+        padding: 12px;
         font-size: 14px;
     }
-}
-</style>
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+<script>
+document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    const password1 = document.querySelector('input[name="password1"]');
+    const password2 = document.querySelector('input[name="password2"]');
+    
+    if (password1.value !== password2.value) {
+        e.preventDefault();
+        alert('Пароли не совпадают');
+    }
+    
+    if (password1.value.length < 8) {
+        e.preventDefault();
+        alert('Пароль должен содержать минимум 8 символов');
+    }
+});
+</script>
 </body>
 </html>

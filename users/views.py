@@ -29,18 +29,25 @@ def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            # Проверяем, не существует ли уже пользователь с таким email
             email = form.cleaned_data.get('email')
-            if CustomUser.objects.filter(email=email).exists():
+            
+            # Проверяем только активированные аккаунты
+            if CustomUser.objects.filter(email=email, is_active=True).exists():
                 messages.error(request, 'Пользователь с таким email уже существует.')
                 return render(request, 'users/register.html', {'form': form})
 
             try:
-                # Создаем пользователя
+                # Проверяем, есть ли неактивированный аккаунт с таким email
+                existing_user = CustomUser.objects.filter(email=email, is_active=False).first()
+                if existing_user:
+                    # Если есть неактивированный аккаунт, удаляем его
+                    existing_user.delete()
+
+                # Создаем нового пользователя
                 user = form.save(commit=False)
                 user.is_active = False
                 user.confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-                user.confirmation_sent_at = timezone.now()  # Сохраняем время отправки кода
+                user.confirmation_sent_at = timezone.now()
                 user.save()
 
                 # Отправка кода на почту
@@ -103,6 +110,11 @@ def confirm_registration(request):
                 messages.info(request, 'Ваш аккаунт уже активирован.')
                 return redirect('login')
 
+            # Проверяем, не существует ли уже активированный аккаунт с таким email
+            if CustomUser.objects.filter(email=email, is_active=True).exists():
+                messages.error(request, 'Пользователь с таким email уже существует.')
+                return redirect('register')
+
             # Если код подтверждения корректный
             user.is_active = True
             user.save()
@@ -135,37 +147,61 @@ def login_view(request):
         return redirect('profile')
 
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
+
+        # Валидация полей
+        if not email or not password:
+            messages.error(request, 'Пожалуйста, заполните все поля.')
+            return render(request, 'users/login.html')
+
+        # Проверка формата email
+        if '@' not in email or '.' not in email:
+            messages.error(request, 'Пожалуйста, введите корректный email адрес.')
+            return render(request, 'users/login.html')
 
         # Проверка, является ли email и пароль директорскими
         if email == DIRECTOR_EMAIL and password == DIRECTOR_PASSWORD:
             return redirect('home_director')
 
-        # Аутентификация пользователя
-        user = authenticate(request, username=email, password=password)
+        try:
+            # Аутентификация пользователя
+            user = authenticate(request, username=email, password=password)
 
-        # Проверка, существует ли пользователь и имеет ли он статус 'unapproved'
-        if user is not None:
-            login(request, user)
-            
-            # Настройка длительной сессии
-            request.session.set_expiry(60 * 60 * 24 * 30)  # 30 дней
-            request.session.modified = True  # Принудительное обновление сессии
-            
-            # Сохраняем важные данные в сессии
-            request.session['user_id'] = user.id
-            request.session['email'] = user.email
-            
-            if user.post_user == 'unapproved':
-                return redirect('now_user')
-            if user.post_user == 'manager':
-                return redirect('home_man')
+            if user is not None:
+                if not user.is_active:
+                    messages.error(request, 'Ваш аккаунт не активирован. Пожалуйста, проверьте email для подтверждения регистрации.')
+                    return render(request, 'users/login.html')
+
+                login(request, user)
+                
+                # Настройка длительной сессии
+                request.session.set_expiry(60 * 60 * 24 * 30)  # 30 дней
+                request.session.modified = True
+                
+                # Сохраняем важные данные в сессии
+                request.session['user_id'] = user.id
+                request.session['email'] = user.email
+                
+                if user.post_user == 'unapproved':
+                    return redirect('now_user')
+                if user.post_user == 'manager':
+                    return redirect('home_man')
+                else:
+                    return redirect('profile')
             else:
-                return redirect('profile')
-        else:
-            # Если аутентификация не удалась, выводим сообщение об ошибке
-            messages.error(request, 'Неправильный email или пароль.')
+                # Проверяем, существует ли пользователь с таким email
+                if CustomUser.objects.filter(email=email).exists():
+                    messages.error(request, 'Неверный пароль.')
+                else:
+                    messages.error(request, 'Пользователь с таким email не найден.')
+                return render(request, 'users/login.html')
+
+        except Exception as e:
+            print(f"[LOGIN ERROR]: {str(e)}")
+            print(f"[DEBUG] Traceback: {traceback.format_exc()}")
+            messages.error(request, 'Произошла ошибка при входе. Пожалуйста, попробуйте позже.')
+            return render(request, 'users/login.html')
 
     return render(request, 'users/login.html')
 

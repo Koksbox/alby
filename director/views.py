@@ -651,7 +651,7 @@ def salary_report(request):
             end_date_plus_one = end_date + timedelta(days=1)
         except ValueError:
             end_date = None
-            end_date_plus_one = None
+        end_date_plus_one = None
 
     # Получаем базовый список всех активных пользователей
     users = CustomUser.objects.filter(is_active=True)
@@ -791,6 +791,7 @@ def salary_manager(request):
     manager_id = request.GET.get('manager')
     sort_by = request.GET.get('sort_by', 'id')
 
+    # Инициализируем переменные
     start_date = None
     end_date = None
 

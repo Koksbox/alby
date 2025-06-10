@@ -5839,3 +5839,122 @@ INFO 2025-06-10 10:43:12,676 basehttp 1924 7108 "GET /register/ HTTP/1.1" 200 65
 WARNING 2025-06-10 10:43:12,683 basehttp 1924 7952 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
 WARNING 2025-06-10 10:43:13,491 basehttp 1924 7952 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
 WARNING 2025-06-10 10:43:13,516 basehttp 1924 7952 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-10 10:45:16,164 basehttp 1924 7952 "GET /register/ HTTP/1.1" 200 6509
+WARNING 2025-06-10 10:45:16,205 basehttp 1924 7952 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-10 10:45:17,797 basehttp 1924 7952 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 10:55:48,951 basehttp 1924 9052 "GET /login/ HTTP/1.1" 302 0
+INFO 2025-06-10 10:55:48,964 basehttp 1924 9052 "GET /now_user HTTP/1.1" 200 2239
+WARNING 2025-06-10 10:55:49,014 basehttp 1924 9052 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+WARNING 2025-06-10 10:55:49,021 basehttp 1924 3376 "GET /static/js/redirect.js HTTP/1.1" 404 179
+INFO 2025-06-10 10:55:51,017 basehttp 1924 3376 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 10:56:01,896 basehttp 1924 3376 "GET /logout/ HTTP/1.1" 200 2457
+WARNING 2025-06-10 10:56:01,941 basehttp 1924 9052 "GET /static/css/styles.css HTTP/1.1" 404 179
+WARNING 2025-06-10 10:56:01,941 basehttp 1924 3376 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+WARNING 2025-06-10 10:56:03,363 basehttp 1924 9052 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+WARNING 2025-06-10 10:56:03,365 basehttp 1924 3376 "GET /static/css/style.css HTTP/1.1" 404 179
+WARNING 2025-06-10 10:56:03,386 basehttp 1924 9160 "GET /static/js/service.js HTTP/1.1" 404 179
+INFO 2025-06-10 10:56:03,476 basehttp 1924 9160 "GET /sw.js HTTP/1.1" 200 1081
+WARNING 2025-06-10 10:56:03,502 basehttp 1924 12476 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-10 10:56:04,500 basehttp 1924 9160 "GET /login/ HTTP/1.1" 200 4865
+WARNING 2025-06-10 10:56:04,533 basehttp 1924 9160 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-10 10:56:05,044 basehttp 1924 9160 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 10:56:06,187 basehttp 1924 9160 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 10:57:09,288 autoreload 1924 13156 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 10:57:10,010 autoreload 6536 11620 Watching for file changes with StatReloader
+INFO 2025-06-10 10:57:16,187 autoreload 6536 11620 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 10:57:17,023 autoreload 8580 9572 Watching for file changes with StatReloader
+ERROR 2025-06-10 10:57:17,850 basehttp 8580 9944 "GET /login/ HTTP/1.1" 500 145
+WARNING 2025-06-10 10:57:17,892 basehttp 8580 9944 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-10 10:57:19,401 basehttp 8580 9944 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-10 10:57:33,341 basehttp 8580 9944 "GET /login/ HTTP/1.1" 500 145
+WARNING 2025-06-10 10:57:33,426 basehttp 8580 9944 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 179
+INFO 2025-06-10 10:57:33,664 autoreload 8580 9572 C:\Users\Student\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-10 10:57:34,377 autoreload 7084 12420 Watching for file changes with StatReloader
+INFO 2025-06-10 10:57:35,406 basehttp 7084 11424 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-10 10:57:36,752 basehttp 7084 11424 "GET /login/ HTTP/1.1" 500 117983
+INFO 2025-06-10 10:57:38,404 basehttp 7084 11424 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 10:58:01,134 basehttp 7084 11424 "GET /login/ HTTP/1.1" 200 6162
+INFO 2025-06-10 10:58:02,722 basehttp 7084 11424 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 10:58:04,403 basehttp 7084 11424 "GET /login/ HTTP/1.1" 200 6162
+WARNING 2025-06-10 10:58:04,451 basehttp 7084 11424 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 10:58:07,805 basehttp 7084 11424 "GET /password/ HTTP/1.1" 200 3916
+WARNING 2025-06-10 10:58:07,838 basehttp 7084 11424 "GET /static/css/css.css HTTP/1.1" 404 1847
+WARNING 2025-06-10 10:58:07,863 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 10:58:09,421 basehttp 7084 9280 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 10:58:10,082 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6162
+WARNING 2025-06-10 10:58:10,149 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 10:58:11,782 basehttp 7084 9280 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 10:59:05,535 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6167
+WARNING 2025-06-10 10:59:05,591 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 10:59:06,158 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6167
+WARNING 2025-06-10 10:59:06,220 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 10:59:07,899 basehttp 7084 9280 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 10:59:12,597 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6167
+WARNING 2025-06-10 10:59:12,671 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 10:59:13,445 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6166
+WARNING 2025-06-10 10:59:13,499 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 10:59:15,057 basehttp 7084 9280 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 10:59:23,336 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6172
+WARNING 2025-06-10 10:59:23,407 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 10:59:25,150 basehttp 7084 9280 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 10:59:30,996 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6166
+WARNING 2025-06-10 10:59:31,071 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 10:59:31,437 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6166
+WARNING 2025-06-10 10:59:31,484 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 10:59:33,109 basehttp 7084 9280 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 11:00:35,701 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:35,776 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:36,198 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:36,242 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:36,457 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:36,522 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:36,626 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:36,674 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:36,774 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:36,818 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:36,935 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:36,985 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:37,086 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:37,144 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:37,223 basehttp 7084 9280 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:37,264 basehttp 7084 4108 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:37,376 basehttp 7084 4108 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:37,438 basehttp 7084 4108 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:37,501 basehttp 7084 4108 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:37,546 basehttp 7084 4108 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:37,640 basehttp 7084 4108 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:37,685 basehttp 7084 4108 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:37,773 basehttp 7084 4108 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:37,835 basehttp 7084 4108 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:37,910 basehttp 7084 4108 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:37,974 basehttp 7084 4108 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:38,056 basehttp 7084 4108 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:38,112 basehttp 7084 4108 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:38,252 basehttp 7084 4108 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:38,311 basehttp 7084 4108 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:39,323 basehttp 7084 4108 "GET /login/ HTTP/1.1" 200 6284
+WARNING 2025-06-10 11:00:39,364 basehttp 7084 4108 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:39,480 basehttp 7084 9280 "GET /static/img/photo_2025-01-24_01-36-25.jpg HTTP/1.1" 200 10293
+WARNING 2025-06-10 11:00:39,506 basehttp 7084 9280 "GET /favicon.ico HTTP/1.1" 404 12192
+INFO 2025-06-10 11:00:39,936 basehttp 7084 9280 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 11:00:40,491 basehttp 7084 9280 "GET /register/ HTTP/1.1" 200 6509
+WARNING 2025-06-10 11:00:40,542 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+WARNING 2025-06-10 11:00:42,108 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+WARNING 2025-06-10 11:00:42,136 basehttp 7084 9280 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:00:42,138 basehttp 7084 4108 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 11:02:27,978 autoreload 7084 12420 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 11:02:28,840 autoreload 9052 8388 Watching for file changes with StatReloader
+INFO 2025-06-10 11:02:50,418 autoreload 9052 8388 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 11:02:51,107 autoreload 4184 13176 Watching for file changes with StatReloader
+INFO 2025-06-10 11:03:21,758 autoreload 4184 13176 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 11:03:22,494 autoreload 12532 6720 Watching for file changes with StatReloader
+INFO 2025-06-10 11:03:51,096 autoreload 12532 6720 C:\Users\Student\PycharmProjects\alby\director\views.py changed, reloading.
+INFO 2025-06-10 11:03:51,787 autoreload 11692 9940 Watching for file changes with StatReloader
+INFO 2025-06-10 11:04:13,809 basehttp 11692 2868 "GET /login/ HTTP/1.1" 200 6166
+WARNING 2025-06-10 11:04:13,862 basehttp 11692 2868 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:04:15,409 basehttp 11692 2868 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 11:04:32,608 basehttp 11692 2868 "GET /register/ HTTP/1.1" 200 6509
+WARNING 2025-06-10 11:04:32,663 basehttp 11692 2868 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 12303
+INFO 2025-06-10 11:04:34,258 basehttp 11692 2868 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 11:04:49,348 autoreload 11692 9940 C:\Users\Student\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-10 11:04:50,086 autoreload 6208 4468 Watching for file changes with StatReloader

@@ -5981,3 +5981,11 @@ INFO 2025-06-10 11:12:16,039 autoreload 11088 9852 C:\Users\Student\PycharmProje
 INFO 2025-06-10 11:12:16,738 autoreload 11872 10204 Watching for file changes with StatReloader
 INFO 2025-06-10 11:12:18,426 autoreload 11872 10204 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
 INFO 2025-06-10 11:12:19,199 autoreload 7420 10672 Watching for file changes with StatReloader
+INFO 2025-06-10 11:13:03,380 autoreload 7420 10672 C:\Users\Student\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-10 11:13:04,379 autoreload 4180 12248 Watching for file changes with StatReloader
+INFO 2025-06-10 11:13:35,423 autoreload 4180 12248 C:\Users\Student\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-10 11:13:36,747 autoreload 12868 9140 Watching for file changes with StatReloader
+INFO 2025-06-10 11:15:20,855 autoreload 12868 9140 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 11:15:21,755 autoreload 2860 8808 Watching for file changes with StatReloader
+INFO 2025-06-10 11:16:42,754 autoreload 2860 8808 C:\Users\Student\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-10 11:16:43,453 autoreload 10628 8756 Watching for file changes with StatReloader

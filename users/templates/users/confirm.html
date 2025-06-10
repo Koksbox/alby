@@ -23,9 +23,6 @@
         <form method="POST">
             {% csrf_token %}
             <div class="form-group">
-                <input type="email" name="email" placeholder="Email" required>
-            </div>
-            <div class="form-group">
                 <input type="text" name="confirmation_code" placeholder="Код подтверждения" required maxlength="6">
             </div>
             <button type="submit">Подтвердить</button>
@@ -51,7 +48,7 @@ html, body {
 }
 
 .container {
-    width: 100%;
+    width: 85%;
     max-width: 400px;
     background: rgba(0, 0, 0, 0.6);
     border-radius: 10px;
@@ -74,9 +71,8 @@ h1 {
     margin-bottom: 15px;
 }
 
-.container input[type="text"],
-.container input[type="email"] {
-    width: 100%;
+.container input[type="text"] {
+    width: 90%;
     padding: 15px;
     border: none;
     font-size: 16px;

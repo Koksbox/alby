@@ -34,19 +34,20 @@ def register(request):
             print("[REGISTRATION] Форма валидна")
             email = form.cleaned_data.get('email')
             print(f"[REGISTRATION] Email: {email}")
-            
-            # Проверяем только активированные аккаунты
-            if CustomUser.objects.filter(email=email, is_active=True).exists():
-                print(f"[REGISTRATION] Пользователь с email {email} уже существует")
-                messages.error(request, 'Пользователь с таким email уже существует.')
-                return render(request, 'users/register.html', {'form': form})
 
             try:
                 # Проверяем, есть ли неактивированный аккаунт с таким email
                 existing_user = CustomUser.objects.filter(email=email, is_active=False).first()
                 if existing_user:
-                    print(f"[REGISTRATION] Удаляем неактивированный аккаунт для {email}")
-                    existing_user.delete()
+                    # Проверяем, не истек ли срок действия кода
+                    if existing_user.is_expired():
+                        print(f"[REGISTRATION] Удаляем неактивированный аккаунт для {email} (истек срок)")
+                        existing_user.delete()
+                        print(f"[REGISTRATION] Аккаунт пользователя {email} успешно удален.")
+                    else:
+                        print(f"[REGISTRATION] Найден неактивированный аккаунт для {email} (срок не истек)")
+                        messages.error(request, 'На этот email уже отправлен код подтверждения. Пожалуйста, проверьте почту или подождите 5 минут.')
+                        return render(request, 'users/register.html', {'form': form})
 
                 # Создаем нового пользователя
                 user = form.save(commit=False)
@@ -58,7 +59,7 @@ def register(request):
 
                 # Отправка кода на почту
                 subject = 'Код подтверждения регистрации'
-                message = f'Ваш код подтверждения: {user.confirmation_code}'
+                message = f'Ваш код подтверждения: {user.confirmation_code}\n\nКод действителен в течение 5 минут.'
                 from_email = settings.DEFAULT_FROM_EMAIL
                 recipient_list = [email]
 
@@ -86,9 +87,10 @@ def register(request):
 
                     # Сохраняем email в сессии
                     request.session['registration_email'] = email
+                    request.session['confirmation_sent_at'] = user.confirmation_sent_at.isoformat()
                     print(f"[REGISTRATION] Email {email} сохранен в сессии")
                     
-                    messages.success(request, 'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации.')
+                    messages.success(request, 'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации. Код действителен 5 минут.')
                     print("[REGISTRATION] Перенаправление на страницу подтверждения")
                     return redirect('confirm')
 
@@ -119,6 +121,23 @@ def register(request):
         print("[REGISTRATION] GET запрос")
         form = CustomUserCreationForm()
 
+        # Проверяем, есть ли незавершенная регистрация в сессии
+        registration_email = request.session.get('registration_email')
+        confirmation_sent_at_str = request.session.get('confirmation_sent_at')
+
+        if registration_email and confirmation_sent_at_str:
+            try:
+                user = CustomUser.objects.get(email=registration_email)
+                confirmation_sent_at = datetime.fromisoformat(confirmation_sent_at_str)
+
+                # Проверяем, что пользователь не активен и код не истек
+                if not user.is_active and (timezone.now() - confirmation_sent_at) < timedelta(minutes=5):
+                    messages.info(request, 'Пожалуйста, завершите регистрацию. Код подтверждения был отправлен на вашу почту.')
+                    return redirect('confirm')
+            except CustomUser.DoesNotExist:
+                # Пользователь не найден, возможно, он был удален командой очистки
+                pass
+
     return render(request, 'users/register.html', {'form': form})
 
 from .models import User, PrizeHistory, TimeEntry, CustomUser  # Импортируем вашу модель пользователя
@@ -128,13 +147,13 @@ def confirm_registration(request):
     if request.method == 'POST':
         print("[CONFIRMATION] Получен POST запрос")
         confirmation_code = request.POST.get('confirmation_code')
-        email = request.POST.get('email')
-        print(f"[CONFIRMATION] Email: {email}, Код: {confirmation_code}")
+        email = request.session.get('registration_email')
+        print(f"[CONFIRMATION] Email из сессии: {email}, Код: {confirmation_code}")
 
         if not confirmation_code or not email:
-            print("[CONFIRMATION] Отсутствует код или email")
-            messages.error(request, 'Пожалуйста, заполните все поля.')
-            return render(request, 'users/confirm.html')
+            print("[CONFIRMATION] Отсутствует код или email в сессии")
+            messages.error(request, 'Пожалуйста, зарегистрируйтесь заново.')
+            return redirect('register')
 
         try:
             user = CustomUser.objects.get(email=email, confirmation_code=confirmation_code)
@@ -144,17 +163,29 @@ def confirm_registration(request):
             if user.is_expired():
                 print(f"[CONFIRMATION] Код подтверждения истек для {email}")
                 messages.error(request, 'Срок действия кода подтверждения истек. Пожалуйста, зарегистрируйтесь заново.')
+                if 'registration_email' in request.session:
+                    del request.session['registration_email']
+                if 'confirmation_sent_at' in request.session:
+                    del request.session['confirmation_sent_at']
                 return redirect('register')
 
             if user.is_active:
                 print(f"[CONFIRMATION] Аккаунт {email} уже активирован")
                 messages.info(request, 'Ваш аккаунт уже активирован.')
+                if 'registration_email' in request.session:
+                    del request.session['registration_email']
+                if 'confirmation_sent_at' in request.session:
+                    del request.session['confirmation_sent_at']
                 return redirect('login')
 
             # Проверяем, не существует ли уже активированный аккаунт с таким email
             if CustomUser.objects.filter(email=email, is_active=True).exists():
                 print(f"[CONFIRMATION] Найден активный аккаунт с email {email}")
                 messages.error(request, 'Пользователь с таким email уже существует.')
+                if 'registration_email' in request.session:
+                    del request.session['registration_email']
+                if 'confirmation_sent_at' in request.session:
+                    del request.session['confirmation_sent_at']
                 return redirect('register')
 
             # Если код подтверждения корректный
@@ -162,18 +193,27 @@ def confirm_registration(request):
             user.save()
             print(f"[CONFIRMATION] Аккаунт {email} успешно активирован")
             messages.success(request, 'Аккаунт успешно активирован. Вы можете войти в систему.')
+            if 'registration_email' in request.session:
+                del request.session['registration_email']
+            if 'confirmation_sent_at' in request.session:
+                del request.session['confirmation_sent_at']
             return redirect('login')
 
         except CustomUser.DoesNotExist:
-            print(f"[CONFIRMATION] Неверный код или email: {email}")
-            messages.error(request, 'Неверный код подтверждения или email.')
+            print(f"[CONFIRMATION] Неверный код для email: {email}")
+            messages.error(request, 'Неверный код подтверждения.')
+            if 'registration_email' in request.session:
+                del request.session['registration_email']
+            if 'confirmation_sent_at' in request.session:
+                del request.session['confirmation_sent_at']
             return render(request, 'users/confirm.html')
 
     # Если это GET запрос, проверяем наличие email в сессии
     email = request.session.get('registration_email')
     print(f"[CONFIRMATION] GET запрос, email в сессии: {email}")
-    if email:
-        return render(request, 'users/confirm.html', {'email': email})
+    if not email:
+        messages.error(request, 'Пожалуйста, зарегистрируйтесь заново.')
+        return redirect('register')
     
     return render(request, 'users/confirm.html')
 

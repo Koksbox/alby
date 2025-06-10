@@ -5749,3 +5749,10 @@ INFO 2025-06-10 08:49:58,747 basehttp 12932 12144 "GET /director/task-monitoring
 INFO 2025-06-10 08:50:00,389 basehttp 12932 12144 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-06-10 08:50:03,225 basehttp 12932 12144 "GET /director/task_list_director/ HTTP/1.1" 200 10991
 INFO 2025-06-10 08:50:04,795 basehttp 12932 12144 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 09:30:13,468 autoreload 12932 7432 C:\Users\Student\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-10 09:30:14,454 autoreload 2084 1516 Watching for file changes with StatReloader
+INFO 2025-06-10 09:31:41,585 basehttp 2084 1716 "GET /login/ HTTP/1.1" 200 4865
+INFO 2025-06-10 09:31:42,041 basehttp 2084 1716 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-10 09:31:43,904 basehttp 2084 1716 "POST /login/ HTTP/1.1" 302 0
+INFO 2025-06-10 09:31:43,920 basehttp 2084 1716 "GET /director/ HTTP/1.1" 200 9961
+INFO 2025-06-10 09:31:45,504 basehttp 2084 1716 "GET /sw.js HTTP/1.1" 200 1081

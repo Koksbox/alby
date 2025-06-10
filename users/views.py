@@ -57,23 +57,43 @@ def register(request):
                 recipient_list = [email]
 
                 if not from_email:
+                    print("[ERROR] DEFAULT_FROM_EMAIL не настроен в settings.py")
                     raise ValueError('DEFAULT_FROM_EMAIL не настроен в settings.py')
 
-                send_mail(
-                    subject,
-                    message,
-                    from_email,
-                    recipient_list,
-                    fail_silently=False,
-                )
+                try:
+                    # Всегда выводим информацию в консоль
+                    print(f"[CONSOLE] Отправка email на {email}")
+                    print(f"[CONSOLE] From email: {from_email}")
+                    print(f"[CONSOLE] Subject: {subject}")
+                    print(f"[CONSOLE] Message: {message}")
+                    print(f"[CONSOLE] Код подтверждения: {user.confirmation_code}")
 
-                # Сохраняем email в сессии
-                request.session['registration_email'] = email
-                messages.success(request, 'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации.')
-                return redirect('confirm')
+                    # Отправляем email
+                    send_mail(
+                        subject,
+                        message,
+                        from_email,
+                        recipient_list,
+                        fail_silently=False,
+                    )
+
+                    # Сохраняем email в сессии
+                    request.session['registration_email'] = email
+                    messages.success(request, 'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации.')
+                    return redirect('confirm')
+
+                except Exception as email_error:
+                    print(f"[EMAIL ERROR] Ошибка при отправке email: {str(email_error)}")
+                    print(f"[DEBUG] Traceback: {traceback.format_exc()}")
+                    
+                    # Удаляем пользователя, если не удалось отправить email
+                    user.delete()
+                    
+                    messages.error(request, 'Произошла ошибка при отправке кода подтверждения. Пожалуйста, проверьте правильность email адреса и попробуйте позже.')
+                    return render(request, 'users/register.html', {'form': form})
 
             except Exception as e:
-                print(f"[EMAIL ERROR]: {str(e)}")
+                print(f"[REGISTRATION ERROR]: {str(e)}")
                 print(f"[DEBUG] Traceback: {traceback.format_exc()}")
                 messages.error(request, 'Произошла ошибка при регистрации. Пожалуйста, попробуйте позже.')
                 return render(request, 'users/register.html', {'form': form})

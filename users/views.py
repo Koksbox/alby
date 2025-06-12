@@ -69,11 +69,12 @@ def register(request):
 
                 try:
                     # Всегда выводим информацию в консоль
-                    print(f"[CONSOLE] Отправка email на {email}")
-                    print(f"[CONSOLE] From email: {from_email}")
-                    print(f"[CONSOLE] Subject: {subject}")
-                    print(f"[CONSOLE] Message: {message}")
-                    print(f"[CONSOLE] Код подтверждения: {user.confirmation_code}")
+                    print(f"[EMAIL DEBUG] Начало отправки email")
+                    print(f"[EMAIL DEBUG] Отправка на: {email}")
+                    print(f"[EMAIL DEBUG] От кого: {from_email}")
+                    print(f"[EMAIL DEBUG] Тема: {subject}")
+                    print(f"[EMAIL DEBUG] Сообщение: {message}")
+                    print(f"[EMAIL DEBUG] Код подтверждения: {user.confirmation_code}")
 
                     # Отправляем email
                     send_mail(
@@ -83,7 +84,7 @@ def register(request):
                         recipient_list,
                         fail_silently=False,
                     )
-                    print(f"[REGISTRATION] Email успешно отправлен на {email}")
+                    print(f"[EMAIL DEBUG] Email успешно отправлен на {email}")
 
                     # Сохраняем email в сессии
                     request.session['registration_email'] = email
@@ -225,6 +226,14 @@ DIRECTOR_PASSWORD = 'qwqwqw12'
 def login_view(request):
     # Проверяем, авторизован ли пользователь
     if request.user.is_authenticated:
+        # Если пользователь авторизован, но его аккаунт не активен,
+        # разлогиниваем его и перенаправляем на страницу подтверждения.
+        if not request.user.is_active:
+            logout(request)
+            messages.error(request, 'Ваш аккаунт не активирован. Пожалуйста, подтвердите вашу почту.')
+            return redirect('confirm')
+
+        # Если аккаунт активен, перенаправляем в зависимости от роли
         if request.user.post_user == 'unapproved':
             return redirect('now_user')
         if request.user.post_user == 'manager':

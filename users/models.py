@@ -104,11 +104,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return dict(self.USER_TYPE_CHOICES).get(self.post_user)
 
     def is_expired(self):
-        """Проверяет, истек ли срок действия кода подтверждения (5 минут)."""
-        if self.confirmation_sent_at:
-            expiration_time = self.confirmation_sent_at + timedelta(minutes=5)
-            return expiration_time < timezone.now()
-        return True
+        expiration_time = self.confirmation_sent_at + timedelta(minutes=5)
+        return timezone.now() > expiration_time
 
     def should_be_deleted(self):
         """Проверяет, должен ли быть удален неактивированный аккаунт."""

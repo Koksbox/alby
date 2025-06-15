@@ -6288,3 +6288,90 @@ INFO 2025-06-14 07:39:23,477 basehttp 9916 6900 "GET /profile/ HTTP/1.1" 200 999
 WARNING 2025-06-14 07:39:23,518 basehttp 9916 6900 "GET /media/static/img/default_avatar.jpg HTTP/1.1" 404 179
 INFO 2025-06-14 07:39:24,001 basehttp 9916 6900 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-06-14 07:39:25,089 basehttp 9916 6900 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:06:36,645 autoreload 14208 7036 Watching for file changes with StatReloader
+INFO 2025-06-15 10:07:24,306 autoreload 14208 7036 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-15 10:07:24,707 autoreload 2600 14244 Watching for file changes with StatReloader
+INFO 2025-06-15 10:07:34,722 autoreload 2600 14244 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-15 10:07:35,219 autoreload 10792 2808 Watching for file changes with StatReloader
+INFO 2025-06-15 10:08:30,912 autoreload 10792 2808 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-15 10:08:31,353 autoreload 8784 10048 Watching for file changes with StatReloader
+WARNING 2025-06-15 10:08:32,862 basehttp 8784 6260 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-15 10:08:33,946 basehttp 8784 14312 "GET /register/ HTTP/1.1" 200 6509
+INFO 2025-06-15 10:08:34,434 basehttp 8784 14312 "GET /sw.js HTTP/1.1" 200 1081
+WARNING 2025-06-15 10:08:34,869 basehttp 8784 6260 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-15 10:08:35,522 basehttp 8784 14312 "GET /sw.js HTTP/1.1" 200 1081
+WARNING 2025-06-15 10:08:38,887 basehttp 8784 6260 "GET /static/manifest.json HTTP/1.1" 404 179
+WARNING 2025-06-15 10:08:46,903 basehttp 8784 6260 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-15 10:08:52,747 basehttp 8784 14312 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-15 10:08:52,761 basehttp 8784 14312 "GET /confirm/ HTTP/1.1" 200 2051
+WARNING 2025-06-15 10:08:52,800 basehttp 8784 14312 "GET /confirm/sw.js HTTP/1.1" 404 179
+INFO 2025-06-15 10:08:54,318 basehttp 8784 14312 "GET /sw.js HTTP/1.1" 200 1081
+WARNING 2025-06-15 10:09:02,908 basehttp 8784 6260 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-15 10:09:03,373 basehttp 8784 14312 "GET /confirm/ HTTP/1.1" 200 1690
+INFO 2025-06-15 10:09:07,757 basehttp 8784 14312 "GET /sw.js HTTP/1.1" 200 1081
+WARNING 2025-06-15 10:09:34,924 basehttp 8784 6260 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-15 10:10:10,273 autoreload 8784 10048 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-15 10:10:10,694 autoreload 5100 13788 Watching for file changes with StatReloader
+INFO 2025-06-15 10:10:36,223 autoreload 5100 13788 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-15 10:10:36,663 autoreload 8116 7616 Watching for file changes with StatReloader
+WARNING 2025-06-15 10:10:38,942 basehttp 8116 5688 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-15 10:10:41,360 basehttp 8116 9168 "GET /confirm/ HTTP/1.1" 200 2981
+INFO 2025-06-15 10:10:43,105 basehttp 8116 9168 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:11:19,282 basehttp 8116 9168 "GET /confirm/ HTTP/1.1" 200 2981
+INFO 2025-06-15 10:11:21,029 basehttp 8116 9168 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:11:30,819 basehttp 8116 9168 "GET /confirm/ HTTP/1.1" 200 3027
+INFO 2025-06-15 10:11:32,563 basehttp 8116 9168 "GET /sw.js HTTP/1.1" 200 1081
+ERROR 2025-06-15 10:11:53,765 basehttp 8116 9168 "POST /confirm/ HTTP/1.1" 500 145
+INFO 2025-06-15 10:11:55,439 basehttp 8116 9168 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:12:12,156 autoreload 8116 7616 C:\Users\Koksbox\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-15 10:12:12,610 autoreload 4848 6312 Watching for file changes with StatReloader
+ERROR 2025-06-15 10:12:13,066 basehttp 4848 8528 "POST /confirm/ HTTP/1.1" 500 89830
+INFO 2025-06-15 10:12:15,693 basehttp 4848 8528 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:12:36,324 autoreload 4848 6312 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-15 10:12:36,747 autoreload 9080 14852 Watching for file changes with StatReloader
+INFO 2025-06-15 10:12:39,469 autoreload 9080 14852 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-15 10:12:39,943 autoreload 1352 6116 Watching for file changes with StatReloader
+INFO 2025-06-15 10:12:46,780 basehttp 1352 14272 "POST /confirm/ HTTP/1.1" 200 3239
+INFO 2025-06-15 10:12:46,973 basehttp 1352 19956 "GET /static/manifest.json HTTP/1.1" 200 490
+INFO 2025-06-15 10:12:48,327 basehttp 1352 14272 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:12:59,380 basehttp 1352 14272 "POST /confirm/ HTTP/1.1" 302 0
+INFO 2025-06-15 10:12:59,392 basehttp 1352 14272 "GET /login/ HTTP/1.1" 200 6430
+INFO 2025-06-15 10:13:00,967 basehttp 1352 14272 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:13:05,258 basehttp 1352 14272 "GET /login/ HTTP/1.1" 200 6166
+INFO 2025-06-15 10:13:07,901 basehttp 1352 14272 "GET /register/ HTTP/1.1" 200 6509
+INFO 2025-06-15 10:13:09,508 basehttp 1352 14272 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:13:22,043 basehttp 1352 14272 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-15 10:13:22,053 basehttp 1352 14272 "GET /confirm/ HTTP/1.1" 200 3388
+INFO 2025-06-15 10:13:23,636 basehttp 1352 14272 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:13:41,224 autoreload 1352 6116 C:\Users\Koksbox\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-15 10:13:41,680 autoreload 15492 19280 Watching for file changes with StatReloader
+INFO 2025-06-15 10:13:42,800 basehttp 15492 18692 "GET /register/ HTTP/1.1" 200 6509
+INFO 2025-06-15 10:13:44,392 basehttp 15492 18692 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:13:52,356 basehttp 15492 18692 "GET /login/ HTTP/1.1" 200 6166
+INFO 2025-06-15 10:13:53,446 basehttp 15492 18692 "GET /register/ HTTP/1.1" 200 6509
+INFO 2025-06-15 10:13:54,026 basehttp 15492 18692 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:13:55,040 basehttp 15492 18692 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:15:45,123 autoreload 15492 19280 C:\Users\Koksbox\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-15 10:15:45,606 autoreload 5096 19396 Watching for file changes with StatReloader
+INFO 2025-06-15 10:16:04,926 basehttp 5096 19136 "GET /register/ HTTP/1.1" 200 6509
+INFO 2025-06-15 10:16:06,497 basehttp 5096 19136 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:16:27,669 basehttp 5096 19136 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-15 10:16:27,680 basehttp 5096 19136 "GET /confirm/ HTTP/1.1" 200 3388
+INFO 2025-06-15 10:16:29,316 basehttp 5096 19136 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:16:49,572 basehttp 5096 19136 "POST /confirm/ HTTP/1.1" 302 0
+INFO 2025-06-15 10:16:49,583 basehttp 5096 19136 "GET /login/ HTTP/1.1" 200 6430
+INFO 2025-06-15 10:16:51,263 basehttp 5096 19136 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:16:51,521 basehttp 5096 19136 "GET /register/ HTTP/1.1" 200 6509
+INFO 2025-06-15 10:16:53,124 basehttp 5096 19136 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:18:12,377 basehttp 5096 19136 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-15 10:18:12,388 basehttp 5096 19136 "GET /confirm/ HTTP/1.1" 200 3561
+INFO 2025-06-15 10:18:14,045 basehttp 5096 19136 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:19:40,305 basehttp 5096 19136 "GET /confirm/ HTTP/1.1" 200 3027
+INFO 2025-06-15 10:19:42,022 basehttp 5096 19136 "GET /confirm/ HTTP/1.1" 200 3027
+INFO 2025-06-15 10:19:42,048 basehttp 5096 19136 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:19:43,613 basehttp 5096 19136 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:19:44,280 basehttp 5096 19136 "GET /register/ HTTP/1.1" 200 6509
+INFO 2025-06-15 10:19:45,895 basehttp 5096 19136 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-15 10:23:34,969 basehttp 5096 19136 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-15 10:23:34,981 basehttp 5096 19136 "GET /confirm/ HTTP/1.1" 200 3472
+INFO 2025-06-15 10:23:36,643 basehttp 5096 19136 "GET /sw.js HTTP/1.1" 200 1081

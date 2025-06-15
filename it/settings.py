@@ -264,3 +264,8 @@ LOGGING = {
 # Создаем директорию для логов, если она не существует
 if not os.path.exists('logs'):
     os.makedirs('logs')
+
+# Настройки для периодического выполнения команд
+CRONJOBS = [
+    ('*/5 * * * *', 'django.core.management.call_command', ['cleanup_inactive_users']),  # Каждые 5 минут
+]

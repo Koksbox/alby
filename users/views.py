@@ -78,6 +78,14 @@ def register(request):
                     [user.email],
                     fail_silently=False
                 )
+                result = send_mail(
+                    subject,
+                    message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user.email],
+                    fail_silently=False
+                )
+                print(f"[EMAIL DEBUG] send_mail вернул: {result}")
                 print("[EMAIL SYNC] Письмо отправлено")
 
                 # Сохраняем email в сессии, чтобы использовать в confirm

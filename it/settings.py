@@ -32,7 +32,7 @@ def get_env_value(env_variable, default=None):
 SECRET_KEY = get_env_value('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = ['152.114.192.9', '127.0.0.1', 'localhost']
@@ -150,7 +150,7 @@ else:
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = 'ozodbekhh2007@gmail.com'
-    EMAIL_HOST_PASSWORD = 'rfmb dbbi imfg hxom'
+    EMAIL_HOST_PASSWORD = 'rfmb dbbi imfg hxom'  # App password for Gmail
     DEFAULT_FROM_EMAIL = 'ozodbekhh2007@gmail.com'
 
 import logging

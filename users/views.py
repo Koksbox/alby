@@ -56,51 +56,49 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             print("[REGISTRATION] Форма валидна")
-            email = form.cleaned_data.get('email')
             try:
+                # Создание нового пользователя, но пока не сохраняем полностью
                 user = form.save(commit=False)
-                user.is_active = False
-                user.confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+                user.is_active = False  # Пользователь пока не активен
+                user.confirmation_code = ''.join(
+                    random.choices(string.ascii_uppercase + string.digits, k=6)
+                )
                 user.confirmation_sent_at = timezone.now()
-                user.save()
-                print(f"[REGISTRATION] Создан новый пользователь с email {email}")
 
-                # Отправка письма
+                user.save()  # Сохраняем до отправки письма
+                print(f"[REGISTRATION] Создан новый пользователь с email {user.email}")
+
+                # Формируем данные письма
                 subject = 'Код подтверждения регистрации'
-                message = f'Ваш код подтверждения: {user.confirmation_code}\nКод действителен в течение 5 минут.'
-                from_email = settings.DEFAULT_FROM_EMAIL
-                recipient_list = [email]
-                if not from_email:
-                    raise ValueError('DEFAULT_FROM_EMAIL не настроен в settings.py')
+                message = (
+                    f'Ваш код подтверждения: {user.confirmation_code}\n'
+                    'Код действителен в течение 5 минут.'
+                )
 
-                print(f"[EMAIL DEBUG] Начало отправки email")
-                print(f"[EMAIL DEBUG] Отправка на: {email}")
-                print(f"[EMAIL DEBUG] От кого: {from_email}")
-                print(f"[EMAIL DEBUG] Тема: {subject}")
-                print(f"[EMAIL DEBUG] Сообщение: {message}")
-                print(f"[EMAIL DEBUG] Код подтверждения: {user.confirmation_code}")
+                # Пытаемся отправить письмо
+                send_mail(
+                    subject,
+                    message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user.email],
+                    fail_silently=False
+                )
 
-                send_mail(subject, message, from_email, recipient_list, fail_silently=False)
-                print(f"[EMAIL DEBUG] Email успешно отправлен на {email}")
-
-                messages.success(request, 'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации. Код действителен 5 минут.')
-                print("[REGISTRATION] Перенаправление на страницу подтверждения")
-                print("Переход на страницу confirm")
+                # Успех: уведомляем пользователя и редиректим
+                messages.success(request, 'Код подтверждения отправлен на вашу почту.')
                 return redirect('confirm')
 
             except Exception as email_error:
+                # Ошибка отправки письма — удаляем пользователя
                 print(f"[EMAIL ERROR] Ошибка при отправке email: {str(email_error)}")
-                print(f"[DEBUG] Traceback: {traceback.format_exc()}")
                 user.delete()
-                print(f"[REGISTRATION] Пользователь {email} удален из-за ошибки отправки email")
-                messages.error(request, 'Произошла ошибка при отправке кода подтверждения. Пожалуйста, проверьте правильность email адреса и попробуйте позже.')
+                messages.error(request, 'Ошибка при отправке кода. Повторите попытку позже.')
                 return render(request, 'users/register.html', {'form': form})
+
         else:
-            print("[REGISTRATION] Форма невалидна")
-            for field, errors in form.errors.items():
-                for error in errors:
-                    print(f"[REGISTRATION] Ошибка в поле {field}: {error}")
-                    messages.error(request, f'{field}: {error}')
+            # Если форма не валидна — возвращаем её с ошибками
+            print("[REGISTRATION] Форма НЕ валидна")
+            return render(request, 'users/register.html', {'form': form})
     else:
         form = CustomUserCreationForm()
 

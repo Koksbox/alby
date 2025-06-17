@@ -270,22 +270,23 @@ html, body {
         font-size: 14px;
     }
 
+</style>  <!-- Закрываем CSS -->
+
 <script>
 document.getElementById('registrationForm').addEventListener('submit', function(e) {
     const password1 = document.querySelector('input[name="password1"]').value.trim();
     const password2 = document.querySelector('input[name="password2"]').value.trim();
 
-    let error = null;
-
     if (password1 !== password2) {
-        error = 'Пароли не совпадают';
-    } else if (password1.length < 8) {
-        error = 'Пароль должен содержать минимум 8 символов';
+        e.preventDefault();
+        alert('Пароли не совпадают');
+        return;
     }
 
-    if (error) {
+    if (password1.length < 8) {
         e.preventDefault();
-        alert(error);
+        alert('Пароль должен содержать минимум 8 символов');
+        return;
     }
 });
 </script>

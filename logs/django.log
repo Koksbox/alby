@@ -6560,3 +6560,21 @@ INFO 2025-06-17 20:53:10,976 basehttp 12148 22824 "GET /confirm/ HTTP/1.1" 200 3
 INFO 2025-06-17 20:53:12,522 basehttp 12148 22824 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-06-17 20:53:15,308 basehttp 12148 22824 "GET /register/ HTTP/1.1" 200 6608
 INFO 2025-06-17 20:53:16,876 basehttp 12148 22824 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 20:53:45,125 basehttp 12148 22824 "GET /confirm/ HTTP/1.1" 200 3027
+INFO 2025-06-17 21:01:18,656 basehttp 12148 18700 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 21:01:20,248 basehttp 12148 18700 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 21:05:12,905 basehttp 12148 18700 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-17 21:05:12,916 basehttp 12148 18700 "GET /confirm/ HTTP/1.1" 200 3576
+INFO 2025-06-17 21:05:14,507 basehttp 12148 18700 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 21:08:24,108 autoreload 12148 6872 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 21:08:24,557 autoreload 2092 24600 Watching for file changes with StatReloader
+INFO 2025-06-17 21:08:38,692 autoreload 2092 24600 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 21:08:39,085 autoreload 15344 24208 Watching for file changes with StatReloader
+INFO 2025-06-17 21:10:39,147 autoreload 15344 24208 C:\Users\Koksbox\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-17 21:10:39,651 autoreload 25136 11780 Watching for file changes with StatReloader
+INFO 2025-06-17 21:10:48,612 autoreload 25136 11780 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 21:10:49,068 autoreload 22148 6048 Watching for file changes with StatReloader
+INFO 2025-06-17 21:12:07,543 autoreload 22148 6048 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 21:12:07,985 autoreload 15544 2380 Watching for file changes with StatReloader
+INFO 2025-06-17 21:12:17,007 autoreload 15544 2380 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 21:12:17,480 autoreload 22036 22336 Watching for file changes with StatReloader

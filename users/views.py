@@ -64,10 +64,6 @@ def register(request):
                 user.save()
                 print(f"[REGISTRATION] Создан новый пользователь с email {user.email}")
 
-                if settings.DEBUG:
-                    messages.info(request, f'Ваш код подтверждения: {user.confirmation_code}')
-                    print(f"[DEBUG INFO] Код подтверждения (для отображения на странице): {user.confirmation_code}")
-
                 subject = 'Код подтверждения регистрации'
                 message = (
                     f'Ваш код подтверждения: {user.confirmation_code}\n'
@@ -82,7 +78,11 @@ def register(request):
                     [user.email],
                     fail_silently=False
                 )
-                print(f"[EMAIL DEBUG] send_mail вернул: {result if 'result' in locals() else 'None'}")
+
+                # Выводим код подтверждения в сообщениях, если DEBUG включен
+                if settings.DEBUG:
+                    messages.info(request, f'DEBUG: Код подтверждения для {user.email}: {user.confirmation_code}. Скопируйте его для подтверждения.')
+
                 print("[EMAIL SYNC] Письмо отправлено")
 
                 # Сохраняем email в сессии, чтобы использовать в confirm

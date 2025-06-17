@@ -6477,3 +6477,7 @@ INFO 2025-06-17 18:58:57,007 basehttp 22136 9724 "GET /register/ HTTP/1.1" 200 8
 INFO 2025-06-17 18:58:58,594 basehttp 22136 9724 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-06-17 18:59:42,208 autoreload 22136 5144 C:\Users\Koksbox\PycharmProjects\alby\it\settings.py changed, reloading.
 INFO 2025-06-17 18:59:43,227 autoreload 18020 15808 Watching for file changes with StatReloader
+INFO 2025-06-17 19:01:51,992 autoreload 18020 15808 C:\Users\Koksbox\PycharmProjects\alby\users\forms.py changed, reloading.
+INFO 2025-06-17 19:01:52,588 autoreload 9516 17192 Watching for file changes with StatReloader
+INFO 2025-06-17 19:02:19,523 autoreload 9516 17192 C:\Users\Koksbox\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-17 19:02:19,930 autoreload 17840 8740 Watching for file changes with StatReloader

@@ -6622,3 +6622,23 @@ INFO 2025-06-17 21:26:41,061 autoreload 24772 12440 C:\Users\Koksbox\PycharmProj
 INFO 2025-06-17 21:26:41,463 autoreload 24780 24152 Watching for file changes with StatReloader
 INFO 2025-06-17 21:26:43,202 basehttp 24780 468 "GET /login/ HTTP/1.1" 200 6166
 INFO 2025-06-17 21:26:44,747 basehttp 24780 468 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 22:49:21,520 autoreload 22928 11544 Watching for file changes with StatReloader
+INFO 2025-06-17 22:49:23,921 basehttp 22928 25324 "GET /static/manifest.json HTTP/1.1" 200 490
+INFO 2025-06-17 22:49:25,485 basehttp 22928 8972 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 22:49:25,714 basehttp 22928 8972 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 22:49:27,361 basehttp 22928 8972 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 22:49:37,257 basehttp 22928 16428 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-17 22:49:37,284 basehttp 22928 16428 "GET /confirm/ HTTP/1.1" 302 0
+INFO 2025-06-17 22:49:37,304 basehttp 22928 16428 "GET /login/ HTTP/1.1" 200 6461
+INFO 2025-06-17 22:49:38,876 basehttp 22928 19564 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 22:52:54,069 autoreload 22928 11544 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 22:52:54,808 autoreload 6188 7420 Watching for file changes with StatReloader
+INFO 2025-06-17 22:53:31,009 autoreload 6188 7420 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 22:53:31,831 autoreload 12192 24792 Watching for file changes with StatReloader
+INFO 2025-06-17 22:53:36,935 basehttp 12192 5992 "GET /static/manifest.json HTTP/1.1" 200 490
+INFO 2025-06-17 22:53:38,526 basehttp 12192 6056 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 22:53:42,006 basehttp 12192 6056 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 22:53:43,640 basehttp 12192 6056 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 22:53:54,947 basehttp 12192 6056 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-17 22:53:54,971 basehttp 12192 6056 "GET /login/ HTTP/1.1" 200 6429
+INFO 2025-06-17 22:53:56,556 basehttp 12192 6056 "GET /sw.js HTTP/1.1" 200 1081

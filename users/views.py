@@ -58,35 +58,40 @@ def register(request):
             print("[REGISTRATION] Форма валидна")
             try:
                 user = form.save(commit=False)
-                user.is_active = False
-                user.confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-                user.confirmation_sent_at = timezone.now()
-                user.save()
-                print(f"[REGISTRATION] Создан новый пользователь с email {user.email}")
 
-                subject = 'Код подтверждения регистрации'
-                message = (
-                    f'Ваш код подтверждения: {user.confirmation_code}\n'
-                    'Код действителен в течение 5 минут.'
-                )
-
-                # Отправляем письмо синхронно
-                send_mail(
-                    subject,
-                    message,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [user.email],
-                    fail_silently=False
-                )
-
-                # Выводим код подтверждения в сообщениях, если DEBUG включен
                 if settings.DEBUG:
-                    messages.info(request, f'DEBUG: Код подтверждения для {user.email}: {user.confirmation_code}. Скопируйте его для подтверждения.')
+                    user.is_active = True
+                    user.confirmation_code = '' # Очищаем код
+                    user.confirmation_sent_at = None # Очищаем время
+                    user.save()
+                    messages.success(request, "Регистрация успешна (DEBUG режим)! Теперь вы можете войти.")
+                    return redirect('login')
+                else:
+                    user.is_active = False
+                    user.confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+                    user.confirmation_sent_at = timezone.now()
+                    user.save()
+                    print(f"[REGISTRATION] Создан новый пользователь с email {user.email}")
 
-                # Сохраняем email в сессии, чтобы использовать в confirm
-                request.session['email_for_confirmation'] = user.email
+                    subject = 'Код подтверждения регистрации'
+                    message = (
+                        f'Ваш код подтверждения: {user.confirmation_code}\n'
+                        'Код действителен в течение 5 минут.'
+                    )
 
-                return redirect('confirm')
+                    # Отправляем письмо синхронно
+                    send_mail(
+                        subject,
+                        message,
+                        settings.DEFAULT_FROM_EMAIL,
+                        [user.email],
+                        fail_silently=False
+                    )
+
+                    # Сохраняем email в сессии, чтобы использовать в confirm
+                    request.session['email_for_confirmation'] = user.email
+
+                    return redirect('confirm')
 
             except Exception as email_error:
                 print(f"[EMAIL ERROR main] Ошибка при отправке email: {str(email_error)}")

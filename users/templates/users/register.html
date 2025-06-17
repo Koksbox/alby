@@ -272,17 +272,20 @@ html, body {
 
 <script>
 document.getElementById('registrationForm').addEventListener('submit', function(e) {
-    const password1 = document.querySelector('input[name="password1"]');
-    const password2 = document.querySelector('input[name="password2"]');
-    
-    if (password1.value !== password2.value) {
-        e.preventDefault();
-        alert('Пароли не совпадают');
+    const password1 = document.querySelector('input[name="password1"]').value.trim();
+    const password2 = document.querySelector('input[name="password2"]').value.trim();
+
+    let error = null;
+
+    if (password1 !== password2) {
+        error = 'Пароли не совпадают';
+    } else if (password1.length < 8) {
+        error = 'Пароль должен содержать минимум 8 символов';
     }
-    
-    if (password1.value.length < 8) {
+
+    if (error) {
         e.preventDefault();
-        alert('Пароль должен содержать минимум 8 символов');
+        alert(error);
     }
 });
 </script>

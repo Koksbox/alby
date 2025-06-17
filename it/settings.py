@@ -12,9 +12,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
-from dotenv import load_dotenv
-
-load_dotenv() # Load environment variables from .env file
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,7 +32,7 @@ def get_env_value(env_variable, default=None):
 SECRET_KEY = get_env_value('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 ALLOWED_HOSTS = ['152.114.192.9', '127.0.0.1', 'localhost']
@@ -153,9 +150,11 @@ else:
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = 'ozodbekhh2007@gmail.com'
-    EMAIL_HOST_PASSWORD = get_env_value('EMAIL_HOST_PASSWORD')
+    EMAIL_HOST_PASSWORD = 'rfmb dbbi imfg hxom'
     DEFAULT_FROM_EMAIL = 'ozodbekhh2007@gmail.com'
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 
 REST_FRAMEWORK = {

@@ -19,14 +19,14 @@ from django.contrib.auth.models import User
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['email', 'full_name', 'phone_number', 'date_of_birth', 'password1', 'password2']
+        fields = ('email', 'full_name', 'phone_number', 'date_of_birth', 'password1', 'password2')
         labels = {
             'email': 'Email',
-            'full_name': 'ФИО',
+            'full_name': 'Ф.И.О',
             'phone_number': 'Номер телефона',
             'date_of_birth': 'Дата рождения',
             'password1': 'Пароль',
-            'password2': 'Подтверждение пароля'
+            'password2': 'Подтверждение пароля',
         }
         widgets = {
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
@@ -36,12 +36,12 @@ class CustomUserCreationForm(UserCreationForm):
             'password1': forms.PasswordInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Введите пароль',
-                'autocomplete': 'new-password'
+                'style': 'width: 95%; padding: 10px; border: none; border-bottom: 2px solid white; background-color: rgba(0, 0, 0, 0.0); color: white; outline: none;'
             }),
             'password2': forms.PasswordInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Подтвердите пароль',
-                'autocomplete': 'new-password'
+                'style': 'width: 95%; padding: 10px; border: none; border-bottom: 2px solid white; background-color: rgba(0, 0, 0, 0.0); color: white; outline: none;'
             }),
         }
 

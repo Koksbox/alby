@@ -85,6 +85,7 @@ def register(request):
 
                 messages.success(request, 'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации. Код действителен 5 минут.')
                 print("[REGISTRATION] Перенаправление на страницу подтверждения")
+                print("Переход на страницу confirm")
                 return redirect('confirm')
 
             except Exception as email_error:

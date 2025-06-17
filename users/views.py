@@ -39,11 +39,19 @@ def register(request):
                 existing_user.delete()
                 print(f"[REGISTRATION] Аккаунт пользователя {email} успешно удален.")
             else:
-                print(f"[REGISTRATION] Найден неактивированный аккаунт для {email} (срок не истек)")
-                messages.error(request, 'На этот email уже отправлен код подтверждения. Пожалуйста, проверьте почту или подождите 5 минут.')
-                form = CustomUserCreationForm(request.POST)  # но без сохранения
-                return render(request, 'users/register.html', {'form': form})
-
+                # 👇 Дополнительная проверка: код НЕ был доставлен ранее
+                if not existing_user.confirmation_sent_at or not existing_user.confirmation_code:
+                    print(f"[REGISTRATION] Удаляем аккаунт без подтверждения email (ошибка при отправке ранее)")
+                    existing_user.delete()
+                    print(f"[REGISTRATION] Аккаунт без кода удален, можно повторно зарегистрировать")
+                else:
+                    print(f"[REGISTRATION] Найден неактивированный аккаунт для {email} (срок не истек)")
+                    messages.error(
+                        request,
+                        'На этот email уже отправлен код подтверждения. Пожалуйста, проверьте почту или подождите 5 минут.'
+                    )
+                    form = CustomUserCreationForm(request.POST)
+                    return render(request, 'users/register.html', {'form': form})
         # Теперь создаём форму
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():

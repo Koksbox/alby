@@ -107,44 +107,38 @@ def confirm_registration(request):
         
         # Получаем последнего неактивированного пользователя
         try:
-            user = CustomUser.objects.filter(is_active=False).order_by('-confirmation_sent_at').first()
-            if not user:
-                print("[CONFIRMATION] Не найден неактивированный пользователь")
-                messages.error(request, 'Пожалуйста, зарегистрируйтесь заново.')
-                return redirect('register')
-
-            email = user.email
-            print(f"[CONFIRMATION] Email из последней регистрации: {email}, Код: {confirmation_code}")
-
             if not confirmation_code:
                 print("[CONFIRMATION] Отсутствует код подтверждения")
                 messages.error(request, 'Пожалуйста, введите код подтверждения.')
                 return render(request, 'users/confirm.html')
 
-            # Проверяем код подтверждения
-            if user.confirmation_code != confirmation_code:
-                print(f"[CONFIRMATION] Неверный код для email: {email}")
-                messages.error(request, 'Неверный код подтверждения.')
+            # Находим пользователя по коду подтверждения и статусу неактивности
+            try:
+                user = CustomUser.objects.get(confirmation_code=confirmation_code, is_active=False)
+            except CustomUser.DoesNotExist:
+                print(f"[CONFIRMATION] Пользователь с кодом {confirmation_code} не найден или уже активирован.")
+                messages.error(request, 'Неверный код подтверждения или аккаунт уже активирован.')
                 return render(request, 'users/confirm.html')
+
+            email = user.email
+            print(f"[CONFIRMATION] Email из найденного пользователя: {email}, Код: {confirmation_code}")
             
             # Проверяем, не истек ли срок действия кода
             if user.is_expired():
                 print(f"[CONFIRMATION] Код подтверждения истек для {email}")
                 messages.error(request, 'Срок действия кода подтверждения истек. Пожалуйста, зарегистрируйтесь заново.')
+                user.delete() # Удаляем просроченный аккаунт
                 return redirect('register')
 
-            if user.is_active:
-                print(f"[CONFIRMATION] Аккаунт {email} уже активирован")
-                messages.info(request, 'Ваш аккаунт уже активирован.')
-                return redirect('login')
-
             # Проверяем, не существует ли уже активированный аккаунт с таким email
+            # (хотя это должно быть перехвачено при регистрации, но на всякий случай)
             if CustomUser.objects.filter(email=email, is_active=True).exists():
                 print(f"[CONFIRMATION] Найден активный аккаунт с email {email}")
                 messages.error(request, 'Пользователь с таким email уже существует.')
-                return redirect('register')
+                # Не удаляем пользователя, так как возможно, это попытка повторной активации уже активного
+                return redirect('login')
 
-            # Если код подтверждения корректный
+            # Если код подтверждения корректный и все проверки пройдены
             user.is_active = True
             user.save()
             print(f"[CONFIRMATION] Аккаунт {email} успешно активирован")

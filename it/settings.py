@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
+
+load_dotenv() # Load environment variables from .env file
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -150,7 +153,7 @@ else:
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = 'ozodbekhh2007@gmail.com'
-    EMAIL_HOST_PASSWORD = 'rfmb dbbi imfg hxom'
+    EMAIL_HOST_PASSWORD = get_env_value('EMAIL_HOST_PASSWORD')
     DEFAULT_FROM_EMAIL = 'ozodbekhh2007@gmail.com'
 
 

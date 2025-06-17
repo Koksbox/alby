@@ -83,12 +83,9 @@ def register(request):
                 if settings.DEBUG:
                     messages.info(request, f'DEBUG: Код подтверждения для {user.email}: {user.confirmation_code}. Скопируйте его для подтверждения.')
 
-                print("[EMAIL SYNC] Письмо отправлено")
-
                 # Сохраняем email в сессии, чтобы использовать в confirm
                 request.session['email_for_confirmation'] = user.email
 
-                messages.success(request, 'Код подтверждения отправлен на вашу почту.')
                 return redirect('confirm')
 
             except Exception as email_error:
@@ -115,12 +112,22 @@ def confirm_registration(request):
         messages.error(request, "Нет email для подтверждения. Пожалуйста, зарегистрируйтесь заново.")
         return redirect('register')
 
+    user = CustomUser.objects.filter(email=email, is_active=False).first()
+    if not user:
+        messages.error(request, "Пользователь не найден или уже активирован.")
+        return redirect('register')
+
+    # Автоматическое подтверждение при включенном DEBUG режиме
+    if settings.DEBUG:
+        user.is_active = True
+        user.confirmation_code = ''
+        user.confirmation_sent_at = None
+        user.save()
+        del request.session['email_for_confirmation']
+        return redirect('login')
+
     if request.method == 'POST':
         input_code = request.POST.get('confirmation_code', '').strip().upper()
-        user = CustomUser.objects.filter(email=email, is_active=False).first()
-        if not user:
-            messages.error(request, "Пользователь не найден или уже активирован.")
-            return redirect('register')
 
         # Проверяем срок действия кода (5 минут)
         time_diff = timezone.now() - user.confirmation_sent_at

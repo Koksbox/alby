@@ -6578,3 +6578,47 @@ INFO 2025-06-17 21:12:07,543 autoreload 22148 6048 C:\Users\Koksbox\PycharmProje
 INFO 2025-06-17 21:12:07,985 autoreload 15544 2380 Watching for file changes with StatReloader
 INFO 2025-06-17 21:12:17,007 autoreload 15544 2380 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
 INFO 2025-06-17 21:12:17,480 autoreload 22036 22336 Watching for file changes with StatReloader
+INFO 2025-06-17 21:21:56,120 autoreload 10368 17928 Watching for file changes with StatReloader
+WARNING 2025-06-17 21:21:57,960 basehttp 10368 18308 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-17 21:21:59,099 basehttp 10368 1992 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 21:21:59,542 basehttp 10368 1992 "GET /sw.js HTTP/1.1" 200 1081
+WARNING 2025-06-17 21:21:59,967 basehttp 10368 18308 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-17 21:22:00,669 basehttp 10368 1992 "GET /sw.js HTTP/1.1" 200 1081
+WARNING 2025-06-17 21:22:03,984 basehttp 10368 18308 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-17 21:22:11,540 basehttp 10368 1992 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-17 21:22:11,552 basehttp 10368 1992 "GET /confirm/ HTTP/1.1" 200 3352
+WARNING 2025-06-17 21:22:11,998 basehttp 10368 18308 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-17 21:22:13,141 basehttp 10368 1992 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 21:22:25,145 autoreload 10368 17928 C:\Users\Koksbox\PycharmProjects\alby\it\settings.py changed, reloading.
+INFO 2025-06-17 21:22:25,573 autoreload 23848 23836 Watching for file changes with StatReloader
+INFO 2025-06-17 21:22:26,104 basehttp 23848 23564 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 21:22:27,065 basehttp 23848 23564 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 21:22:27,177 basehttp 23848 23564 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 21:22:27,363 basehttp 23848 23564 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 21:22:27,512 basehttp 23848 23564 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 21:22:27,641 basehttp 23848 23564 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 21:22:28,024 basehttp 23848 2312 "GET /static/manifest.json HTTP/1.1" 200 490
+INFO 2025-06-17 21:22:29,077 basehttp 23848 23564 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 21:22:37,119 basehttp 23848 23564 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-17 21:22:37,130 basehttp 23848 23564 "GET /confirm/ HTTP/1.1" 200 3672
+INFO 2025-06-17 21:22:38,708 basehttp 23848 23564 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 21:24:58,988 autoreload 23848 23836 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 21:24:59,416 autoreload 24328 22176 Watching for file changes with StatReloader
+INFO 2025-06-17 21:25:09,380 autoreload 24328 22176 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 21:25:09,815 autoreload 16784 4752 Watching for file changes with StatReloader
+INFO 2025-06-17 21:25:11,992 basehttp 16784 24132 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 21:25:12,791 basehttp 16784 24132 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 21:25:12,935 basehttp 16784 24132 "GET /register/ HTTP/1.1" 200 6608
+INFO 2025-06-17 21:25:14,507 basehttp 16784 24132 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 21:25:27,775 basehttp 16784 24132 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-17 21:25:27,791 basehttp 16784 24132 "GET /confirm/ HTTP/1.1" 302 0
+INFO 2025-06-17 21:25:27,803 basehttp 16784 24132 "GET /login/ HTTP/1.1" 200 6875
+INFO 2025-06-17 21:25:29,407 basehttp 16784 24132 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-17 21:26:08,915 autoreload 16784 4752 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 21:26:09,317 autoreload 23932 22064 Watching for file changes with StatReloader
+INFO 2025-06-17 21:26:16,208 autoreload 23932 22064 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 21:26:16,601 autoreload 24772 12440 Watching for file changes with StatReloader
+INFO 2025-06-17 21:26:41,061 autoreload 24772 12440 C:\Users\Koksbox\PycharmProjects\alby\users\views.py changed, reloading.
+INFO 2025-06-17 21:26:41,463 autoreload 24780 24152 Watching for file changes with StatReloader
+INFO 2025-06-17 21:26:43,202 basehttp 24780 468 "GET /login/ HTTP/1.1" 200 6166
+INFO 2025-06-17 21:26:44,747 basehttp 24780 468 "GET /sw.js HTTP/1.1" 200 1081

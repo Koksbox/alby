@@ -274,6 +274,7 @@ html, body {
 
 <script>
 document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    console.log('Форма отправляется');
     const password1 = document.querySelector('input[name="password1"]').value.trim();
     const password2 = document.querySelector('input[name="password2"]').value.trim();
 

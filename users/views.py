@@ -95,9 +95,10 @@ def register(request):
                 messages.error(request, 'Ошибка при отправке кода. Повторите попытку позже.')
                 return render(request, 'users/register.html', {'form': form})
 
+
         else:
-            # Если форма не валидна — возвращаем её с ошибками
             print("[REGISTRATION] Форма НЕ валидна")
+            print(form.errors)  # ➕ это покажет, ЧТО именно не так
             return render(request, 'users/register.html', {'form': form})
     else:
         form = CustomUserCreationForm()

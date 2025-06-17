@@ -32,7 +32,7 @@ def get_env_value(env_variable, default=None):
 SECRET_KEY = get_env_value('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = ['152.114.192.9', '127.0.0.1', 'localhost']
@@ -140,18 +140,14 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# EMAIL------------------------------------------------
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    DEFAULT_FROM_EMAIL = 'ozodbekhh2007@gmail.com'
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = 'ozodbekhh2007@gmail.com'
-    EMAIL_HOST_PASSWORD = 'rfmb dbbi imfg hxom'
-    DEFAULT_FROM_EMAIL = 'ozodbekhh2007@gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ozodbekhh2007@gmail.com'
+EMAIL_HOST_PASSWORD = 'rfmb dbbi imfg hxom'  # лучше использовать пароль приложения (см. ниже)
+DEFAULT_FROM_EMAIL = 'ozodbekhh2007@gmail.com'
+
 
 
 

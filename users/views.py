@@ -28,6 +28,7 @@ User = get_user_model()
 
 def send_email_async(subject, message, recipient):
     try:
+        print(f"[EMAIL ASYNC] Отправка письма на {recipient}")
         send_mail(
             subject,
             message,
@@ -35,6 +36,7 @@ def send_email_async(subject, message, recipient):
             [recipient],
             fail_silently=False
         )
+        print("[EMAIL ASYNC] Письмо отправлено")
     except Exception as e:
         print(f"[EMAIL ERROR async] Ошибка при отправке email: {str(e)}")
 
@@ -82,8 +84,9 @@ def register(request):
                 )
 
                 # Отправляем письмо в отдельном потоке
-                threading.Thread(target=send_email_async, args=(subject, message, user.email)).start()
-
+                thread = threading.Thread(target=send_email_async, args=(subject, message, user.email))
+                thread.daemon = True
+                thread.start()
                 messages.success(request, 'Код подтверждения отправлен на вашу почту.')
                 return redirect('confirm')
 

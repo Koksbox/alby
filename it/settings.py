@@ -142,12 +142,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mail.ru'
-EMAIL_PORT = 2525
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+EMAIL_PORT = 587  # или 465 для SSL
+EMAIL_USE_TLS = True  # Используйте True для порта 587
+EMAIL_USE_SSL = False  # Не используйте одновременно TLS и SSL
 EMAIL_HOST_USER = 'mynam97@mail.ru'
-EMAIL_HOST_PASSWORD = 'Xd9o4TWzKuhnVtEekWBQ'
-
+EMAIL_HOST_PASSWORD = 'Xd9o4TWzKuhnVtEekWBQ'  # Убедитесь, что пароль правильный
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 import logging
 logging.basicConfig(level=logging.DEBUG)
 

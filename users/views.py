@@ -51,6 +51,7 @@ def register(request):
                 if not from_email:
                     raise ValueError('DEFAULT_FROM_EMAIL не настроен в settings.py')
 
+                print("[DEBUG] Пытаемся отправить письмо...")
                 send_mail(
                     subject,
                     message,
@@ -58,16 +59,18 @@ def register(request):
                     recipient_list,
                     fail_silently=False,
                 )
-                print(f'[DEBUG] Код подтверждения: {user.confirmation_code}')
-                print(f'[DEBUG] Отправка на email: {email}')
+                print('[DEBUG] Письмо успешно отправлено!')
 
-                messages.success(request, 'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации.')
+                messages.success(request,
+                                 'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации.')
                 return redirect('confirm')
 
             except Exception as e:
                 print(f"[EMAIL ERROR]: {str(e)}")
                 print(f"[DEBUG] Traceback: {traceback.format_exc()}")
-                messages.error(request, 'Не удалось отправить письмо. Пожалуйста, проверьте правильность email адреса и попробуйте позже.')
+                logger.error(f"Ошибка при отправке email: {e}", exc_info=True)
+                messages.error(request,
+                               'Не удалось отправить письмо. Пожалуйста, проверьте правильность email адреса и попробуйте позже.')
                 return render(request, 'users/register.html', {'form': form})
 
     else:

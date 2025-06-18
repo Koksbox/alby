@@ -78,7 +78,7 @@ def register(request):
                         f'Ваш код подтверждения: {user.confirmation_code}\n'
                         'Код действителен в течение 5 минут.'
                     )
-
+                    print(f"[REGISTRATION] Начало отправки кода {user.confirmation_code}")
                     # Отправляем письмо синхронно
                     send_mail(
                         subject,
@@ -87,7 +87,7 @@ def register(request):
                         [user.email],
                         fail_silently=False
                     )
-
+                    print(f"[REGISTRATION] Код {user.confirmation_code} отправлены")
                     # Сохраняем email в сессии, чтобы использовать в confirm
                     request.session['email_for_confirmation'] = user.email
 

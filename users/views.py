@@ -23,6 +23,13 @@ from django.conf import settings
 from .forms import CustomUserCreationForm
 from .models import CustomUser
 
+
+from django.core.mail import send_mail
+import traceback
+import logging
+
+logger = logging.getLogger(__name__)
+
 User = get_user_model()
 
 
@@ -63,6 +70,7 @@ def register(request):
 
                 messages.success(request,
                                  'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации.')
+                print("[DEBUG] Редиректим на confirm")
                 return redirect('confirm')
 
             except Exception as e:

@@ -100,8 +100,31 @@ def register(request):
 from .models import User, PrizeHistory, TimeEntry, CustomUser  # Импортируем вашу модель пользователя
 
 def confirm_registration(request):
-    messages.info(request, 'Подтверждение email отключено для тестирования. Пожалуйста, войдите в систему.')
-    return redirect('login')
+    if request.method == 'POST':
+        confirmation_code = request.POST.get('confirmation_code')
+
+        if not confirmation_code:
+            messages.error(request, 'Код подтверждения не может быть пустым.')
+            return render(request, 'users/confirm.html')
+
+        try:
+            user = User.objects.get(confirmation_code=confirmation_code)
+        except User.DoesNotExist:
+            messages.error(request, 'Неверный код подтверждения.\n Пожалуйста, проверьте и введите правильный код.')
+            return render(request, 'users/confirm.html')
+
+        if user.is_active:
+            messages.info(request, 'Ваш аккаунт уже активирован.')
+            return render(request, 'users/confirm.html')
+
+        # Если код подтверждения корректный
+        user.is_active = True
+        user.save()
+        logout(request)
+        messages.success(request, 'Аккаунт успешно активирован. Вы можете войти в систему.')
+        return redirect('login')
+
+    return render(request, 'users/confirm.html')
 
 
 DIRECTOR_EMAIL = 'albygroup@bk.ru'

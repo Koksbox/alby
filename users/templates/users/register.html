@@ -63,6 +63,10 @@
                 {% endif %}
                 <div class="help-text">{{ form.password2.help_text }}</div>
             </div>
+            <div class="form-group checkbox-group">
+                {{ form.auto_confirm }}
+                <label for="{{ form.auto_confirm.id_for_label }}">{{ form.auto_confirm.label }}</label>
+            </div>
             <div class="error-container">
                 {% if form.non_field_errors %}
                 <div class="error-message">
@@ -270,6 +274,26 @@ html, body {
         font-size: 14px;
     }
 
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+    color: white;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    font-size: 14px;
+    cursor: pointer;
+}
 </style>
 
 <script>

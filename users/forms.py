@@ -17,6 +17,12 @@ from django.contrib.auth.models import User
 
 
 class CustomUserCreationForm(UserCreationForm):
+    auto_confirm = forms.BooleanField(
+        required=False,
+        label='Автоподтверждение (только для тестирования)',
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
     class Meta:
         model = CustomUser
         fields = ('email', 'full_name', 'phone_number', 'date_of_birth', 'password1', 'password2')

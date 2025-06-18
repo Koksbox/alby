@@ -1,7 +1,7 @@
 INFO 2025-05-28 08:39:14,983 autoreload 8912 5728 Watching for file changes with StatReloader
 INFO 2025-05-28 08:39:14,991 autoreload 3752 10680 Watching for file changes with StatReloader
-INFO 2025-05-28 08:42:16,456 autoreload 8912 5728 C:\Users\Ученик\Downloads\it\it\settings.py changed, reloading.
-INFO 2025-05-28 08:42:16,457 autoreload 3752 10680 C:\Users\Ученик\Downloads\it\it\settings.py changed, reloading.
+INFO 2025-05-28 08:42:16,456 autoreload 8912 5728 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\it\settings.py changed, reloading.
+INFO 2025-05-28 08:42:16,457 autoreload 3752 10680 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\it\settings.py changed, reloading.
 INFO 2025-05-28 08:42:17,220 autoreload 4424 9720 Watching for file changes with StatReloader
 INFO 2025-05-28 08:42:17,220 autoreload 296 7828 Watching for file changes with StatReloader
 INFO 2025-05-28 08:42:24,889 autoreload 9012 7736 Watching for file changes with StatReloader
@@ -189,7 +189,7 @@ INFO 2025-05-30 06:17:09,179 basehttp 9932 7172 "POST /register/ HTTP/1.1" 200 5
 INFO 2025-05-30 06:17:10,801 basehttp 9932 7172 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 06:17:11,704 basehttp 9932 7172 "GET /login/ HTTP/1.1" 200 4485
 INFO 2025-05-30 06:17:13,341 basehttp 9932 7172 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 06:19:02,385 autoreload 9932 960 C:\Users\Ученик\Downloads\it\users\forms.py changed, reloading.
+INFO 2025-05-30 06:19:02,385 autoreload 9932 960 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\users\forms.py changed, reloading.
 INFO 2025-05-30 06:19:03,077 autoreload 5272 10392 Watching for file changes with StatReloader
 INFO 2025-05-30 06:20:28,155 basehttp 5272 10680 "POST /login/ HTTP/1.1" 302 0
 INFO 2025-05-30 06:20:28,175 basehttp 5272 10680 "GET /director/ HTTP/1.1" 200 9961
@@ -214,9 +214,9 @@ ERROR 2025-05-30 06:30:19,320 basehttp 5272 9568 "GET /money/ HTTP/1.1" 500 1284
 INFO 2025-05-30 06:30:21,105 basehttp 5272 9568 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 06:30:25,185 basehttp 5272 9568 "GET /profile/ HTTP/1.1" 200 9917
 INFO 2025-05-30 06:30:25,405 basehttp 5272 9568 "GET /director/ HTTP/1.1" 200 9961
-INFO 2025-05-30 06:34:25,409 autoreload 5272 10392 C:\Users\Ученик\Downloads\it\users\views.py changed, reloading.
+INFO 2025-05-30 06:34:25,409 autoreload 5272 10392 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\users\views.py changed, reloading.
 INFO 2025-05-30 06:34:26,124 autoreload 6460 7548 Watching for file changes with StatReloader
-INFO 2025-05-30 06:34:34,115 autoreload 6460 7548 C:\Users\Ученик\Downloads\it\it\settings.py changed, reloading.
+INFO 2025-05-30 06:34:34,115 autoreload 6460 7548 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\it\settings.py changed, reloading.
 INFO 2025-05-30 06:34:34,776 autoreload 1280 10140 Watching for file changes with StatReloader
 INFO 2025-05-30 06:38:29,627 basehttp 1280 3044 "GET /logout/ HTTP/1.1" 200 2457
 WARNING 2025-05-30 06:38:29,689 basehttp 1280 3044 "GET /static/css/styles.css HTTP/1.1" 404 1856
@@ -337,9 +337,9 @@ INFO 2025-05-30 07:02:26,807 basehttp 10776 3752 "GET /director/ HTTP/1.1" 200 9
 INFO 2025-05-30 07:02:28,455 basehttp 10776 3752 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 07:02:29,200 basehttp 10776 3752 "GET /director/employee_director/ HTTP/1.1" 200 9416
 INFO 2025-05-30 07:02:30,823 basehttp 10776 3752 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 07:08:36,174 autoreload 10776 1664 C:\Users\Ученик\Downloads\it\director\views.py changed, reloading.
+INFO 2025-05-30 07:08:36,174 autoreload 10776 1664 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\views.py changed, reloading.
 INFO 2025-05-30 07:08:36,854 autoreload 6376 6156 Watching for file changes with StatReloader
-INFO 2025-05-30 07:08:41,621 autoreload 6376 6156 C:\Users\Ученик\Downloads\it\director\urls.py changed, reloading.
+INFO 2025-05-30 07:08:41,621 autoreload 6376 6156 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\urls.py changed, reloading.
 INFO 2025-05-30 07:08:42,422 autoreload 8580 9924 Watching for file changes with StatReloader
 INFO 2025-05-30 07:09:04,556 basehttp 8580 5232 "GET /director/employee_director/ HTTP/1.1" 200 9644
 INFO 2025-05-30 07:09:06,134 basehttp 8580 5232 "GET /sw.js HTTP/1.1" 200 1081
@@ -366,9 +366,9 @@ INFO 2025-05-30 07:10:30,623 basehttp 8580 5232 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 07:10:31,113 basehttp 8580 5232 "GET /director/employee/1/shifts/ HTTP/1.1" 302 0
 INFO 2025-05-30 07:10:31,118 basehttp 8580 5232 "GET /login/?next=/director/employee/1/shifts/ HTTP/1.1" 200 4485
 INFO 2025-05-30 07:10:32,769 basehttp 8580 5232 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 07:11:40,616 autoreload 8580 9924 C:\Users\Ученик\Downloads\it\director\views.py changed, reloading.
+INFO 2025-05-30 07:11:40,616 autoreload 8580 9924 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\views.py changed, reloading.
 INFO 2025-05-30 07:11:41,391 autoreload 6400 7172 Watching for file changes with StatReloader
-INFO 2025-05-30 07:11:45,103 autoreload 6400 7172 C:\Users\Ученик\Downloads\it\director\urls.py changed, reloading.
+INFO 2025-05-30 07:11:45,103 autoreload 6400 7172 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\urls.py changed, reloading.
 INFO 2025-05-30 07:11:45,769 autoreload 1644 4652 Watching for file changes with StatReloader
 INFO 2025-05-30 07:12:21,073 basehttp 1644 7016 "GET /login/?next=/director/employee/1/shifts/ HTTP/1.1" 200 4485
 INFO 2025-05-30 07:12:22,214 basehttp 1644 7016 "POST /login/?next=/director/employee/1/shifts/ HTTP/1.1" 302 0
@@ -385,12 +385,12 @@ INFO 2025-05-30 07:12:27,784 basehttp 1644 7016 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 07:12:28,837 basehttp 1644 7016 "GET /director/employee_director/ HTTP/1.1" 200 9653
 INFO 2025-05-30 07:12:28,964 basehttp 1644 7016 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 07:12:30,449 basehttp 1644 7016 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 07:13:17,424 autoreload 1644 4652 C:\Users\Ученик\Downloads\it\director\views.py changed, reloading.
+INFO 2025-05-30 07:13:17,424 autoreload 1644 4652 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\views.py changed, reloading.
 INFO 2025-05-30 07:13:18,158 autoreload 2068 9060 Watching for file changes with StatReloader
 WARNING 2025-05-30 07:14:24,874 basehttp 2068 9724 "GET /favicon.ico HTTP/1.1" 404 12200
 ERROR 2025-05-30 07:19:33,168 basehttp 2068 7956 "GET /director/employee/1/shifts/ HTTP/1.1" 500 68416
 INFO 2025-05-30 07:19:34,832 basehttp 2068 7956 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 07:20:24,995 autoreload 2068 9060 C:\Users\Ученик\Downloads\it\director\urls.py changed, reloading.
+INFO 2025-05-30 07:20:24,995 autoreload 2068 9060 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\urls.py changed, reloading.
 INFO 2025-05-30 07:20:25,674 autoreload 12236 8992 Watching for file changes with StatReloader
 INFO 2025-05-30 07:20:25,993 basehttp 12236 3548 "GET /director/employee_director/ HTTP/1.1" 200 9653
 INFO 2025-05-30 07:20:26,878 basehttp 12236 3548 "GET /director/employee_director/ HTTP/1.1" 200 9653
@@ -398,9 +398,9 @@ WARNING 2025-05-30 07:20:28,295 basehttp 12236 3548 "GET /director/employee/1/sh
 INFO 2025-05-30 07:20:28,461 basehttp 12236 3548 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 07:20:29,889 basehttp 12236 3548 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 07:20:31,937 basehttp 12236 3548 "GET /director/employee_director/ HTTP/1.1" 200 9653
-INFO 2025-05-30 07:22:33,371 autoreload 12236 8992 C:\Users\Ученик\Downloads\it\director\urls.py changed, reloading.
+INFO 2025-05-30 07:22:33,371 autoreload 12236 8992 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\urls.py changed, reloading.
 INFO 2025-05-30 07:22:34,095 autoreload 9808 11356 Watching for file changes with StatReloader
-INFO 2025-05-30 07:23:31,437 autoreload 9808 11356 C:\Users\Ученик\Downloads\it\director\views.py changed, reloading.
+INFO 2025-05-30 07:23:31,437 autoreload 9808 11356 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\views.py changed, reloading.
 INFO 2025-05-30 07:23:32,094 autoreload 3972 8280 Watching for file changes with StatReloader
 INFO 2025-05-30 07:25:12,928 basehttp 3972 11032 "GET /director/employee_director/ HTTP/1.1" 200 9653
 ERROR 2025-05-30 07:25:14,484 basehttp 3972 11032 "GET /director/employee/shifts/1/ HTTP/1.1" 500 68408
@@ -412,13 +412,13 @@ INFO 2025-05-30 07:25:31,489 basehttp 3972 11032 "GET /director/employee_directo
 ERROR 2025-05-30 07:25:32,970 basehttp 3972 11032 "GET /director/employee/shifts/1/ HTTP/1.1" 500 68408
 INFO 2025-05-30 07:25:33,083 basehttp 3972 11032 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 07:25:34,603 basehttp 3972 11032 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 07:25:53,201 autoreload 3972 8280 C:\Users\Ученик\Downloads\it\director\views.py changed, reloading.
+INFO 2025-05-30 07:25:53,201 autoreload 3972 8280 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\views.py changed, reloading.
 INFO 2025-05-30 07:25:53,875 autoreload 1804 7564 Watching for file changes with StatReloader
 INFO 2025-05-30 07:26:07,220 basehttp 1804 1608 "GET /director/employee_director/ HTTP/1.1" 200 9653
 INFO 2025-05-30 07:26:08,804 basehttp 1804 1608 "GET /sw.js HTTP/1.1" 200 1081
 ERROR 2025-05-30 07:26:08,970 basehttp 1804 1608 "GET /director/employee/shifts/1/ HTTP/1.1" 500 151757
 INFO 2025-05-30 07:26:10,659 basehttp 1804 1608 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 07:26:51,568 autoreload 1804 7564 C:\Users\Ученик\Downloads\it\users\templatetags\custom_filters.py changed, reloading.
+INFO 2025-05-30 07:26:51,568 autoreload 1804 7564 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\users\templatetags\custom_filters.py changed, reloading.
 INFO 2025-05-30 07:26:52,250 autoreload 11876 1792 Watching for file changes with StatReloader
 INFO 2025-05-30 07:27:14,498 basehttp 11876 11996 "GET /director/employee_director/ HTTP/1.1" 200 9653
 INFO 2025-05-30 07:27:16,052 basehttp 11876 11996 "GET /sw.js HTTP/1.1" 200 1081
@@ -501,7 +501,7 @@ INFO 2025-05-30 07:38:03,313 basehttp 11876 1092 "GET /director/employee_directo
 INFO 2025-05-30 07:38:04,498 basehttp 11876 1092 "GET /director/employee_director/ HTTP/1.1" 200 9570
 INFO 2025-05-30 07:38:04,886 basehttp 11876 1092 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 07:38:06,074 basehttp 11876 1092 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 07:39:16,441 autoreload 11876 1792 C:\Users\Ученик\Downloads\it\director\views.py changed, reloading.
+INFO 2025-05-30 07:39:16,441 autoreload 11876 1792 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\views.py changed, reloading.
 INFO 2025-05-30 07:39:17,113 autoreload 10992 8036 Watching for file changes with StatReloader
 INFO 2025-05-30 07:39:45,487 basehttp 10992 268 "GET /director/employee_director/ HTTP/1.1" 200 9341
 INFO 2025-05-30 07:39:47,054 basehttp 10992 268 "GET /sw.js HTTP/1.1" 200 1081
@@ -513,7 +513,7 @@ INFO 2025-05-30 07:39:53,490 basehttp 10992 268 "GET /director/employee_director
 INFO 2025-05-30 07:39:55,065 basehttp 10992 268 "GET /director/employee_director/?sort_by=name HTTP/1.1" 200 9341
 INFO 2025-05-30 07:39:55,110 basehttp 10992 268 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 07:39:56,673 basehttp 10992 268 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 07:40:46,151 autoreload 10992 8036 C:\Users\Ученик\Downloads\it\director\views.py changed, reloading.
+INFO 2025-05-30 07:40:46,151 autoreload 10992 8036 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\views.py changed, reloading.
 INFO 2025-05-30 07:40:46,824 autoreload 6112 10624 Watching for file changes with StatReloader
 INFO 2025-05-30 07:41:05,678 basehttp 6112 9152 "GET /director/employee_director/?sort_by=name HTTP/1.1" 200 9446
 INFO 2025-05-30 07:41:07,258 basehttp 6112 9152 "GET /sw.js HTTP/1.1" 200 1081
@@ -521,7 +521,7 @@ INFO 2025-05-30 07:41:08,584 basehttp 6112 9152 "GET /director/employee_director
 INFO 2025-05-30 07:41:10,041 basehttp 6112 9152 "GET /director/employee_director/?sort_by=name_desc HTTP/1.1" 200 9452
 INFO 2025-05-30 07:41:10,182 basehttp 6112 9152 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 07:41:11,653 basehttp 6112 9152 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 07:41:40,214 autoreload 6112 10624 C:\Users\Ученик\Downloads\it\director\views.py changed, reloading.
+INFO 2025-05-30 07:41:40,214 autoreload 6112 10624 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\views.py changed, reloading.
 INFO 2025-05-30 07:41:40,885 autoreload 4464 11664 Watching for file changes with StatReloader
 INFO 2025-05-30 07:41:53,762 basehttp 4464 1084 "GET /director/employee_director/?sort_by=name_desc HTTP/1.1" 200 9224
 INFO 2025-05-30 07:41:55,358 basehttp 4464 1084 "GET /sw.js HTTP/1.1" 200 1081
@@ -578,9 +578,9 @@ INFO 2025-05-30 07:44:35,250 basehttp 4464 1084 "GET /director/employee_director
 INFO 2025-05-30 07:44:36,868 basehttp 4464 1084 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 07:44:40,593 basehttp 4464 1084 "GET /director/employee_manager/ HTTP/1.1" 200 8754
 INFO 2025-05-30 07:44:42,222 basehttp 4464 1084 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 07:45:32,389 autoreload 4464 11664 C:\Users\Ученик\Downloads\it\director\views.py changed, reloading.
+INFO 2025-05-30 07:45:32,389 autoreload 4464 11664 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\views.py changed, reloading.
 INFO 2025-05-30 07:45:33,094 autoreload 8888 11952 Watching for file changes with StatReloader
-INFO 2025-05-30 07:45:37,891 autoreload 8888 11952 C:\Users\Ученик\Downloads\it\director\urls.py changed, reloading.
+INFO 2025-05-30 07:45:37,891 autoreload 8888 11952 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\urls.py changed, reloading.
 INFO 2025-05-30 07:45:38,597 autoreload 12040 9932 Watching for file changes with StatReloader
 INFO 2025-05-30 07:46:21,552 basehttp 12040 11684 "GET /director/employee_manager/ HTTP/1.1" 200 8807
 INFO 2025-05-30 07:46:23,133 basehttp 12040 11684 "GET /sw.js HTTP/1.1" 200 1081
@@ -663,9 +663,9 @@ INFO 2025-05-30 08:21:33,219 basehttp 2072 5792 "GET /director/employee_manager/
 INFO 2025-05-30 08:21:34,768 basehttp 2072 5792 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 08:22:09,634 basehttp 2072 5792 "GET /director/employee_director/ HTTP/1.1" 200 9901
 INFO 2025-05-30 08:22:11,183 basehttp 2072 5792 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 08:23:02,156 autoreload 2072 8576 C:\Users\Ученик\Downloads\it\director\views.py changed, reloading.
+INFO 2025-05-30 08:23:02,156 autoreload 2072 8576 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\views.py changed, reloading.
 INFO 2025-05-30 08:23:02,865 autoreload 1856 9520 Watching for file changes with StatReloader
-INFO 2025-05-30 08:23:07,665 autoreload 1856 9520 C:\Users\Ученик\Downloads\it\director\urls.py changed, reloading.
+INFO 2025-05-30 08:23:07,665 autoreload 1856 9520 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\urls.py changed, reloading.
 INFO 2025-05-30 08:23:08,321 autoreload 3112 2964 Watching for file changes with StatReloader
 INFO 2025-05-30 08:26:06,698 basehttp 3112 7000 "GET /director/employee_director/ HTTP/1.1" 200 9901
 INFO 2025-05-30 08:26:07,981 basehttp 3112 7000 "GET /director/employee_manager/ HTTP/1.1" 200 8694
@@ -685,7 +685,7 @@ INFO 2025-05-30 08:31:47,818 basehttp 3112 6956 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 08:31:49,196 basehttp 3112 6956 "GET /sw.js HTTP/1.1" 200 1081
 ERROR 2025-05-30 08:31:50,227 basehttp 3112 6956 "GET /manager/upload/ HTTP/1.1" 500 67872
 INFO 2025-05-30 08:31:51,850 basehttp 3112 6956 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 08:32:25,668 autoreload 3112 2964 C:\Users\Ученик\Downloads\it\manager2\views.py changed, reloading.
+INFO 2025-05-30 08:32:25,668 autoreload 3112 2964 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\manager2\views.py changed, reloading.
 INFO 2025-05-30 08:32:26,394 autoreload 6780 3312 Watching for file changes with StatReloader
 INFO 2025-05-30 08:34:38,382 basehttp 6780 5864 "GET /manager/profile_manager HTTP/1.1" 200 9872
 INFO 2025-05-30 08:34:38,688 basehttp 6780 5864 "GET /manager/profile_manager HTTP/1.1" 200 9872
@@ -734,7 +734,7 @@ INFO 2025-05-30 08:35:31,996 basehttp 6780 868 "GET /director/employee_manager/ 
 ERROR 2025-05-30 08:35:33,242 basehttp 6780 868 "GET /director/manager_shifts/3/ HTTP/1.1" 500 73288
 INFO 2025-05-30 08:35:33,539 basehttp 6780 868 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 08:35:35,158 basehttp 6780 868 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 08:36:11,294 autoreload 6780 3312 C:\Users\Ученик\Downloads\it\director\views.py changed, reloading.
+INFO 2025-05-30 08:36:11,294 autoreload 6780 3312 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\director\views.py changed, reloading.
 INFO 2025-05-30 08:36:12,039 autoreload 6112 9428 Watching for file changes with StatReloader
 INFO 2025-05-30 08:36:50,766 basehttp 6112 5252 "GET /director/manager_shifts/3/ HTTP/1.1" 200 9537
 INFO 2025-05-30 08:36:52,371 basehttp 6112 5252 "GET /sw.js HTTP/1.1" 200 1081
@@ -763,23 +763,23 @@ INFO 2025-05-30 08:40:50,003 basehttp 6112 11896 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 08:41:28,309 basehttp 6112 5528 "GET /manager/employee/ HTTP/1.1" 200 10308
 INFO 2025-05-30 08:41:29,932 basehttp 6112 5528 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 08:41:32,701 basehttp 6112 5528 "GET /manager/employee/ HTTP/1.1" 200 10308
-INFO 2025-05-30 08:42:46,187 autoreload 6112 9428 C:\Users\Ученик\Downloads\it\manager2\urls.py changed, reloading.
+INFO 2025-05-30 08:42:46,187 autoreload 6112 9428 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\manager2\urls.py changed, reloading.
 INFO 2025-05-30 08:42:46,901 autoreload 2460 10252 Watching for file changes with StatReloader
-INFO 2025-05-30 08:42:56,857 autoreload 2460 10252 C:\Users\Ученик\Downloads\it\manager2\views.py changed, reloading.
+INFO 2025-05-30 08:42:56,857 autoreload 2460 10252 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\manager2\views.py changed, reloading.
 INFO 2025-05-30 08:42:57,599 autoreload 9648 2684 Watching for file changes with StatReloader
 INFO 2025-05-30 08:43:18,149 basehttp 9648 10304 "GET /manager/employee/ HTTP/1.1" 200 10673
 INFO 2025-05-30 08:43:19,773 basehttp 9648 10304 "GET /sw.js HTTP/1.1" 200 1081
 ERROR 2025-05-30 08:43:19,848 basehttp 9648 10304 "GET /manager/employee_shifts/1/ HTTP/1.1" 500 67374
 INFO 2025-05-30 08:43:21,522 basehttp 9648 10304 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 08:45:04,386 autoreload 9648 2684 C:\Users\Ученик\Downloads\it\manager2\views.py changed, reloading.
+INFO 2025-05-30 08:45:04,386 autoreload 9648 2684 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\manager2\views.py changed, reloading.
 INFO 2025-05-30 08:45:06,496 autoreload 10812 7476 Watching for file changes with StatReloader
-INFO 2025-05-30 08:45:35,543 autoreload 10812 7476 C:\Users\Ученик\Downloads\it\manager2\views.py changed, reloading.
+INFO 2025-05-30 08:45:35,543 autoreload 10812 7476 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\manager2\views.py changed, reloading.
 INFO 2025-05-30 08:45:36,289 autoreload 8732 7236 Watching for file changes with StatReloader
-INFO 2025-05-30 08:46:04,322 autoreload 8732 7236 C:\Users\Ученик\Downloads\it\manager2\views.py changed, reloading.
+INFO 2025-05-30 08:46:04,322 autoreload 8732 7236 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\manager2\views.py changed, reloading.
 INFO 2025-05-30 08:46:05,047 autoreload 11476 11876 Watching for file changes with StatReloader
-INFO 2025-05-30 08:46:14,274 autoreload 11476 11876 C:\Users\Ученик\Downloads\it\manager2\views.py changed, reloading.
+INFO 2025-05-30 08:46:14,274 autoreload 11476 11876 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\manager2\views.py changed, reloading.
 INFO 2025-05-30 08:46:14,960 autoreload 5068 284 Watching for file changes with StatReloader
-INFO 2025-05-30 08:46:25,342 autoreload 5068 284 C:\Users\Ученик\Downloads\it\manager2\views.py changed, reloading.
+INFO 2025-05-30 08:46:25,342 autoreload 5068 284 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\manager2\views.py changed, reloading.
 INFO 2025-05-30 08:46:26,042 autoreload 9420 4548 Watching for file changes with StatReloader
 INFO 2025-05-30 08:47:01,284 basehttp 9420 10632 "GET /manager/employee_shifts/1/ HTTP/1.1" 200 8545
 INFO 2025-05-30 08:47:03,112 basehttp 9420 10632 "GET /sw.js HTTP/1.1" 200 1081
@@ -873,7 +873,7 @@ INFO 2025-05-30 08:59:39,476 basehttp 9420 6728 "GET /manager/history/ HTTP/1.1"
 INFO 2025-05-30 08:59:41,129 basehttp 9420 6728 "GET /sw.js HTTP/1.1" 200 1081
 ERROR 2025-05-30 09:00:02,294 basehttp 9420 6728 "GET /manager/history/ HTTP/1.1" 500 147215
 INFO 2025-05-30 09:00:04,046 basehttp 9420 6728 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 09:00:59,606 autoreload 9420 4548 C:\Users\Ученик\Downloads\it\manager2\views.py changed, reloading.
+INFO 2025-05-30 09:00:59,606 autoreload 9420 4548 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\manager2\views.py changed, reloading.
 INFO 2025-05-30 09:01:00,479 autoreload 11796 6976 Watching for file changes with StatReloader
 INFO 2025-05-30 09:02:46,266 basehttp 11796 10736 "GET /manager/history/ HTTP/1.1" 200 8370
 INFO 2025-05-30 09:02:47,867 basehttp 11796 10736 "GET /sw.js HTTP/1.1" 200 1081
@@ -892,7 +892,7 @@ INFO 2025-05-30 09:03:11,362 basehttp 11796 1284 "GET /profile/ HTTP/1.1" 200 10
 INFO 2025-05-30 09:03:13,000 basehttp 11796 1284 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-05-30 09:03:13,313 basehttp 11796 1284 "GET /money/ HTTP/1.1" 200 9584
 INFO 2025-05-30 09:03:14,948 basehttp 11796 1284 "GET /sw.js HTTP/1.1" 200 1081
-INFO 2025-05-30 09:04:38,509 autoreload 11796 6976 C:\Users\Ученик\Downloads\it\users\views.py changed, reloading.
+INFO 2025-05-30 09:04:38,509 autoreload 11796 6976 C:\Users\пїЅпїЅпїЅпїЅпїЅпїЅ\Downloads\it\users\views.py changed, reloading.
 INFO 2025-05-30 09:04:39,226 autoreload 8692 12032 Watching for file changes with StatReloader
 INFO 2025-05-30 09:05:40,333 basehttp 8692 7232 "GET /money/ HTTP/1.1" 200 10270
 INFO 2025-05-30 09:05:41,922 basehttp 8692 7232 "GET /sw.js HTTP/1.1" 200 1081
@@ -6653,3 +6653,16 @@ INFO 2025-06-18 10:55:03,825 basehttp 13120 7400 "GET /sw.js HTTP/1.1" 200 1081
 INFO 2025-06-18 10:55:12,032 basehttp 13120 7400 "POST /register/ HTTP/1.1" 302 0
 INFO 2025-06-18 10:55:12,046 basehttp 13120 7400 "GET /login/ HTTP/1.1" 200 6447
 INFO 2025-06-18 10:55:13,705 basehttp 13120 7400 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-18 10:55:43,168 basehttp 13120 7400 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-18 11:04:30,738 autoreload 1276 13340 Watching for file changes with StatReloader
+WARNING 2025-06-18 11:04:32,132 basehttp 1276 8276 "GET /static/css/style.css HTTP/1.1" 404 179
+WARNING 2025-06-18 11:04:32,140 basehttp 1276 7512 "GET /static/js/service.js HTTP/1.1" 404 179
+WARNING 2025-06-18 11:04:32,187 basehttp 1276 10460 "GET /static/manifest.json HTTP/1.1" 404 179
+INFO 2025-06-18 11:04:33,746 basehttp 1276 7512 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-18 11:04:34,601 basehttp 1276 7512 "GET /register/ HTTP/1.1" 200 7218
+INFO 2025-06-18 11:04:36,208 basehttp 1276 7512 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-18 11:04:45,045 basehttp 1276 7512 "POST /register/ HTTP/1.1" 200 7521
+INFO 2025-06-18 11:04:46,626 basehttp 1276 7512 "GET /sw.js HTTP/1.1" 200 1081
+INFO 2025-06-18 11:05:02,374 basehttp 1276 7512 "POST /register/ HTTP/1.1" 302 0
+INFO 2025-06-18 11:05:02,388 basehttp 1276 7512 "GET /login/ HTTP/1.1" 200 6447
+INFO 2025-06-18 11:05:03,948 basehttp 1276 7512 "GET /sw.js HTTP/1.1" 200 1081

@@ -39,16 +39,57 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_active = True  # Сразу делаем аккаунт активным
-            user.save()
+            auto_confirm = form.cleaned_data.get('auto_confirm', False)
+            
+            if auto_confirm:
+                # Если включено автоподтверждение
+                user.is_active = True
+                user.save()
+                messages.success(request, 'Регистрация успешно завершена. Теперь вы можете войти в систему.')
+                return redirect('login')
+            else:
+                # Стандартная процедура с подтверждением по email
+                user.is_active = False
+                user.confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+                user.save()
 
-            email = form.cleaned_data.get('email')
-            if not email:
-                messages.error(request, 'Email не может быть пустым')
-                return render(request, 'users/register.html', {'form': form})
+                email = form.cleaned_data.get('email')
+                if not email:
+                    messages.error(request, 'Email не может быть пустым')
+                    return render(request, 'users/register.html', {'form': form})
 
-            messages.success(request, 'Регистрация успешно завершена. Теперь вы можете войти в систему.')
-            return redirect('login')
+                # Отправка кода на почту
+                try:
+                    subject = 'Код подтверждения регистрации'
+                    message = f'Ваш код подтверждения: {user.confirmation_code}'
+                    from_email = settings.DEFAULT_FROM_EMAIL
+                    recipient_list = [email]
+
+                    if not from_email:
+                        raise ValueError('DEFAULT_FROM_EMAIL не настроен в settings.py')
+
+                    print("[DEBUG] Пытаемся отправить письмо...")
+                    send_mail(
+                        subject,
+                        message,
+                        from_email,
+                        recipient_list,
+                        fail_silently=False,
+                    )
+                    print('[DEBUG] Письмо успешно отправлено!')
+
+                    messages.success(request,
+                                     'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации.')
+                    print("[DEBUG] Редиректим на confirm")
+                    return redirect('confirm')
+
+                except Exception as e:
+                    print(f"[EMAIL ERROR]: {str(e)}")
+                    print(f"[DEBUG] Traceback: {traceback.format_exc()}")
+                    logger.error(f"Ошибка при отправке email: {e}", exc_info=True)
+                    messages.error(request,
+                                   'Не удалось отправить письмо. Пожалуйста, проверьте правильность email адреса и попробуйте позже.')
+                    return render(request, 'users/register.html', {'form': form})
 
     else:
         form = CustomUserCreationForm()

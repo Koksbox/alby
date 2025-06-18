@@ -114,8 +114,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     @property
     def average_rating(self):
         """Вычисляет средний рейтинг пользователя."""
-        from manager2.models import TaskReview
-        reviews = TaskReview.objects.filter(user=self, rating__isnull=False)
+        reviews = self.reviews_user.filter(rating__isnull=False)
         if not reviews.exists():
             return 0.0
         return round(sum(review.rating for review in reviews) / reviews.count(), 1)

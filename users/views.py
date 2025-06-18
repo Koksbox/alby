@@ -75,50 +75,33 @@ def register(request):
 
     return render(request, 'users/register.html', {'form': form})
 
+
 from .models import User, PrizeHistory, TimeEntry, CustomUser  # Импортируем вашу модель пользователя
 
 def confirm_registration(request):
-    email = request.session.get('email_for_confirmation')
-    if not email:
-        messages.error(request, "Нет email для подтверждения. Пожалуйста, зарегистрируйтесь заново.")
-        return redirect('register')
-
-    user = CustomUser.objects.filter(email=email, is_active=False).first()
-    if not user:
-        messages.error(request, "Пользователь не найден или уже активирован.")
-        return redirect('register')
-
-    # Автоматическое подтверждение при включенном DEBUG режиме
-    if settings.DEBUG:
-        user.is_active = True
-        user.confirmation_code = ''
-        user.confirmation_sent_at = None
-        user.save()
-        del request.session['email_for_confirmation']
-        return redirect('login')
-
     if request.method == 'POST':
-        input_code = request.POST.get('confirmation_code', '').strip().upper()
+        confirmation_code = request.POST.get('confirmation_code')
 
-        # Проверяем срок действия кода (5 минут)
-        time_diff = timezone.now() - user.confirmation_sent_at
-        if time_diff.total_seconds() > 5 * 60:
-            messages.error(request, "Срок действия кода истек. Пожалуйста, зарегистрируйтесь заново.")
-            user.delete()
-            return redirect('register')
-
-        if user.confirmation_code == input_code:
-            user.is_active = True
-            user.confirmation_code = ''
-            user.confirmation_sent_at = None
-            user.save()
-            messages.success(request, "Регистрация подтверждена! Теперь вы можете войти.")
-            # Очистим email из сессии
-            del request.session['email_for_confirmation']
-            return redirect('login')
-        else:
-            messages.error(request, "Неверный код подтверждения.")
+        if not confirmation_code:
+            messages.error(request, 'Код подтверждения не может быть пустым.')
             return render(request, 'users/confirm.html')
+
+        try:
+            user = User.objects.get(confirmation_code=confirmation_code)
+        except User.DoesNotExist:
+            messages.error(request, 'Неверный код подтверждения.\n Пожалуйста, проверьте и введите правильный код.')
+            return render(request, 'users/confirm.html')
+
+        if user.is_active:
+            messages.info(request, 'Ваш аккаунт уже активирован.')
+            return render(request, 'users/confirm.html')
+
+        # Если код подтверждения корректный
+        user.is_active = True
+        user.save()
+        logout(request)
+        messages.success(request, 'Аккаунт успешно активирован. Вы можете войти в систему.')
+        return redirect('login')
 
     return render(request, 'users/confirm.html')
 

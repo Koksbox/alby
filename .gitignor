@@ -1,0 +1,4 @@
+.idea/
+logs/
+db.sqlite3
+.venv/

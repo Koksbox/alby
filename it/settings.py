@@ -141,12 +141,12 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 2525
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'ozodbekhh2007@gmail.com'
-EMAIL_HOST_PASSWORD = 'rfmbdbbiimfghxom'  # ← Уберите пробелы!
-DEFAULT_FROM_EMAIL = 'ozodbekhh2007@gmail.com'
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'mynam97@mail.ru'
+EMAIL_HOST_PASSWORD = 'Xd9o4TWzKuhnVtEekWBQ'
 
 import logging
 logging.basicConfig(level=logging.DEBUG)

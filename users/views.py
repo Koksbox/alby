@@ -39,8 +39,7 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_active = False
-            user.confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            user.is_active = True  # Сразу делаем аккаунт активным
             user.save()
 
             email = form.cleaned_data.get('email')
@@ -48,38 +47,8 @@ def register(request):
                 messages.error(request, 'Email не может быть пустым')
                 return render(request, 'users/register.html', {'form': form})
 
-            # Отправка кода на почту
-            try:
-                subject = 'Код подтверждения регистрации'
-                message = f'Ваш код подтверждения: {user.confirmation_code}'
-                from_email = settings.DEFAULT_FROM_EMAIL
-                recipient_list = [email]
-
-                if not from_email:
-                    raise ValueError('DEFAULT_FROM_EMAIL не настроен в settings.py')
-
-                print("[DEBUG] Пытаемся отправить письмо...")
-                send_mail(
-                    subject,
-                    message,
-                    from_email,
-                    recipient_list,
-                    fail_silently=False,
-                )
-                print('[DEBUG] Письмо успешно отправлено!')
-
-                messages.success(request,
-                                 'Код подтверждения отправлен на вашу почту. Введите его для завершения регистрации.')
-                print("[DEBUG] Редиректим на confirm")
-                return redirect('confirm')
-
-            except Exception as e:
-                print(f"[EMAIL ERROR]: {str(e)}")
-                print(f"[DEBUG] Traceback: {traceback.format_exc()}")
-                logger.error(f"Ошибка при отправке email: {e}", exc_info=True)
-                messages.error(request,
-                               'Не удалось отправить письмо. Пожалуйста, проверьте правильность email адреса и попробуйте позже.')
-                return render(request, 'users/register.html', {'form': form})
+            messages.success(request, 'Регистрация успешно завершена. Теперь вы можете войти в систему.')
+            return redirect('login')
 
     else:
         form = CustomUserCreationForm()
@@ -90,31 +59,8 @@ def register(request):
 from .models import User, PrizeHistory, TimeEntry, CustomUser  # Импортируем вашу модель пользователя
 
 def confirm_registration(request):
-    if request.method == 'POST':
-        confirmation_code = request.POST.get('confirmation_code')
-
-        if not confirmation_code:
-            messages.error(request, 'Код подтверждения не может быть пустым.')
-            return render(request, 'users/confirm.html')
-
-        try:
-            user = User.objects.get(confirmation_code=confirmation_code)
-        except User.DoesNotExist:
-            messages.error(request, 'Неверный код подтверждения.\n Пожалуйста, проверьте и введите правильный код.')
-            return render(request, 'users/confirm.html')
-
-        if user.is_active:
-            messages.info(request, 'Ваш аккаунт уже активирован.')
-            return render(request, 'users/confirm.html')
-
-        # Если код подтверждения корректный
-        user.is_active = True
-        user.save()
-        logout(request)
-        messages.success(request, 'Аккаунт успешно активирован. Вы можете войти в систему.')
-        return redirect('login')
-
-    return render(request, 'users/confirm.html')
+    messages.info(request, 'Подтверждение email отключено для тестирования. Пожалуйста, войдите в систему.')
+    return redirect('login')
 
 
 DIRECTOR_EMAIL = 'albygroup@bk.ru'

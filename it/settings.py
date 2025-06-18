@@ -140,18 +140,13 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# EMAIL------------------------------------------------
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    DEFAULT_FROM_EMAIL = 'ozodbekhh2007@gmail.com'
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = 'ozodbekhh2007@gmail.com'
-    EMAIL_HOST_PASSWORD = 'rfmb dbbi imfg hxom'  # App password for Gmail
-    DEFAULT_FROM_EMAIL = 'ozodbekhh2007@gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ozodbekhh2007@gmail.com'
+EMAIL_HOST_PASSWORD = 'rfmbdbbiimfghxom'  # ← Уберите пробелы!
+DEFAULT_FROM_EMAIL = 'ozodbekhh2007@gmail.com'
 
 import logging
 logging.basicConfig(level=logging.DEBUG)

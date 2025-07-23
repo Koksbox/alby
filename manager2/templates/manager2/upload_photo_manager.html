@@ -20,7 +20,7 @@
 
             <!-- Поле для выбора фото -->
             <label for="fileInput">Выберите фото:</label>
-            <input type="file" id="fileInput" name="photo" multiple accept="image/*" class="form-control mb-3">
+            <input type="file" id="fileInput" name="photo" multiple accept="image/*" class="form-control mb-3" required>
 
             <div class="text-container">
                 <div class="wrapper">
@@ -34,6 +34,18 @@
                 <!-- Кнопка отправки -->
                 <input type="submit" value="Загрузить макет" class="btnn">
             </div>
+            <script>
+            document.getElementById('uploadForm').addEventListener('submit', function(e) {
+                var fileInput = document.getElementById('fileInput');
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    fileInput.setCustomValidity('Пожалуйста, выберите файл для загрузки!');
+                    fileInput.reportValidity();
+                    e.preventDefault();
+                } else {
+                    fileInput.setCustomValidity('');
+                }
+            });
+            </script>
         </form>
     </div>
 </main>

@@ -359,6 +359,8 @@ def refactor_profile(request):
 
 
 def startapp(request):
+    from users.models import TimeEntry
+    TimeEntry.auto_stop_long_shifts()
     # Получаем активную задачу пользователя
     active_task = Task.objects.filter(
         submitted_by__id=request.user.id,
@@ -619,6 +621,8 @@ def stop_timer1(request):
 
 
 def toggle_timer(request):
+    from users.models import TimeEntry
+    TimeEntry.auto_stop_long_shifts()
     if request.method == 'POST':
         user = request.user
         if not user.is_authenticated:
@@ -656,6 +660,8 @@ def toggle_timer(request):
 
 
 def money(request):
+    from users.models import TimeEntry
+    TimeEntry.auto_stop_long_shifts()
     # Получаем все записи TimeEntry для текущего пользователя
     time_entries_task = TimeEntry.objects.filter(user=request.user, end_time__isnull=False, timer_type='task')
     # Получаем только ЗАВЕРШЕННЫЕ смены

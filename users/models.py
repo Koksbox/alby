@@ -316,6 +316,18 @@ class TimeEntry(models.Model):
 
         return dict(salaries_by_user)
 
+    @classmethod
+    def auto_stop_long_shifts(cls):
+        from django.utils import timezone
+        twelve_hours = 12 * 3600
+        now = timezone.now()
+        entries = cls.objects.filter(timer_type='shift', end_time__isnull=True)
+        for entry in entries:
+            elapsed = (now - entry.start_time).total_seconds()
+            if elapsed > twelve_hours:
+                entry.end_time = entry.start_time + timezone.timedelta(seconds=twelve_hours)
+                entry.save()
+
 class PrizeHistory(models.Model):
     """Модель для истории премий."""
     user = models.ForeignKey(

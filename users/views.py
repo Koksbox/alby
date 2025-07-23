@@ -384,7 +384,7 @@ def start_timer(request, task_id):
 
     if user not in task.submitted_by.all():
         messages.warning(request, 'Вы не назначены на эту задачу.')
-        return redirect('select_task')
+        return redirect('select_task', photo_id=task.photo.id if hasattr(task, 'photo') and task.photo else 0)
 
     active_time_entry = TimeEntry.objects.filter(user=user, task=task, end_time__isnull=True).first()
     if active_time_entry:
@@ -408,7 +408,7 @@ def stop_timer(request, task_id):
 
     if user not in task.submitted_by.all():
         messages.warning(request, 'Вы не назначены на эту задачу.')
-        return redirect('select_task')
+        return redirect('select_task', photo_id=task.photo.id if hasattr(task, 'photo') and task.photo else 0)
 
     active_time_entry = TimeEntry.objects.filter(user=user, task=task, end_time__isnull=True).first()
     if active_time_entry:
@@ -427,6 +427,18 @@ def select_task(request, photo_id=None):
     current_user = request.user
     selected_task = None
     message = None
+
+    # Обработка выбора задачи (POST)
+    if request.method == 'POST':
+        task_id = request.POST.get('task_id')
+        if task_id:
+            try:
+                task = Task.objects.get(id=task_id, assigned_user=current_user, completed=False)
+                return redirect('work_on_task', task_id=task.id)
+            except Task.DoesNotExist:
+                messages.error(request, 'Выбранная задача недоступна или не назначена вам.')
+        else:
+            messages.error(request, 'Пожалуйста, выберите задачу.')
 
     # Получаем макет по ID (если указан)
     if photo_id:
@@ -487,22 +499,27 @@ def work_on_task(request, task_id):
         selected_task = Task.objects.get(id=task_id, completed=False)
     except Task.DoesNotExist:
         messages.error(request, 'Задача больше недоступна.')
-        return redirect('select_task')  # Перенаправляем на страницу выбора задач
+        return redirect('select_task', photo_id=0)  # Если задача не найдена, photo_id=0
 
     # Проверяем, является ли пользователь назначенным на задачу
-    if user not in selected_task.submitted_by.all():
+    if user not in selected_task.assigned_user.all():
         messages.error(request, 'Вы не назначены на эту задачу.')
-        return redirect('select_task')
+        return redirect('select_task', photo_id=selected_task.photo.id if hasattr(selected_task, 'photo') and selected_task.photo else 0)
+
+    # Если пользователь только что выбрал задачу, добавляем его в submitted_by
+    if user not in selected_task.submitted_by.all():
+        selected_task.submitted_by.add(user)
+        selected_task.save()
 
     # Проверяем, отправил ли пользователь свою часть задачи на проверку
     if user in selected_task.submitted_by_users_for_review.all():
         messages.warning(request, 'Вы уже отправили свою часть задачи на проверку.')
-        return redirect('select_task')
+        return redirect('select_task', photo_id=selected_task.photo.id if hasattr(selected_task, 'photo') and selected_task.photo else 0)
 
     # Если задача была отправлена на проверку другим пользователем, предупреждаем об этом
     if selected_task.is_submitted_for_review and not all(
-        user in selected_task.submitted_by_users_for_review.all()
-        for user in selected_task.submitted_by.all()
+        u in selected_task.submitted_by_users_for_review.all()
+        for u in selected_task.submitted_by.all()
     ):
         messages.warning(request, 'Эта задача уже отправлена на проверку другим пользователем.')
 

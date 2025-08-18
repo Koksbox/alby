@@ -319,13 +319,15 @@ class TimeEntry(models.Model):
     @classmethod
     def auto_stop_long_shifts(cls):
         from django.utils import timezone
-        twenty_four_hours = 24 * 3600
+        from django.conf import settings
+        # Используем настройку для гибкого лимита (по умолчанию 24 часа)
+        one_minute_seconds = getattr(settings, 'TIME_TRACKER_SHIFT_MAX_SECONDS', 24 * 3600)
         now = timezone.now()
         entries = cls.objects.filter(timer_type='shift', end_time__isnull=True)
         for entry in entries:
             elapsed = (now - entry.start_time).total_seconds()
-            if elapsed > twenty_four_hours:
-                entry.end_time = entry.start_time + timezone.timedelta(seconds=twenty_four_hours)
+            if elapsed > one_minute_seconds:
+                entry.end_time = entry.start_time + timezone.timedelta(seconds=one_minute_seconds)
                 entry.save()
 
 class PrizeHistory(models.Model):

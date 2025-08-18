@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'users.middleware.AutoShiftStopMiddleware',
 ]
 
 ROOT_URLCONF = 'it.urls'
@@ -266,3 +267,9 @@ if not os.path.exists('logs'):
 CRONJOBS = [
     ('*/5 * * * *', 'django.core.management.call_command', ['cleanup_inactive_users']),  # Каждые 5 минут
 ]
+
+# Максимальная длительность смены в секундах (24 часа)
+TIME_TRACKER_SHIFT_MAX_SECONDS = 24 * 3600
+
+# Максимальная длительность смены менеджера (в секундах). Возвращаем 24 часа.
+TIME_TRACKER_MANAGER_MAX_SECONDS = 24 * 3600

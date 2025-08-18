@@ -373,9 +373,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let timerInterval = null;
     let startTime = null;
-    const stavka = {{ user.stavka|default:0 }}; // Получаем ставку из Django
-    const MAX_SHIFT_HOURS = 24; // Максимальная продолжительность смены в часах
-    const MAX_SHIFT_MS = 86400000; // 24 часа в миллисекундах
+    const stavka = parseFloat('{{ user.stavka|default:0 }}'); // Получаем ставку из Django безопасно
+    const MAX_SHIFT_MS = 24 * 60 * 60 * 1000; // 24 часа в миллисекундах
+    const MAX_SHIFT_HOURS = 24; // Продолжительность смены в часах
 
     // Функция обновления таймера
     function updateTimer() {
@@ -383,15 +383,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const elapsedTime = Date.now() - startTime;
         
-        // Проверяем, не превысили ли мы лимит в 24 часа
+        // Проверяем, не превысили ли мы лимит
         if (elapsedTime >= MAX_SHIFT_MS) {
-            // Автоматически останавливаем таймер при достижении 24 часов
+            // Автоматически останавливаем таймер при достижении лимита
             autoStopTimer();
             return;
         }
 
-        // Показываем предупреждение за час до достижения лимита
-        const warningTime = MAX_SHIFT_MS - (60 * 60 * 1000); // За час до лимита
+        // Показываем предупреждение за 1 час до достижения лимита
+        const warningTime = MAX_SHIFT_MS - (60 * 60 * 1000);
         if (elapsedTime >= warningTime && elapsedTime < warningTime + 1000) {
             showNotification('Внимание! До окончания смены остался 1 час', 'warning');
         }
@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
         timerInterval = null;
         startTime = null;
         timerDisplay.textContent = '24:00:00';
-        salaryDisplay.textContent = `${Math.round(stavka * 24)} ₽`;
+        salaryDisplay.textContent = `${Math.round(stavka * MAX_SHIFT_HOURS)} ₽`;
         startButton.textContent = 'Начать смену';
         
         // Убираем предупреждающий стиль
@@ -475,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.active) {
                 startTime = Date.now() - data.elapsed_time * 1000;
                 
-                // Проверяем, не превысили ли уже лимит в 24 часа
+                // Проверяем, не превысили ли уже лимит
                 const elapsedTime = Date.now() - startTime;
                 if (elapsedTime >= MAX_SHIFT_MS) {
                     // Если лимит превышен, автоматически останавливаем

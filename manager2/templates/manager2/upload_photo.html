@@ -423,93 +423,115 @@ button:hover {
 </style>
 
     <script>
-let timer;
-let seconds = 0;
-let isRunning = false;
+// Ограничение таймера менеджера на 24 часа с автозавершением
+(function(){
+    const MAX_MS = 24 * 60 * 60 * 1000; // 24 часа
+    const WARNING_MS = 60 * 60 * 1000; // предупреждение за 1 час
 
-// Получаем элементы DOM
-const timerDisplay = document.getElementById('timerDisplay');
-const toggleButton = document.getElementById('toggleButton');
+    let timer;
+    let seconds = 0;
+    let isRunning = false;
+    let startTimestamp = null; // отметка начала, чтобы считать точно по времени
 
-// Инициализация начального времени
-seconds = parseInt(timerDisplay.getAttribute('data-elapsed-time')) || 0;
-updateTimerDisplay();
+    const timerDisplay = document.getElementById('timerDisplay');
+    const toggleButton = document.getElementById('toggleButton');
 
-// Функция для обновления отображения таймера
-function updateTimerDisplay() {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    timerDisplay.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-}
+    // Инициализация
+    seconds = parseInt(timerDisplay.getAttribute('data-elapsed-time')) || 0;
+    updateTimerDisplay();
+    const initiallyRunning = {{ request.session.timer_started|yesno:'true,false' }};
 
-// Запуск таймера
-function startTimer() {
-    if (!isRunning) {
-        isRunning = true;
-        timer = setInterval(() => {
-            seconds++;
-            updateTimerDisplay();
-        }, 1000);
+    function updateTimerDisplay() {
+        // если тикаем по реальному времени, пересчитаем seconds
+        if (isRunning && startTimestamp) {
+            seconds = Math.max(0, Math.floor((Date.now() - startTimestamp) / 1000));
+        }
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        timerDisplay.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+        const elapsedMs = seconds * 1000;
+        if (elapsedMs >= MAX_MS) {
+            autoStop();
+            return;
+        }
+
+        if (elapsedMs >= MAX_MS - WARNING_MS && elapsedMs < MAX_MS - WARNING_MS + 1000) {
+            showBanner('Внимание! До окончания смены остался 1 час');
+        }
     }
-}
 
-// Остановка таймера
-function stopTimer() {
-    clearInterval(timer);
-    isRunning = false;
-}
+    function startTimer() {
+        if (!isRunning) {
+            isRunning = true;
+            // Зафиксируем старт исходя из имеющегося elapsed
+            startTimestamp = Date.now() - (seconds * 1000);
+            updateTimerDisplay();
+            timer = setInterval(updateTimerDisplay, 1000);
+        }
+    }
 
-// Автоматический запуск таймера, если он был запущен ранее
-if (parseInt(timerDisplay.getAttribute('data-elapsed-time')) > 0) {
-    startTimer();
-}
+    function stopTimer() {
+        clearInterval(timer);
+        isRunning = false;
+        startTimestamp = null;
+    }
 
-// Обработчик события для кнопки
-toggleButton.addEventListener('click', (event) => {
-    event.preventDefault(); // Предотвращаем отправку формы
-
-    if (isRunning) {
-        // Если таймер запущен, останавливаем его
+    function autoStop() {
         stopTimer();
-        toggleButton.innerText = "Начать смену";
+        seconds = Math.floor(MAX_MS / 1000);
+        updateTimerDisplay();
+        toggleButton.innerText = 'Начать смену';
         toggleButton.classList.remove('btn-danger');
         toggleButton.classList.add('btn-success');
-
-        // Сброс времени и обновление интерфейса
-        seconds = 0;
-        updateTimerDisplay();
-
-    } else {
-        // Если таймер остановлен, запускаем его
-        startTimer();
-        toggleButton.innerText = "Завершить смену";
-        toggleButton.classList.remove('btn-success');
-        toggleButton.classList.add('btn-danger');
+        showBanner('Смена автоматически завершена по истечении 24 часов');
+        // Отправляем POST на сервер через существующую форму
+        const form = toggleButton.closest('form');
+        if (form) {
+            fetch(form.action, {
+                method: form.method,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': form.querySelector('[name="csrfmiddlewaretoken"]').value,
+                },
+                body: new URLSearchParams(new FormData(form)).toString(),
+            });
+        }
     }
 
-    // Отправляем данные на сервер через AJAX
-    const form = event.target.closest('form');
-    fetch(form.action, {
-        method: form.method,
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': form.querySelector('[name="csrfmiddlewaretoken"]').value,
-        },
-        body: new URLSearchParams(new FormData(form)).toString(),
-    })
-    .then(response => {
-        if (!response.ok) {
-            console.error('Ошибка при отправке данных.');
+    function showBanner(text) {
+        const banner = document.createElement('div');
+        banner.textContent = text;
+        banner.style.cssText = 'position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#17a2b8;color:#fff;padding:12px 16px;border-radius:8px;z-index:2000;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.2)';
+        document.body.appendChild(banner);
+        setTimeout(()=>{banner.remove();}, 5000);
+    }
+
+    // Автоматический запуск при активной смене или при наличии прошедшего времени
+    if (initiallyRunning || parseInt(timerDisplay.getAttribute('data-elapsed-time')) > 0) {
+        startTimer();
+    }
+
+    // Обработчик клика по кнопке
+    toggleButton.addEventListener('click', (event) => {
+        // Ничего не меняем: сервер уже обрабатывает старт/стоп. Мы лишь обновляем UI локально.
+        if (isRunning) {
+            stopTimer();
+            toggleButton.innerText = 'Начать смену';
+            toggleButton.classList.remove('btn-danger');
+            toggleButton.classList.add('btn-success');
+            seconds = 0;
+            updateTimerDisplay();
+        } else {
+            startTimer();
+            toggleButton.innerText = 'Завершить смену';
+            toggleButton.classList.remove('btn-success');
+            toggleButton.classList.add('btn-danger');
         }
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
     });
-});
-
-
-</script>
+})();
+    </script>
 {% endblock %}
 </body>
 </html>

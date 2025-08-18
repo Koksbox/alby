@@ -10,6 +10,17 @@
 </head>
 <body>
 
+{% if messages %}
+<div id="global-messages" style="position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:2000; width:90%; max-width:520px;">
+    {% for message in messages %}
+        <div style="margin-bottom:8px; padding:12px 16px; border-radius:8px; color:#fff; font-weight:600; background: {% if message.tags == 'info' %}#17a2b8{% elif message.tags == 'warning' %}#ffc107; color:#000{% elif message.tags == 'success' %}#28a745{% else %}#343a40{% endif %}; box-shadow:0 4px 12px rgba(0,0,0,.2);">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <script>setTimeout(()=>{var m=document.getElementById('global-messages'); if(m){m.remove();}}, 5000);</script>
+</div>
+{% endif %}
+
 {% block content %}
 <!-- Здесь будет содержимое конкретной страницы -->
 {% endblock %}

@@ -313,6 +313,56 @@ button {
 .mockup strong {
     color: #17a2b8;
 }
+
+/* Стили для уведомлений */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.notification-info {
+    background-color: #17a2b8;
+}
+
+.notification-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.notification-success {
+    background-color: #28a745;
+}
+
+/* Стили для предупреждения о приближении к лимиту */
+.timer-warning {
+    color: #ffc107;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
 </style>
 
 <script>
@@ -324,15 +374,38 @@ document.addEventListener('DOMContentLoaded', function() {
     let timerInterval = null;
     let startTime = null;
     const stavka = {{ user.stavka|default:0 }}; // Получаем ставку из Django
+    const MAX_SHIFT_HOURS = 24; // Максимальная продолжительность смены в часах
+    const MAX_SHIFT_MS = 86400000; // 24 часа в миллисекундах
 
     // Функция обновления таймера
     function updateTimer() {
         if (!startTime) return;
 
         const elapsedTime = Date.now() - startTime;
+        
+        // Проверяем, не превысили ли мы лимит в 24 часа
+        if (elapsedTime >= MAX_SHIFT_MS) {
+            // Автоматически останавливаем таймер при достижении 24 часов
+            autoStopTimer();
+            return;
+        }
+
+        // Показываем предупреждение за час до достижения лимита
+        const warningTime = MAX_SHIFT_MS - (60 * 60 * 1000); // За час до лимита
+        if (elapsedTime >= warningTime && elapsedTime < warningTime + 1000) {
+            showNotification('Внимание! До окончания смены остался 1 час', 'warning');
+        }
+
         const hours = Math.floor(elapsedTime / 3600000);
         const minutes = Math.floor((elapsedTime % 3600000) / 60000);
         const seconds = Math.floor((elapsedTime % 60000) / 1000);
+
+        // Добавляем предупреждающий стиль при приближении к лимиту
+        if (elapsedTime >= warningTime) {
+            timerDisplay.classList.add('timer-warning');
+        } else {
+            timerDisplay.classList.remove('timer-warning');
+        }
 
         timerDisplay.textContent =
             `${String(hours).padStart(2, '0')}:` +
@@ -343,6 +416,28 @@ document.addEventListener('DOMContentLoaded', function() {
         salaryDisplay.textContent = `${Math.round(salary)} ₽`;
     }
 
+    // Функция автоматической остановки таймера
+    function autoStopTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        startTime = null;
+        timerDisplay.textContent = '24:00:00';
+        salaryDisplay.textContent = `${Math.round(stavka * 24)} ₽`;
+        startButton.textContent = 'Начать смену';
+        
+        // Убираем предупреждающий стиль
+        timerDisplay.classList.remove('timer-warning');
+        
+        // Отправляем запрос на остановку таймера на сервере
+        fetch('/api/stop-timer/', { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    // Показываем уведомление о достижении лимита
+                    showNotification('Смена автоматически завершена по истечении 24 часов', 'info');
+                }
+            });
+    }
+
     // Функция сброса таймера
     function resetTimer() {
         clearInterval(timerInterval);
@@ -350,6 +445,27 @@ document.addEventListener('DOMContentLoaded', function() {
         startTime = null;
         timerDisplay.textContent = '00:00:00';
         salaryDisplay.textContent = '0 ₽';
+        
+        // Убираем предупреждающий стиль
+        timerDisplay.classList.remove('timer-warning');
+    }
+
+    // Функция показа уведомлений
+    function showNotification(message, type = 'info') {
+        // Создаем элемент уведомления
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+
+        // Добавляем уведомление на страницу
+        document.body.appendChild(notification);
+
+        // Удаляем уведомление через 5 секунд
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 5000);
     }
 
     // Проверка активного таймера при загрузке
@@ -358,9 +474,18 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.active) {
                 startTime = Date.now() - data.elapsed_time * 1000;
-                timerInterval = setInterval(updateTimer, 1000);
-                startButton.textContent = 'Завершить смену';
-                updateTimer(); // Немедленное обновление при загрузке
+                
+                // Проверяем, не превысили ли уже лимит в 24 часа
+                const elapsedTime = Date.now() - startTime;
+                if (elapsedTime >= MAX_SHIFT_MS) {
+                    // Если лимит превышен, автоматически останавливаем
+                    autoStopTimer();
+                } else {
+                    // Запускаем таймер
+                    timerInterval = setInterval(updateTimer, 1000);
+                    startButton.textContent = 'Завершить смену';
+                    updateTimer(); // Немедленное обновление при загрузке
+                }
             }
         });
 
@@ -374,6 +499,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (response.ok) {
                         resetTimer();
                         startButton.textContent = 'Начать смену';
+                        showNotification('Смена завершена', 'success');
                     }
                 });
         } else { // Запуск таймера
@@ -381,7 +507,12 @@ document.addEventListener('DOMContentLoaded', function() {
             timerInterval = setInterval(updateTimer, 1000);
             startButton.textContent = 'Завершить смену';
             updateTimer(); // Немедленное обновление при старте
-            fetch('/api/start-timer/', { method: 'POST' });
+            fetch('/api/start-timer/', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        showNotification('Смена начата', 'success');
+                    }
+                });
         }
     });
 });

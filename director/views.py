@@ -148,23 +148,27 @@ def delete_photo(request, photo_id):
     photo = get_object_or_404(Photo, id=photo_id)
 
     if request.method == 'POST':
-        # Проверка прав доступа
-        if not request.user.is_superuser:
-            messages.error(request, 'Недостаточно прав для удаления')
-            return redirect('task_list_director')
 
-        # Удаление связанных задач
+        # Удаление задач
         Task.objects.filter(photo=photo).delete()
 
-        # Удаление файла изображения
+        # Удаление файла
         if photo.image:
             photo.image.delete(save=False)
 
+        photo_name = photo.image_name
         photo.delete()
-        messages.success(request, 'Макет удален')
-        return redirect('task_list_director')
 
-    return redirect('task_list_director')
+        messages.success(request, f'Макет "{photo_name}" удалён.')
+
+        # Редирект по referer
+        referer = request.META.get('HTTP_REFERER', '')
+        if 'director' in referer:
+            return redirect('task_list_director')
+        else:
+            return redirect('task_list')
+
+    return redirect('task_list')
 
 def upload_photo_director(request):
     if request.method == 'POST':

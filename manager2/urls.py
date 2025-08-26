@@ -9,7 +9,6 @@ urlpatterns = [
     path('', views.home_man, name='home_man'),
     path('upload/', upload_photo, name='upload_photo'),
     path('photos/', display_photos, name='display_photos'),
-    path('delete/<int:photo_id>/', delete_photo, name='delete_photo'),
     path('task_list/', views.task_list, name='task_list'),  # URL для отображения списка задач
     path('delete_task/<int:task_id>/', views.delete_task, name='delete_task'),  # Удаление задачи
     path('photo_list', views.photo_list, name='photo_list'),

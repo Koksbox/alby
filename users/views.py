@@ -739,7 +739,8 @@ def user_statistic(request):
     if selected_month_str:
         try:
             # Преобразуем строку в дату (формат 'YYYY-MM')
-            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
+            selected_month = datetime.strptime(selected_month_str, '%Y-%m')
+            selected_month = timezone.make_aware(selected_month)  # Теперь это datetime
         except (ValueError, TypeError):
             # Если данные некорректны, используем текущий месяц
             selected_month = timezone.now().date()
@@ -850,6 +851,7 @@ def upload_avatar_users(request):
 
     return render(request, 'users/upload_avatar_users.html', {'form': form})
 
+from django.utils.safestring import mark_safe
 
 @login_required
 def photo_maket(request):
@@ -873,11 +875,11 @@ def photo_maket(request):
         # Показываем информацию о назначенных задачах
         for task in assigned_tasks:
             status = "ожидает проверки" if task.is_submitted_for_review else "в работе"
-            messages.info(
-                request,
+            message = mark_safe(
                 f'Вы назначены на задачу "{task.title}" в макете "{task.photo.image_name}" (статус: {status}). '
                 f'<a href="/maket_info/{task.photo.id}/" class="task-link">Перейти к макету</a>'
             )
+            messages.info(request, message)
 
     # Получаем все макеты, к которым относятся назначенные задачи
     assigned_photos = Photo.objects.filter(

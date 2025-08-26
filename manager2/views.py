@@ -157,17 +157,30 @@ def display_photos(request):
 
 
 def delete_photo(request, photo_id):
+    photo = get_object_or_404(Photo, id=photo_id)
+
     if request.method == 'POST':
-        photo = get_object_or_404(Photo, id=photo_id)
 
-        # Путь к файлу изображения
-        photo_path = os.path.join(settings.MEDIA_ROOT, photo.image.name)  # Используем имя изображения
+        # Удаление задач
+        Task.objects.filter(photo=photo).delete()
 
-        if os.path.exists(photo_path):
-            os.remove(photo_path)  # Удаляем файл из файловой системы
+        # Удаление файла
+        if photo.image:
+            photo.image.delete(save=False)
 
-        photo.delete()  # Удаляем запись из базы данных
-        return redirect('/manager/')
+        photo_name = photo.image_name
+        photo.delete()
+
+        messages.success(request, f'Макет "{photo_name}" удалён.')
+
+        # Редирект по referer
+        referer = request.META.get('HTTP_REFERER', '')
+        if 'director' in referer:
+            return redirect('task_list_director')
+        else:
+            return redirect('task_list')
+
+    return redirect('task_list')
 
 
 def task_list(request):

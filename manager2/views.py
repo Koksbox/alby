@@ -714,11 +714,13 @@ def my_statistic(request):
 
     # Обработка выбора месяца
     selected_month_str = request.GET.get('month')
-    selected_month = timezone.now().date()
+    selected_month = timezone.now().date()  # Это date
     if selected_month_str:
         try:
-            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
-        except ValueError:
+            # Парсим как datetime, делаем aware, но оставляем дату месяца
+            dt = datetime.strptime(selected_month_str, '%Y-%m')
+            selected_month = timezone.make_aware(dt)  # Теперь это datetime
+        except (ValueError, TypeError):
             pass
 
     # Определение границ месяца
@@ -830,7 +832,8 @@ def manager_user_statistic(request, user_id):
     selected_month = timezone.now().date()
     if 'month' in request.GET:
         try:
-            selected_month = timezone.make_aware(datetime.strptime(request.GET['month'], '%Y-%m').date())
+            dt = datetime.strptime(request.GET['month'], '%Y-%m')
+            selected_month = timezone.make_aware(dt)  # Теперь это datetime
         except ValueError:
             pass
 
@@ -904,7 +907,8 @@ def my_maket_manager(request):
     if selected_month_str:
         try:
             # Преобразуем строку в дату (формат 'YYYY-MM')
-            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
+            dt = datetime.strptime(selected_month_str, '%Y-%m')
+            selected_month = timezone.make_aware(dt)  # Теперь это datetime
         except (ValueError, TypeError):
             # Если данные некорректны, используем текущий месяц
             selected_month = timezone.now().date()

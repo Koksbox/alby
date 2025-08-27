@@ -655,7 +655,17 @@ def salary_report(request):
             end_date_plus_one = end_date + timedelta(days=1)
         except ValueError:
             end_date = None
+            end_date_plus_one = None
+    else:
         end_date_plus_one = None
+
+    # Значения по умолчанию: с 1-го числа текущего месяца по сегодня
+    if start_date is None and end_date is None:
+        today = dt.datetime.now().date()
+        start_date = today.replace(day=1)
+        end_date = today
+    # Для корректной фильтрации по верхней границе в аннотациях используем следующий день
+    end_date_plus_one = end_date + timedelta(days=1)
 
     # Получаем базовый список всех активных пользователей
     users = CustomUser.objects.filter(is_active=True)
@@ -763,6 +773,17 @@ def salary_report(request):
     # Передаем данные в шаблон
     filtered_roles = [choice for choice in CustomUser.USER_TYPE_CHOICES if choice[0] not in ['unapproved', 'manager']]
 
+    # Согласовываем суммы с текущим набором пользователей
+    if start_date and end_date_plus_one:
+        allowed_user_ids = set(users.values_list('id', flat=True))
+        individual_salaries = {
+            uid: amount for uid, amount in individual_salaries.items() if uid in allowed_user_ids
+        }
+        total_salary = sum(individual_salaries.values())
+    else:
+        total_salary = None
+        individual_salaries = {}
+
     # Форматируем даты для передачи в шаблон, явно проверяя их тип
     formatted_start_date = ''
     if isinstance(start_date, dt.date):
@@ -798,6 +819,7 @@ def salary_manager(request):
     # Инициализируем переменные
     start_date = None
     end_date = None
+    end_date_plus_one = None
 
     if start_date_str:
         try:
@@ -809,9 +831,19 @@ def salary_manager(request):
     if end_date_str:
         try:
             end_date = dt.datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            end_date_plus_one = end_date + timedelta(days=1)
         except ValueError:
             messages.error(request, "Неверный формат конечной даты.")
             end_date = None
+            end_date_plus_one = None
+
+    # Значения по умолчанию: с 1-го числа текущего месяца по сегодня
+    if start_date is None and end_date is None:
+        today = dt.datetime.now().date()
+        start_date = today.replace(day=1)
+        end_date = today
+    if end_date_plus_one is None and end_date is not None:
+        end_date_plus_one = end_date + timedelta(days=1)
 
     # Получаем базовый список всех активных менеджеров
     users = CustomUser.objects.filter(is_active=True, post_user='manager')
@@ -825,7 +857,7 @@ def salary_manager(request):
     if start_date and end_date:
         completed_tasks_subquery = completed_tasks_subquery.filter(
             created_at__gte=start_date,
-            created_at__lt=end_date
+            created_at__lt=end_date_plus_one
         )
 
     completed_tasks_subquery = completed_tasks_subquery.values('created_by').annotate(
@@ -849,17 +881,18 @@ def salary_manager(request):
                             output_field=FloatField()
                         ),
                         filter=Q(timemanger_set__start_time__gte=start_date,
-                                 timemanger_set__end_time__lt=end_date)
+                                 timemanger_set__end_time__lt=end_date_plus_one)
                     ),
                     Value(0.0),
                     output_field=FloatField()
                 )
             )
             # Рассчитываем общую зарплату за период через метод модели
-            total_salary = TimeManger.total_salary_users_money(start_date=start_date, end_date=end_date)
+            # Используем включающую верхнюю границу через end_date_plus_one
+            total_salary = TimeManger.total_salary_users_money(start_date=start_date, end_date=end_date_plus_one)
             # Рассчитываем индивидуальную зарплату для каждого менеджера
             individual_salaries = TimeManger.total_salary_for_each_user(start_date=start_date,
-                                                                        end_date=end_date)
+                                                                        end_date=end_date_plus_one)
         except ValueError:
             total_salary = 0
             individual_salaries = {}
@@ -875,7 +908,7 @@ def salary_manager(request):
                 queryset=Task.objects.filter(
                     completed=True,  # Только завершенные задачи
                     created_at__gte=start_date,  # Фильтр по дате начала
-                    created_at__lt=end_date  # Фильтр по дате окончания
+                    created_at__lt=end_date_plus_one  # Фильтр по дате окончания
                 ).select_related('photo'),  # Предварительно загружаем связанные макеты
                 to_attr='published_tasks'  # Сохраняем результат в атрибуте published_tasks
             )
@@ -915,13 +948,11 @@ def salary_manager(request):
     elif sort_by == 'anti_task' and 'completed_tasks_count' in users.query.annotations:
         users = users.order_by('-completed_tasks_count')  # По убыванию количества завершенных задач
 
-    # Передаем данные в шаблон
-    # Отладочный вывод для проверки типа и значения dt и dt.date
-    print(f"[DEBUG] Type of dt: {type(dt)}, Value of dt: {dt}")
-    if hasattr(dt, 'date'):
-        print(f"[DEBUG] Type of dt.date: {type(dt.date)}, Value of dt.date: {dt.date}")
-    else:
-        print("[DEBUG] dt does not have 'date' attribute.")
+    # Согласовываем суммы с текущим набором пользователей
+    if start_date and end_date:
+        allowed_user_ids = set(users.values_list('id', flat=True))
+        individual_salaries = {uid: amt for uid, amt in individual_salaries.items() if uid in allowed_user_ids}
+        total_salary = sum(individual_salaries.values())
 
     formatted_start_date = ''
     if isinstance(start_date, dt.date):

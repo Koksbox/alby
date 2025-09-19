@@ -1,14 +1,6 @@
 {% extends 'director/layout.html' %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>История смен сотрудника</title>
-    {% load custom_filters %}
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-</head>
-<body>
+{% load custom_filters %}
+
 {% block content %}
 <div class="main">
     <h1>История смен сотрудника: {{ employee.full_name }}</h1>
@@ -281,6 +273,4 @@ updateTimer();
 </script>
 {% endif %}
 
-{% endblock %}
-</body>
-</html> 
+{% endblock %} 

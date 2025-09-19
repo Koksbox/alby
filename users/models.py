@@ -18,11 +18,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     Расширенная модель пользователя с дополнительными полями и функциональностью.
     """
     USER_TYPE_CHOICES = [
-        ('improver', 'Практикант'),
         ('trainee', 'Стажер'),
+        ('junior_employee', 'Младший сотрудник'),
+        ('employee', 'Сотрудник'),
+        ('senior_employee', 'Старший сотрудник'),
         ('specialist', 'Специалист'),
+        ('master', 'Мастер'),
         ('expert', 'Эксперт'),
-        ('manager', 'Менеджер'),
+        ('junior_manager', 'Младший менеджер'),
+        ('senior_manager', 'Старший менеджер'),
         ('unapproved', 'Неутвержденный'),
     ]
 
@@ -131,11 +135,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def calculate_default_stavka(self):
         """Вычисляет ставку по умолчанию в зависимости от должности."""
         stavka_map = {
-            'improver': 0,
             'trainee': 100,
-            'specialist': 140,
-            'expert': 180,
-            'manager': 180,
+            'junior_employee': 120,
+            'employee': 140,
+            'senior_employee': 160,
+            'specialist': 180,
+            'master': 200,
+            'expert': 250,
+            'junior_manager': 180,
+            'senior_manager': 225,
         }
         return stavka_map.get(self.post_user, 0)
 

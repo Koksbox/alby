@@ -29,7 +29,7 @@
                     {% if user.is_active %}
                     <tr class="fade-in-item">
                         <td>{{ user.full_name }}</td>
-                        <td>{{ user.get_post_user_display }}</td>
+                        <td>{{ user.get_post_display }}</td>
                         <td>
                             <a href="{% url 'profile_employee_manager' user.id %}" class="btn-primary">Профиль</a>
                         </td>

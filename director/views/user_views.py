@@ -12,14 +12,14 @@ logger = logging.getLogger('director')
 def employee_director(request):
     """Список сотрудников (кроме менеджеров)"""
     logger.info(f'Пользователь {request.user} просматривает список сотрудников')
-    users = CustomUser.objects.exclude(Q(post_user='manager') | Q(post_user='unapproved'))
+    users = CustomUser.objects.exclude(Q(post_user__in=['manager', 'junior_manager', 'senior_manager']) | Q(post_user='unapproved'))
     return render(request, 'director/employee.html', {'users': users})
 
 @login_required
 def employee_manager(request):
     """Список менеджеров"""
     logger.info(f'Пользователь {request.user} просматривает список менеджеров')
-    users = CustomUser.objects.filter(post_user='manager')
+    users = CustomUser.objects.filter(post_user__in=['manager', 'junior_manager', 'senior_manager'])
     return render(request, 'director/employee_manager.html', {'users': users})
 
 @login_required

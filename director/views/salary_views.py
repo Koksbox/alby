@@ -146,7 +146,7 @@ def salary_report(request):
         individual_salaries = {}
 
     # Исключаем менеджеров
-    users = users.exclude(post_user='manager')
+    users = users.exclude(post_user__in=['manager', 'junior_manager', 'senior_manager'])
 
     # Фильтруем по должности, если указана
     if post_user:
@@ -202,7 +202,7 @@ def salary_manager(request):
         end_date_plus_one = None
 
     # Базовый запрос для менеджеров
-    users = CustomUser.objects.filter(is_active=True, post_user='manager')
+    users = CustomUser.objects.filter(is_active=True, post_user__in=['manager', 'junior_manager', 'senior_manager'])
 
     # Добавляем аннотацию для выполненных задач
     users = users.annotate(

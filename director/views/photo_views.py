@@ -161,7 +161,7 @@ def photo_report(request):
         total_photos = None
         individual_photos = {}
 
-    users = users.exclude(post_user='manager')
+    users = users.exclude(post_user__in=['manager', 'junior_manager', 'senior_manager'])
 
     if post_user:
         users = users.filter(post_user=post_user)
@@ -210,7 +210,7 @@ def photo_manager(request):
         start_date = None
         end_date_plus_one = None
 
-    users = CustomUser.objects.filter(is_active=True, post_user='manager')
+    users = CustomUser.objects.filter(is_active=True, post_user__in=['manager', 'junior_manager', 'senior_manager'])
 
     if start_date and end_date_plus_one:
         try:

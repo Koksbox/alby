@@ -144,7 +144,7 @@ def login_view(request):
         # Если аккаунт активен, перенаправляем в зависимости от роли
         if request.user.post_user == 'unapproved':
             return redirect('now_user')
-        if request.user.post_user == 'manager':
+        if request.user.post_user in ['junior_manager', 'senior_manager']:
             return redirect('home_man')
         return redirect('profile')
 
@@ -191,7 +191,7 @@ def login_view(request):
                 request.session['email'] = user.email
                 
                 # Перенаправляем в зависимости от роли
-                if user.post_user == 'manager':
+                if user.post_user in ['junior_manager', 'senior_manager']:
                     return redirect('home_man')
                 return redirect('profile')
             else:

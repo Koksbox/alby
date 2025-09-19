@@ -15,7 +15,7 @@ def home_director(request):
     logger.info(f'Пользователь {request.user} открыл главную страницу директора')
     
     total_users = CustomUser.objects.filter(is_active=True).count()
-    active_users = CustomUser.objects.filter(is_active=True, post_user__in=['employee', 'manager']).count()
+    active_users = CustomUser.objects.filter(is_active=True, post_user__in=['employee', 'manager', 'junior_manager', 'senior_manager']).count()
     completed_tasks = Task.objects.filter(completed=True).count()
     
     # Расчет среднего времени выполнения задачи

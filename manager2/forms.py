@@ -55,7 +55,7 @@ class TaskForm(forms.ModelForm):
         CustomUser = get_user_model()
         # Исключаем пользователей с ролями 'manager' и 'unapproved'
         self.fields['assigned_user'].queryset = CustomUser.objects.exclude(
-            post_user__in=['manager', 'unapproved'])
+            post_user__in=['manager', 'junior_manager', 'senior_manager', 'unapproved'])
 
     def clean(self):
         cleaned_data = super().clean()
@@ -126,4 +126,4 @@ class PhotoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['assigned_manager'].queryset = CustomUser.objects.filter(post_user='manager').distinct()
+        self.fields['assigned_manager'].queryset = CustomUser.objects.filter(post_user__in=['manager', 'junior_manager', 'senior_manager']).distinct()

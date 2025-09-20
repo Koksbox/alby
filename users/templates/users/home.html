@@ -1,23 +1,93 @@
 {% extends "users/_base.html" %}
-{% block content %}
 {% load static %}
-    <div class="container-fluid">
-        <div class="main">
-            <div class="logo">
-                <img class="img-logo" src="{% static 'img/loggo.png' %}" alt="Логотип">
-            </div>
-            <div class="button-container">
-                <a href="login" class="btn btn-primary mb-2">Войти</a>
-                <a href="register" class="btn btn-transparent">Регистрация</a>
-                <button id="installPWA" class="btn pwa-install-btn" aria-label="Установить приложение">
-                    <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 3v10" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M8 9l4 4 4-4" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M5 15h14v4a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-4z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Установить
-                </button>
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="main">
+        <div class="logo">
+            <img class="img-logo" src="{% static 'img/loggo.png' %}" alt="Логотип">
+        </div>
+
+        <div class="button-container">
+            <!-- Основные кнопки -->
+            <a href="login" class="btn btn-primary mb-2">Войти</a>
+            <a href="register" class="btn btn-transparent mb-3">Регистрация</a>
+
+            <!-- Кнопка установки PWA — теперь внутри контейнера -->
+            <button id="installButton" class="btn btn-outline-secondary btn-sm w-100" style="display: none; font-size: 0.85rem; padding: 8px 12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                    <polyline points="7 13 12 18 17 13"></polyline>
+                    <polyline points="7 6 12 11 17 6"></polyline>
+                </svg>
+                Установить приложение
+            </button>
+
+            <!-- Подсказка для iOS -->
+            <div id="iosInstallHint" class="text-center mt-2" style="display: none; font-size: 0.8rem; color: white;">
+                Чтобы установить: нажмите <b>Поделиться</b> → «На экран домой»
             </div>
         </div>
     </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    let deferredPrompt;
+
+    const installButton = document.getElementById('installButton');
+    const iosInstallHint = document.getElementById('iosInstallHint');
+
+    // Проверка на iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+        iosInstallHint.style.display = 'block';
+        installButton.style.display = 'none';
+    }
+
+    // Обработка события beforeinstallprompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        // Показываем кнопку только не на iOS
+        if (!isIOS) {
+            installButton.style.display = 'flex';
+            installButton.style.alignItems = 'center';
+            installButton.style.justifyContent = 'center';
+        }
+    });
+
+    // Действие по клику
+    installButton.addEventListener('click', () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('PWA установлено');
+                } else {
+                    console.log('Установка отклонена');
+                }
+                deferredPrompt = null;
+                installButton.style.display = 'none';
+            });
+        }
+    });
+
+    // Скрываем после установки
+    window.addEventListener('appinstalled', () => {
+        installButton.style.display = 'none';
+        iosInstallHint.style.display = 'none';
+    });
+
+    // Регистрация Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/static/sw.js')
+                .then(reg => console.log('SW зарегистрирован'))
+                .catch(err => console.error('Ошибка регистрации SW:', err));
+        });
+    }
+</script>
+
 {% endblock content %}

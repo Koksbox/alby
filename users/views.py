@@ -1106,3 +1106,6 @@ def task_history(request):
         'sorted_dates': sorted_dates,
     }
     return render(request, 'users/task_history.html', context)
+
+def trigger_500(request):
+    raise Exception("Тестовая ошибка 500")

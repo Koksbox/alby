@@ -43,4 +43,5 @@ urlpatterns = [
     path('my_maket', views.my_maket, name='my_maket'),
     path('complete_maket/<int:photo_id>/', views.complete_maket, name='complete_maket'),
     path('task_history/', views.task_history, name='task_history'),
+    path('test-500/', views.trigger_500),
 ]

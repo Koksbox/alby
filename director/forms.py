@@ -59,7 +59,10 @@ class PhotoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['assigned_manager'].queryset = CustomUser.objects.filter(post_user__in=['manager', 'junior_manager', 'senior_manager']).distinct()
+        # Исправлено: используем __in для нескольких значений
+        self.fields['assigned_manager'].queryset = CustomUser.objects.filter(
+            post_user__in=['junior_manager', 'senior_manager']
+        ).distinct()
 
 class UserForm(forms.ModelForm):
     big_stavka = forms.IntegerField(
@@ -199,7 +202,7 @@ class AddDescriptionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AddDescriptionForm, self).__init__(*args, **kwargs)
         CustomUser = get_user_model()
-        self.fields['assigned_manager'].queryset = CustomUser.objects.filter(post_user__in=['manager', 'junior_manager', 'senior_manager']).distinct()
+        self.fields['assigned_manager'].queryset = CustomUser.objects.filter(post_user__in=['junior_manager', 'senior_manager']).distinct()
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):

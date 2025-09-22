@@ -35,7 +35,7 @@ SECRET_KEY = get_env_value('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key
 DEBUG = False
 
 
-ALLOWED_HOSTS = ['152.114.192.9', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['91.218.244.219', '127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -134,12 +134,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'staticfiles'),
 ]
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = '/var/www/alby/static'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mail.ru'

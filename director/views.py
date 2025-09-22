@@ -260,7 +260,9 @@ def employee_director(request):
     sort_by = request.GET.get('sort_by', 'name')  # По умолчанию сортировка по имени
     
     # Получаем всех пользователей, исключая менеджеров и непринятых
-    users = CustomUser.objects.exclude(Q(post_user__in=['manager', 'junior_manager', 'senior_manager']) | Q(post_user='unapproved'))
+    users = CustomUser.objects.exclude(
+        Q(post_user__in=['junior_manager', 'senior_manager']) | Q(post_user='unapproved')
+    )
     
     # Применяем сортировку
     if sort_by == 'name':
@@ -278,7 +280,7 @@ def employee_director(request):
 
 
 def employee_manager(request):
-    users = CustomUser.objects.filter(post_user__in=['manager', 'junior_manager', 'senior_manager'])
+    users = CustomUser.objects.filter(post_user__in=['junior_manager', 'senior_manager'])
     return render(request, 'director/employee_manager.html', {'users': users})
 
 def profile_employee(request, user_id):
@@ -751,10 +753,10 @@ def salary_report(request):
 
     # Применяем фильтр по роли
     if post_user:
-        if post_user not in ['unapproved', 'manager', 'junior_manager', 'senior_manager']:
+        if post_user not in ['unapproved', 'manager']:
             users = users.filter(post_user=post_user)
     else:
-        users = users.exclude(post_user__in=['unapproved', 'manager', 'junior_manager', 'senior_manager'])
+        users = users.exclude(post_user__in=['unapproved', 'manager'])
 
     # Применяем сортировку
     if sort_by == 'asc':
@@ -846,7 +848,10 @@ def salary_manager(request):
         end_date_plus_one = end_date + timedelta(days=1)
 
     # Получаем базовый список всех активных менеджеров
-    users = CustomUser.objects.filter(is_active=True, post_user__in=['manager', 'junior_manager', 'senior_manager'])
+    users = CustomUser.objects.filter(
+        is_active=True,
+        post_user__in=['junior_manager', 'senior_manager']
+    )
 
     # Подсчитываем количество завершенных задач для каждого менеджера через Subquery
     completed_tasks_subquery = Task.objects.filter(
@@ -979,6 +984,7 @@ def salary_manager(request):
 def director_user_statistic(request, user_id):
     current_user = get_object_or_404(CustomUser, id=user_id)
 
+    # Обработка выбора месяца
     selected_month = timezone.now().date()
     if 'month' in request.GET:
         try:
@@ -986,12 +992,14 @@ def director_user_statistic(request, user_id):
         except ValueError:
             pass
 
+    # Определение границ месяца
     first_day = selected_month.replace(day=1)
     if selected_month.month == 12:
         last_day = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
     else:
         last_day = selected_month.replace(month=selected_month.month + 1, day=1)
 
+    # Расчет зарплаты
     try:
         salary_data = TimeEntry.boss_total_salary_for_each_user(
             start_date=first_day,
@@ -1002,6 +1010,7 @@ def director_user_statistic(request, user_id):
     except Exception:
         total_salary = 0
 
+    # Подзапрос для подсчета задач
     completed_tasks_subquery = Task.objects.filter(
         submitted_by=OuterRef('pk'),
         completed=True,
@@ -1176,7 +1185,8 @@ def employee_shiftsdir(request, user_id):
     # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
-            selected_month = timezone.make_aware(dt.datetime.strptime(selected_month_str, '%Y-%m').date())
+            selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
+            selected_month = timezone.make_aware(selected_month_naive)
         except (ValueError, TypeError):
             selected_month = timezone.now().date()
     else:
@@ -1242,7 +1252,8 @@ def manager_shifts(request, user_id):
     # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
-            selected_month = timezone.make_aware(dt.datetime.strptime(selected_month_str, '%Y-%m').date())
+            selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
+            selected_month = timezone.make_aware(selected_month_naive)
         except (ValueError, TypeError):
             selected_month = timezone.now().date()
     else:

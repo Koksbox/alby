@@ -18,6 +18,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     Расширенная модель пользователя с дополнительными полями и функциональностью.
     """
     USER_TYPE_CHOICES = [
+        ('unapproved', 'Неутвержденный'),
         ('trainee', 'Стажер'),
         ('junior_employee', 'Младший сотрудник'),
         ('employee', 'Сотрудник'),
@@ -27,7 +28,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('expert', 'Эксперт'),
         ('junior_manager', 'Младший менеджер'),
         ('senior_manager', 'Старший менеджер'),
-        ('unapproved', 'Неутвержденный'),
     ]
 
     # Основные поля
@@ -144,6 +144,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             'expert': 250,
             'junior_manager': 180,
             'senior_manager': 225,
+            'unapproved': 0,  # на всякий случай
         }
         return stavka_map.get(self.post_user, 0)
 

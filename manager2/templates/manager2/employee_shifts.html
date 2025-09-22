@@ -1,19 +1,11 @@
-{% extends 'manager2/layout.html' %}
+{% extends 'director/layout.html' %}
 {% load custom_filters %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>История смен сотрудника</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-</head>
-<body>
+
 {% block content %}
 <div class="main">
     <h1>История смен сотрудника: {{ employee.full_name }}</h1>
     <a href="/manager/employee/" class="btn">Назад</a>
-    
+
     <div class="filter-section">
         <form method="get" class="filter-form">
             <input type="month" name="month" value="{{ selected_month|date:'Y-m' }}" class="month-input">
@@ -282,5 +274,3 @@ updateTimer();
 {% endif %}
 
 {% endblock %}
-</body>
-</html> 

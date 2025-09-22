@@ -634,7 +634,9 @@ def task_completed(request, photo_id):
 
 
 def employee(request):
-    users = CustomUser.objects.filter(post_user__in=['junior_manager', 'senior_manager'])
+    users = CustomUser.objects.exclude(
+        post_user__in=['unapproved', 'junior_manager', 'senior_manager']
+    )
     return render(request, 'manager2/employee.html', {'users': users})
 
 
@@ -986,7 +988,8 @@ def employee_shifts(request, user_id):
     # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
-            selected_month = timezone.make_aware(datetime.strptime(selected_month_str, '%Y-%m').date())
+            selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
+            selected_month = timezone.make_aware(selected_month_naive)
         except (ValueError, TypeError):
             selected_month = timezone.now().date()
     else:

@@ -988,7 +988,8 @@ def director_user_statistic(request, user_id):
     selected_month = timezone.now().date()
     if 'month' in request.GET:
         try:
-            selected_month = dt.datetime.strptime(request.GET['month'], '%Y-%m').date()
+            selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
+            selected_month = timezone.make_aware(selected_month_naive)
         except ValueError:
             pass
 
@@ -1060,7 +1061,8 @@ def director_manager_statistic(request, user_id):
     selected_month = timezone.now().date()
     if selected_month_str:
         try:
-            selected_month = dt.datetime.strptime(selected_month_str, '%Y-%m').date()
+            selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
+            selected_month = timezone.make_aware(selected_month_naive)
         except ValueError:
             pass
 

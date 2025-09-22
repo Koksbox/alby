@@ -994,14 +994,20 @@ def employee_shifts(request, user_id):
     # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
-            # создаём naive datetime
-            selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
-            # делаем его aware в текущей TZ
-            selected_month = timezone.make_aware(selected_month_naive)
+            selected_month = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d').date()
         except (ValueError, TypeError):
-            selected_month = timezone.now()
+            selected_month = timezone.now().date()
     else:
-        selected_month = timezone.now()
+        selected_month = timezone.now().date()
+
+    # Делаем first/last как date
+    first_day_of_month = timezone.make_aware(dt.datetime.combine(selected_month.replace(day=1), dt.time.min))
+    if selected_month.month == 12:
+        last_day_of_month = timezone.make_aware(
+            dt.datetime.combine(selected_month.replace(year=selected_month.year + 1, month=1, day=1), dt.time.min))
+    else:
+        last_day_of_month = timezone.make_aware(
+            dt.datetime.combine(selected_month.replace(month=selected_month.month + 1, day=1), dt.time.min))
 
     # Определяем первый и последний день выбранного месяца
     first_day_of_month = selected_month.replace(day=1)

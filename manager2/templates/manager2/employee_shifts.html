@@ -1,11 +1,11 @@
 {% extends 'manager2/layout.html' %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>История смен сотрудника</title>
-    {% load custom_filters %}
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -38,7 +38,7 @@
                 <li class="entry-item">
                     <strong>Начало смены:</strong> {{ entry.start_time|date:"Y-m-d H:i:s" }}<br>
                     <strong>Окончание смены:</strong> {{ entry.end_time|date:"Y-m-d H:i:s" }}<br>
-                    <strong>Длительность смены:</strong> {{ entry.duration_seconds|format_time }}<br>
+                    <strong>Длительность смены:</strong> {{ entry.duration|format_time }}<br>
                     <strong>Зарплата:</strong> {{ entry.salary|floatformat:2 }} Р.
                 </li>
             {% endfor %}

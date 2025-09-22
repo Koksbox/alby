@@ -982,6 +982,12 @@ def employee_shifts(request, user_id):
     if active_shift:
         elapsed_time = int((timezone.now() - active_shift.start_time).total_seconds())
 
+    active_task = Task.objects.filter(
+        submitted_by=employee,
+        is_rated=False,
+        is_submitted_for_review=False
+    ).first()
+
     # Получаем выбранный месяц из параметров GET-запроса
     selected_month_str = request.GET.get('month')
 
@@ -991,14 +997,12 @@ def employee_shifts(request, user_id):
             selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
             selected_month = timezone.make_aware(selected_month_naive)
         except (ValueError, TypeError):
-            # Исправлено: всегда datetime
-            selected_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            selected_month = timezone.now().date()
     else:
-        # Исправлено: всегда datetime
-        selected_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        selected_month = timezone.now().date()
 
     # Определяем первый и последний день выбранного месяца
-    first_day_of_month = selected_month  # ← уже первый день месяца
+    first_day_of_month = selected_month.replace(day=1)
     if selected_month.month == 12:
         last_day_of_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
     else:
@@ -1008,8 +1012,8 @@ def employee_shifts(request, user_id):
     time_entries = TimeEntry.objects.filter(
         user=employee,
         timer_type='shift',
-        start_time__gte=first_day_of_month,   # ← теперь это datetime!
-        start_time__lt=last_day_of_month,     # ← и это datetime!
+        start_time__gte=first_day_of_month,
+        start_time__lt=last_day_of_month,
         end_time__isnull=False
     ).order_by('-start_time')
 
@@ -1019,7 +1023,7 @@ def employee_shifts(request, user_id):
         if entry.end_time and entry.start_time:
             total_duration += entry.end_time - entry.start_time
 
-    total_salary = sum(entry.salary() for entry in time_entries)  # ← если метод
+    total_salary = sum(entry.salary() for entry in time_entries)
 
     context = {
         'employee': employee,
@@ -1027,6 +1031,7 @@ def employee_shifts(request, user_id):
         'selected_month': selected_month,
         'total_duration': total_duration,
         'total_salary': total_salary,
+        'active_task': active_task,
         'active_shift': active_shift,
         'elapsed_time': elapsed_time,
         'user_stavka': employee.stavka(),

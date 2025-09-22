@@ -987,8 +987,10 @@ def employee_shifts(request, user_id):
         is_submitted_for_review=False
     ).first()
 
-    # выбранный месяц
+    # Получаем выбранный месяц из параметров GET-запроса
     selected_month_str = request.GET.get('month')
+
+    # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
             selected_month = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d').date()
@@ -997,27 +999,23 @@ def employee_shifts(request, user_id):
     else:
         selected_month = timezone.now().date()
 
-    # первый и последний день месяца (aware)
-    first_day = dt.datetime.combine(selected_month.replace(day=1), dt.time.min)
-    first_day = timezone.make_aware(first_day)
-
+    # Определяем первый и последний день выбранного месяца
+    first_day_of_month = selected_month.replace(day=1)
     if selected_month.month == 12:
-        next_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
+        last_day_of_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
     else:
-        next_month = selected_month.replace(month=selected_month.month + 1, day=1)
+        last_day_of_month = selected_month.replace(month=selected_month.month + 1, day=1)
 
-    last_day = dt.datetime.combine(next_month, dt.time.min)
-    last_day = timezone.make_aware(last_day)
-
-    # записи
+    # Получаем записи времени для сотрудника за выбранный период
     time_entries = TimeEntry.objects.filter(
         user=employee,
         timer_type='shift',
-        start_time__gte=first_day,
-        start_time__lt=last_day,
+        start_time__gte=first_day_of_month,
+        start_time__lt=last_day_of_month,
         end_time__isnull=False
     ).order_by('-start_time')
 
+    # Рассчитываем общее время и зарплату
     total_duration = timezone.timedelta()
     for entry in time_entries:
         if entry.end_time and entry.start_time:

@@ -1187,8 +1187,7 @@ def employee_shiftsdir(request, user_id):
     # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
-            selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
-            selected_month = timezone.make_aware(selected_month_naive)
+            selected_month = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d').date()
         except (ValueError, TypeError):
             selected_month = timezone.now().date()
     else:

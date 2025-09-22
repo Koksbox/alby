@@ -7,12 +7,14 @@ register = template.Library()
 def format_time(value):
     if value is None:
         return "0 секунд"
-    
+
+    # Если timedelta — конвертируем в секунды
     if isinstance(value, timedelta):
         total_seconds = int(value.total_seconds())
     else:
-        total_seconds = int(value * 3600)
-    
+        # Предполагаем, что value — уже в секундах (int или float)
+        total_seconds = int(value)
+
     if total_seconds < 0:
         return "0 секунд"
 
@@ -21,7 +23,6 @@ def format_time(value):
     seconds = total_seconds % 60
 
     time_parts = []
-
     if hours > 0:
         time_parts.append(f"{hours} ч")
     if minutes > 0 or hours > 0:
@@ -30,7 +31,6 @@ def format_time(value):
         time_parts.append(f"{seconds} с")
 
     return " ".join(time_parts)
-
 
 @register.filter
 def dict_get(dictionary, key):

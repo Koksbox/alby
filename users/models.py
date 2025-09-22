@@ -264,6 +264,13 @@ class TimeEntry(models.Model):
             return (self.end_time - self.start_time).total_seconds() / 3600
         return 0
 
+    @property
+    def duration_seconds(self):
+        """Возвращает продолжительность в секундах."""
+        if self.end_time:
+            return int((self.end_time - self.start_time).total_seconds())
+        return 0
+
     def salary(self):
         """Вычисляет зарплату за период."""
         return self.duration * self.user.stavka()

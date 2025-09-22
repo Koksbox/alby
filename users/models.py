@@ -268,8 +268,8 @@ class TimeEntry(models.Model):
     def duration_seconds(self):
         """Возвращает продолжительность в секундах."""
         if self.end_time:
-            return int((self.end_time - self.start_time).total_seconds())
-        return 0
+            return self.end_time - self.start_time
+        return timezone.timedelta(0)
 
     def salary(self):
         """Вычисляет зарплату за период."""

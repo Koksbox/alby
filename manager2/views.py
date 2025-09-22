@@ -970,14 +970,13 @@ def maket_info_manager(request, photo_id):
 def employee_shifts(request, user_id):
     employee = get_object_or_404(CustomUser, id=user_id)
 
-    # Получаем активную смену
+    # Активная смена
     active_shift = TimeEntry.objects.filter(
         user=employee,
         end_time__isnull=True,
         timer_type='shift'
     ).first()
 
-    # Рассчитываем прошедшее время для активной смены
     elapsed_time = 0
     if active_shift:
         elapsed_time = int((timezone.now() - active_shift.start_time).total_seconds())
@@ -988,38 +987,37 @@ def employee_shifts(request, user_id):
         is_submitted_for_review=False
     ).first()
 
-    # Получаем выбранный месяц из параметров GET-запроса
+    # выбранный месяц
     selected_month_str = request.GET.get('month')
-
-    # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
-            # создаём naive datetime
-            selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
-            # делаем его aware в текущей TZ
-            selected_month = timezone.make_aware(selected_month_naive)
+            selected_month = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d').date()
         except (ValueError, TypeError):
-            selected_month = timezone.now()
+            selected_month = timezone.now().date()
     else:
-        selected_month = timezone.now()
+        selected_month = timezone.now().date()
 
-    # Определяем первый и последний день выбранного месяца
-    first_day_of_month = selected_month.replace(day=1)
+    # первый и последний день месяца (aware)
+    first_day = dt.datetime.combine(selected_month.replace(day=1), dt.time.min)
+    first_day = timezone.make_aware(first_day)
+
     if selected_month.month == 12:
-        last_day_of_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
+        next_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
     else:
-        last_day_of_month = selected_month.replace(month=selected_month.month + 1, day=1)
+        next_month = selected_month.replace(month=selected_month.month + 1, day=1)
 
-    # Получаем записи времени для сотрудника за выбранный период
+    last_day = dt.datetime.combine(next_month, dt.time.min)
+    last_day = timezone.make_aware(last_day)
+
+    # записи
     time_entries = TimeEntry.objects.filter(
         user=employee,
         timer_type='shift',
-        start_time__gte=first_day_of_month,
-        start_time__lt=last_day_of_month,
+        start_time__gte=first_day,
+        start_time__lt=last_day,
         end_time__isnull=False
     ).order_by('-start_time')
 
-    # Рассчитываем общее время и зарплату
     total_duration = timezone.timedelta()
     for entry in time_entries:
         if entry.end_time and entry.start_time:
@@ -1030,7 +1028,7 @@ def employee_shifts(request, user_id):
     context = {
         'employee': employee,
         'time_entries': time_entries,
-        'selected_month': selected_month,
+        'selected_month': selected_month,  # <-- это date, для шаблона
         'total_duration': total_duration,
         'total_salary': total_salary,
         'active_task': active_task,
@@ -1040,6 +1038,7 @@ def employee_shifts(request, user_id):
     }
 
     return render(request, 'manager2/employee_shifts.html', context)
+
 
 def upload_photo_manager(request):
     """Загрузка нового макета менеджером"""

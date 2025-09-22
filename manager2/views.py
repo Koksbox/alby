@@ -991,12 +991,14 @@ def employee_shifts(request, user_id):
             selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
             selected_month = timezone.make_aware(selected_month_naive)
         except (ValueError, TypeError):
-            selected_month = timezone.now().date()
+            # Исправлено: всегда datetime
+            selected_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     else:
-        selected_month = timezone.now().date()
+        # Исправлено: всегда datetime
+        selected_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     # Определяем первый и последний день выбранного месяца
-    first_day_of_month = selected_month.replace(day=1)
+    first_day_of_month = selected_month  # ← уже первый день месяца
     if selected_month.month == 12:
         last_day_of_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
     else:
@@ -1006,19 +1008,19 @@ def employee_shifts(request, user_id):
     time_entries = TimeEntry.objects.filter(
         user=employee,
         timer_type='shift',
-        start_time__gte=first_day_of_month,
-        start_time__lt=last_day_of_month,
+        start_time__gte=first_day_of_month,   # ← теперь это datetime!
+        start_time__lt=last_day_of_month,     # ← и это datetime!
         end_time__isnull=False
     ).order_by('-start_time')
-    
+
     # Рассчитываем общее время и зарплату
     total_duration = timezone.timedelta()
     for entry in time_entries:
         if entry.end_time and entry.start_time:
             total_duration += entry.end_time - entry.start_time
 
-    total_salary = sum(entry.salary() for entry in time_entries)
-    
+    total_salary = sum(entry.salary() for entry in time_entries)  # ← если метод
+
     context = {
         'employee': employee,
         'time_entries': time_entries,
@@ -1029,7 +1031,7 @@ def employee_shifts(request, user_id):
         'elapsed_time': elapsed_time,
         'user_stavka': employee.stavka(),
     }
-    
+
     return render(request, 'manager2/employee_shifts.html', context)
 
 def upload_photo_manager(request):

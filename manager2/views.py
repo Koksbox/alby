@@ -678,10 +678,24 @@ def refactor_profile_manager(request):
 
 
 def profile_employee_manager(request, user_id):
-    print(f"Received user_id: {user_id}")  # Временное сообщение для отладки
-    user = get_object_or_404(CustomUser, id=user_id)  # Получаем одного пользователя
-    return render(request, 'manager2/profile_employee_manager.html',
-{'user': user})  # Передаем единственного пользователя в контекст
+    user = get_object_or_404(CustomUser, id=user_id)
+    user.refresh_from_db()   # гарантированно получить свежие данные из БД
+
+    # безопасно получить stavka (метод или поле)
+    stavka_value = None
+    if callable(getattr(user, 'stavka', None)):
+        stavka_value = user.stavka()
+    else:
+        stavka_value = getattr(user, 'stavka', None)
+
+    is_senior = (user.post_user == 'senior_manager')
+
+    context = {
+        'user': user,
+        'is_senior': is_senior,
+        'user_stavka': stavka_value,
+    }
+    return render(request, 'manager2/profile_employee_manager.html', context)
 
 from django.shortcuts import render, get_object_or_404, redirect
 from director.forms import UserForm

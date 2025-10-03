@@ -27,6 +27,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('master', 'Мастер'),
         ('expert', 'Эксперт'),
         ('junior_manager', 'Младший менеджер'),
+        ('manager', 'Менеджер'),
         ('senior_manager', 'Старший менеджер'),
     ]
 
@@ -143,6 +144,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             'master': 200,
             'expert': 250,
             'junior_manager': 180,
+            'manager': 200,
             'senior_manager': 225,
             'unapproved': 0,  # на всякий случай
         }

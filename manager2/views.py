@@ -635,7 +635,7 @@ def task_completed(request, photo_id):
 
 def employee(request):
     users = CustomUser.objects.exclude(
-        post_user__in=['unapproved', 'junior_manager', 'senior_manager']
+        post_user__in=['unapproved', 'junior_manager', 'manager', 'senior_manager']
     )
     return render(request, 'manager2/employee.html', {'users': users})
 

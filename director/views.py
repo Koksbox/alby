@@ -261,7 +261,7 @@ def employee_director(request):
     
     # Получаем всех пользователей, исключая менеджеров и непринятых
     users = CustomUser.objects.exclude(
-        Q(post_user__in=['junior_manager', 'senior_manager']) | Q(post_user='unapproved')
+        Q(post_user__in=['junior_manager', 'manager', 'senior_manager']) | Q(post_user='unapproved')
     )
     
     # Применяем сортировку
@@ -280,7 +280,7 @@ def employee_director(request):
 
 
 def employee_manager(request):
-    users = CustomUser.objects.filter(post_user__in=['junior_manager', 'senior_manager'])
+    users = CustomUser.objects.filter(post_user__in=['junior_manager', 'manager', 'senior_manager'])
     return render(request, 'director/employee_manager.html', {'users': users})
 
 def profile_employee(request, user_id):
@@ -850,7 +850,7 @@ def salary_manager(request):
     # Получаем базовый список всех активных менеджеров
     users = CustomUser.objects.filter(
         is_active=True,
-        post_user__in=['junior_manager', 'senior_manager']
+        post_user__in=['junior_manager', 'manager', 'senior_manager']
     )
 
     # Подсчитываем количество завершенных задач для каждого менеджера через Subquery

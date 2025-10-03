@@ -61,7 +61,7 @@ class PhotoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Исправлено: используем __in для нескольких значений
         self.fields['assigned_manager'].queryset = CustomUser.objects.filter(
-            post_user__in=['junior_manager', 'senior_manager']
+            post_user__in=['junior_manager', 'manager' ,'senior_manager']
         ).distinct()
 
 class UserForm(forms.ModelForm):
@@ -202,7 +202,7 @@ class AddDescriptionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AddDescriptionForm, self).__init__(*args, **kwargs)
         CustomUser = get_user_model()
-        self.fields['assigned_manager'].queryset = CustomUser.objects.filter(post_user__in=['junior_manager', 'senior_manager']).distinct()
+        self.fields['assigned_manager'].queryset = CustomUser.objects.filter(post_user__in=['junior_manager', 'manager', 'senior_manager']).distinct()
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):

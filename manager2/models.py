@@ -409,6 +409,11 @@ class TimeManger(models.Model):
         related_name='timemanger_set',
         verbose_name=_('Менеджер')
     )
+    hourly_rate = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name=_('Ставка на момент записи')
+    )
     start_time = models.DateTimeField(
         verbose_name=_('Время начала')
     )
@@ -433,7 +438,8 @@ class TimeManger(models.Model):
     @property
     def salary(self):
         """Вычисляет зарплату за период."""
-        return self.duration * self.manager.stavka()
+        effective_rate = self.hourly_rate if self.hourly_rate is not None else self.manager.stavka()
+        return self.duration * effective_rate
 
     def __str__(self):
         return f"TimeManager: {self.manager.get_full_name()} from {self.start_time} to {self.end_time}"

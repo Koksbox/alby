@@ -248,6 +248,11 @@ class TimeEntry(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_('Пользователь')
     )
+    hourly_rate = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name=_('Ставка на момент записи')
+    )
     start_time = models.DateTimeField(verbose_name=_('Время начала'))
     end_time = models.DateTimeField(
         null=True,
@@ -275,7 +280,8 @@ class TimeEntry(models.Model):
 
     def salary(self):
         """Вычисляет зарплату за период."""
-        return self.duration * self.user.stavka()
+        effective_rate = self.hourly_rate if self.hourly_rate is not None else self.user.stavka()
+        return self.duration * effective_rate
 
     def __str__(self):
         return f"TimeEntry: {self.user.full_name} from {self.start_time} to {self.end_time}"

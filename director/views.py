@@ -669,8 +669,11 @@ def salary_report(request):
     # Для корректной фильтрации по верхней границе в аннотациях используем следующий день
     end_date_plus_one = end_date + timedelta(days=1)
 
-    # Получаем базовый список всех активных пользователей
-    users = CustomUser.objects.filter(is_active=True)
+    # Роли без менеджеров
+    non_manager_roles = [code for code, _ in CustomUser.USER_TYPE_CHOICES if code not in ['junior_manager', 'manager', 'senior_manager']]
+
+    # Получаем базовый список всех активных сотрудников (не менеджеры)
+    users = CustomUser.objects.filter(is_active=True, post_user__in=non_manager_roles)
 
     # Подсчитываем количество завершенных задач для каждого пользователя через Subquery
     completed_tasks_subquery = TaskReview.objects.filter(
@@ -753,10 +756,13 @@ def salary_report(request):
 
     # Применяем фильтр по роли
     if post_user:
-        if post_user not in ['unapproved', 'manager']:
+        # Игнорируем менеджерские роли в фильтре
+        if post_user in ['junior_manager', 'manager', 'senior_manager']:
+            post_user = None
+        elif post_user != 'unapproved':
             users = users.filter(post_user=post_user)
     else:
-        users = users.exclude(post_user__in=['unapproved', 'manager'])
+        users = users.exclude(post_user__in=['unapproved', 'junior_manager', 'manager', 'senior_manager'])
 
     # Применяем сортировку
     if sort_by == 'asc':
@@ -773,7 +779,7 @@ def salary_report(request):
         users = users.order_by('-completed_tasks_count')  # По убыванию количества завершенных задач
 
     # Передаем данные в шаблон
-    filtered_roles = [choice for choice in CustomUser.USER_TYPE_CHOICES if choice[0] not in ['unapproved', 'manager']]
+    filtered_roles = [choice for choice in CustomUser.USER_TYPE_CHOICES if choice[0] in non_manager_roles and choice[0] != 'unapproved']
 
     # Согласовываем суммы с текущим набором пользователей
     if start_date and end_date_plus_one:

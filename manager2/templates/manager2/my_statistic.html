@@ -32,7 +32,9 @@
             <p>Проверено задач: {{ user_data.reviewed_tasks }}</p>
             <p><a href="{% url 'my_maket_manager' %}" class="maket_zav"> Мои макеты:</a> {{ worked_photos_manager }}</p>
         </div>
+        {% if request.user.post_user != 'junior_manager' %}
         <a href="/manager/employee/" class="btn">Назад</a>
+        {% endif %}
     </div>
 
 <style>

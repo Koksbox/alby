@@ -42,7 +42,11 @@ window.addEventListener('beforeinstallprompt', (e) => {
   deferredPrompt = e;
   const btn = getInstallButton();
   if (btn) {
-    showInstallButton();
+    // На iOS события нет; кнопку показываем только на не-iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (!isIOS) {
+      showInstallButton();
+    }
     // Re-bind click each time event fires to use the latest deferredPrompt
     btn.onclick = async () => {
       btn.disabled = true;
@@ -70,4 +74,16 @@ window.addEventListener('beforeinstallprompt', (e) => {
 window.addEventListener('appinstalled', () => {
   console.log('PWA installed');
   hideInstallButton();
+});
+
+// Показать подсказку для iOS
+window.addEventListener('load', () => {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (isIOS) {
+    const hint = document.getElementById('iosInstallHint');
+    if (hint) {
+      hint.style.display = 'block';
+    }
+    hideInstallButton();
+  }
 });

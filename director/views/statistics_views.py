@@ -88,7 +88,7 @@ def director_user_statistic(request, user_id):
         ).aggregate(
             total=Sum(
                 ExpressionWrapper(
-                    ((F('end_time') - F('start_time')) / timedelta(hours=1)) * F('user__big_stavka'),
+                    ((F('end_time') - F('start_time')) / timedelta(hours=1)) * Coalesce(F('hourly_rate'), F('user__big_stavka')),
                     output_field=FloatField()
                 )
             )
@@ -175,7 +175,7 @@ def director_manager_statistic(request, user_id):
         ).aggregate(
             total=Sum(
                 ExpressionWrapper(
-                    ((F('end_time') - F('start_time')) / timedelta(hours=1)) * F('user__big_stavka'),
+                    ((F('end_time') - F('start_time')) / timedelta(hours=1)) * Coalesce(F('hourly_rate'), F('user__big_stavka')),
                     output_field=FloatField()
                 )
             )

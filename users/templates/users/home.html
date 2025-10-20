@@ -15,7 +15,7 @@
             <a href="register" class="btn btn-transparent mb-3">Регистрация</a>
 
             <!-- Кнопка установки PWA — теперь внутри контейнера -->
-            <button id="installButton" class="btn btn-outline-secondary btn-sm w-100" style="display: none; font-size: 0.85rem; padding: 8px 12px;">
+            <button id="installPWA" class="btn btn-outline-secondary btn-sm w-100" style="display: none; font-size: 0.85rem; padding: 8px 12px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
                     <polyline points="7 13 12 18 17 13"></polyline>
                     <polyline points="7 6 12 11 17 6"></polyline>
@@ -31,63 +31,6 @@
     </div>
 </div>
 
-<!-- JavaScript -->
-<script>
-    let deferredPrompt;
-
-    const installButton = document.getElementById('installButton');
-    const iosInstallHint = document.getElementById('iosInstallHint');
-
-    // Проверка на iOS
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS) {
-        iosInstallHint.style.display = 'block';
-        installButton.style.display = 'none';
-    }
-
-    // Обработка события beforeinstallprompt
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-
-        // Показываем кнопку только не на iOS
-        if (!isIOS) {
-            installButton.style.display = 'flex';
-            installButton.style.alignItems = 'center';
-            installButton.style.justifyContent = 'center';
-        }
-    });
-
-    // Действие по клику
-    installButton.addEventListener('click', () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('PWA установлено');
-                } else {
-                    console.log('Установка отклонена');
-                }
-                deferredPrompt = null;
-                installButton.style.display = 'none';
-            });
-        }
-    });
-
-    // Скрываем после установки
-    window.addEventListener('appinstalled', () => {
-        installButton.style.display = 'none';
-        iosInstallHint.style.display = 'none';
-    });
-
-    // Регистрация Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/static/sw.js')
-                .then(reg => console.log('SW зарегистрирован'))
-                .catch(err => console.error('Ошибка регистрации SW:', err));
-        });
-    }
-</script>
+<!-- JS логика PWA и SW централизована в users/static/js/service.js -->
 
 {% endblock content %}

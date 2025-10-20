@@ -106,8 +106,11 @@ def salary_report(request):
         start_date = None
         end_date_plus_one = None
 
-    # Базовый запрос для пользователей
-    users = CustomUser.objects.filter(is_active=True)
+    # Разрешенные роли (без менеджерских)
+    non_manager_roles = [code for code, _ in CustomUser.USER_TYPE_CHOICES if code not in ['junior_manager', 'manager', 'senior_manager']]
+
+    # Базовый запрос: только активные пользователи с не-менеджерскими ролями
+    users = CustomUser.objects.filter(is_active=True, post_user__in=non_manager_roles)
 
     # Добавляем аннотации для среднего рейтинга и выполненных задач
     users = users.annotate(
@@ -122,7 +125,7 @@ def salary_report(request):
                 total_salary=Coalesce(
                     Sum(
                         ExpressionWrapper(
-                            ((F('timeentry__end_time') - F('timeentry__start_time')) / timedelta(hours=1)) * F('big_stavka'),
+                            ((F('timeentry__end_time') - F('timeentry__start_time')) / timedelta(hours=1)) * Coalesce(F('timeentry__hourly_rate'), F('big_stavka')),
                             output_field=FloatField()
                         ),
                         filter=Q(timeentry__start_time__gte=start_date, timeentry__end_time__lt=end_date_plus_one)
@@ -145,12 +148,16 @@ def salary_report(request):
         total_salary = None
         individual_salaries = {}
 
-    # Исключаем менеджеров
+    # Повторно убеждаемся, что менеджеры исключены (на случай внешних аннотаций)
     users = users.exclude(post_user__in=['manager', 'junior_manager', 'senior_manager'])
 
     # Фильтруем по должности, если указана
     if post_user:
-        users = users.filter(post_user=post_user)
+        # Игнорируем менеджерские роли в фильтре
+        if post_user in ['junior_manager', 'manager', 'senior_manager']:
+            post_user = None
+        else:
+            users = users.filter(post_user=post_user)
 
     # Сортировка
     if sort_by == 'asc':
@@ -166,11 +173,14 @@ def salary_report(request):
     elif sort_by == 'anti_task' and 'completed_tasks_count' in users.query.annotations:
         users = users.order_by('-completed_tasks_count')
 
+    # Список ролей для фильтра (без менеджерских)
+    post_user_choices_filtered = [choice for choice in CustomUser.USER_TYPE_CHOICES if choice[0] in non_manager_roles]
+
     context = {
         'users': users,
         'total_salary': total_salary,
         'individual_salaries': individual_salaries,
-        'post_user_choices': CustomUser.USER_TYPE_CHOICES,
+        'post_user_choices': post_user_choices_filtered,
         'selected_post_user': post_user,
         'sort_by': sort_by,
         'start_date': start_date.strftime('%Y-%m-%d') if start_date else '',
@@ -216,7 +226,7 @@ def salary_manager(request):
                 total_salary=Coalesce(
                     Sum(
                         ExpressionWrapper(
-                            ((F('timemanger_set__end_time') - F('timemanger_set__start_time')) / timedelta(hours=1)) * F('big_stavka'),
+                            ((F('timemanger_set__end_time') - F('timemanger_set__start_time')) / timedelta(hours=1)) * Coalesce(F('timemanger_set__hourly_rate'), F('big_stavka')),
                             output_field=FloatField()
                         ),
                         filter=Q(timemanger_set__start_time__gte=start_date,

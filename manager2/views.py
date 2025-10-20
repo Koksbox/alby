@@ -552,7 +552,7 @@ def start_timer_manager(request):
             return redirect('profile_man')
 
         # Создаем новую запись времени
-        time_entry = TimeManger(manager=user, start_time=timezone.now())
+        time_entry = TimeManger(manager=user, start_time=timezone.now(), hourly_rate=user.stavka())
         time_entry.save()
         request.session['timer_started'] = True
         messages.success(request, "Таймер успешно запущен.")
@@ -600,7 +600,7 @@ def toggle_timer_manager(request):
             messages.success(request, "Таймер успешно остановлен.")
         else:
             # Если таймер не запущен, начинаем новый
-            time_entry = TimeManger(manager=user, start_time=timezone.now())
+            time_entry = TimeManger(manager=user, start_time=timezone.now(), hourly_rate=user.stavka())
             time_entry.save()
             request.session['timer_started'] = True
             messages.success(request, "Таймер успешно запущен.")
@@ -634,6 +634,13 @@ def task_completed(request, photo_id):
 
 
 def employee(request):
+    # Доступ только для ролей от младшего менеджера и выше
+    if request.user.post_user not in ['junior_manager', 'manager', 'senior_manager']:
+        messages.error(request, 'Недостаточно прав для просмотра списка сотрудников.')
+        return redirect('profile')
+    # Для младшего менеджера показываем его собственную статистику, как у сотрудников на /statistic/
+    if request.user.post_user == 'junior_manager':
+        return redirect('my_statistic')
     users = CustomUser.objects.exclude(
         post_user__in=['unapproved', 'junior_manager', 'manager', 'senior_manager']
     )
@@ -828,6 +835,10 @@ def my_statistic(request):
 
 @login_required
 def manager_user_statistic(request, user_id):
+    # Доступ только для ролей от младшего менеджера и выше
+    if request.user.post_user not in ['junior_manager', 'manager', 'senior_manager']:
+        messages.error(request, 'Недостаточно прав для просмотра статистики.')
+        return redirect('profile')
     current_user = get_object_or_404(CustomUser, id=user_id)
 
     # Обработка выбора месяца
@@ -968,6 +979,10 @@ def maket_info_manager(request, photo_id):
     return render(request, 'manager2/maket_info_manager.html', {'photo': photo})
 
 def employee_shifts(request, user_id):
+    # Доступ только для ролей от младшего менеджера и выше
+    if request.user.post_user not in ['junior_manager', 'manager', 'senior_manager']:
+        messages.error(request, 'Недостаточно прав для просмотра истории смен.')
+        return redirect('profile')
     employee = get_object_or_404(CustomUser, id=user_id)
 
     # Активная смена

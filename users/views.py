@@ -395,6 +395,7 @@ def start_timer(request, task_id):
         TimeEntry.objects.create(
             user=user,
             task=task,
+            hourly_rate=user.stavka(),
             start_time=timezone.now()
         )
         messages.success(request, 'Таймер запущен!')
@@ -601,7 +602,7 @@ def completed_task_user(request):
 def start_timer1(request):
     if request.method == 'POST':
         user = request.user
-        time_entry = TimeEntry(user=user, start_time=timezone.now(), timer_type='shift')
+        time_entry = TimeEntry(user=user, start_time=timezone.now(), timer_type='shift', hourly_rate=user.stavka())
         time_entry.save()
         messages.success(request, 'Таймер начала смены запущен.')
         return redirect('startapp')
@@ -650,6 +651,7 @@ def toggle_timer(request):
             TimeEntry.objects.create(
                 user=user,
                 timer_type=timer_type,
+                hourly_rate=user.stavka(),
                 start_time=timezone.now()
             )
             request.session[f'timer_{timer_type}_started'] = True

@@ -75,8 +75,8 @@ def history(request):
 
     for entry in time_entries:
         if entry.end_time and entry.start_time:
-            duration = entry.end_time - entry.start_time
-            total_duration += duration
+            entry.display_duration = int((entry.end_time - entry.start_time).total_seconds())
+            total_duration += entry.end_time - entry.start_time
             total_salary += entry.salary
 
     # Добавляем время и зарплату текущей смены

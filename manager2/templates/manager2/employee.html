@@ -17,6 +17,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>Онлайн</th>
                     <th>Полное имя</th>
                     <th>Должность</th>
                     <th>Профиль</th>
@@ -28,6 +29,13 @@
                 {% for user in users %}
                     {% if user.is_active %}
                     <tr class="fade-in-item">
+                        <td>
+                            {% if user.is_online %}
+                                <span style="color: green; font-weight: bold;">● Онлайн</span>
+                            {% else %}
+                                <span style="color: red; font-weight: bold;">● Оффлайн</span>
+                            {% endif %}
+                        </td>
                         <td>{{ user.full_name }}</td>
                         <td>{{ user.get_post_display }}</td>
                         <td>

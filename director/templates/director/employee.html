@@ -12,7 +12,7 @@
 <body>
 {% block content %}
 <main>
-    <h1>Список сотрудников</h1>
+     <h1>Список сотрудников</h1>
     <div class="sort-buttons">
         <a href="{% url 'employee_director' %}?sort_by=name" class="btnn {% if current_sort == 'name' %}active{% endif %}">По имени (А-Я)</a>
         <a href="{% url 'employee_director' %}?sort_by=position" class="btnn {% if current_sort == 'position' %}active{% endif %}">По должности</a>
@@ -22,6 +22,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>Онлайн</th>
                     <th>Полное имя</th>
                     <th>Должность</th>
                     <th>Профиль</th>
@@ -33,8 +34,16 @@
                 {% for user in users %}
                     {% if user.is_active %}
                     <tr>
+                        <td>
+                            {% if user.is_online %}
+                                <span style="color: green; font-weight: bold;">● Онлайн</span>
+                            {% else %}
+                                <span style="color: red; font-weight: bold;">● Оффлайн</span>
+                            {% endif %}
+                        </td>
                         <td>{{ user.full_name }}</td>
                         <td>{{ user.get_post_user_display }}</td>
+
                         <td>
                             <a href="{% url 'profile_employee' user.id %}" class="btn btn-primary w-100">Профиль</a>
                         </td>
@@ -49,9 +58,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <div style = "height: 100px;">
-
-    </div>
+        <div style="height: 100px;"></div>
     </div>
 </main>
 <style>

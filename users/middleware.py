@@ -95,3 +95,21 @@ class AutoShiftStopMiddleware:
         return response
 
 
+# middleware.py
+from django.utils import timezone
+from django.conf import settings
+
+class LastActivityMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.user.is_authenticated:
+            # Обновляем last_activity, если прошло больше 30 секунд
+            now = timezone.now()
+            if not request.user.last_activity or (now - request.user.last_activity).total_seconds() > 30:
+                request.user.last_activity = now
+                request.user.save(update_fields=['last_activity'])
+
+        response = self.get_response(request)
+        return response

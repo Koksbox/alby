@@ -666,14 +666,26 @@ def money(request):
     # Получаем все записи TimeEntry для текущего пользователя
     time_entries_task = TimeEntry.objects.filter(user=request.user, end_time__isnull=False, timer_type='task')
     # Получаем только ЗАВЕРШЕННЫЕ смены
-    time_entries_shift = TimeEntry.objects.filter(user=request.user, end_time__isnull=False, timer_type='shift')
+    time_entries_shift = TimeEntry.objects.filter(
+        user=request.user,
+        end_time__isnull=False,
+        timer_type='shift'
+    )
+
+    # Добавляем display_duration в секундах
+    for entry in time_entries_shift:
+        if entry.end_time and entry.start_time:
+            entry.display_duration = int((entry.end_time - entry.start_time).total_seconds())
 
     # Получаем активную смену (если есть)
     active_shift = TimeEntry.objects.filter(user=request.user, end_time__isnull=True, timer_type='shift').first()
 
     # Рассчитываем общую зарплату и длительность только для ЗАВЕРШЕННЫХ смен
     total_salary_shift_completed = sum(entry.salary() for entry in time_entries_shift)
-    total_duration_shift_completed = sum(entry.duration for entry in time_entries_shift)
+    total_duration_shift_completed = sum(
+        int((entry.end_time - entry.start_time).total_seconds())
+        for entry in time_entries_shift
+    )
 
     # Рассчитываем прошедшее время и потенциальную зарплату для активной смены (если есть)
     elapsed_time_active = 0

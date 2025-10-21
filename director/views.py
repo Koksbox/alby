@@ -258,12 +258,12 @@ def task_list_director(request):
 def employee_director(request):
     # Получаем параметр сортировки из GET-запроса
     sort_by = request.GET.get('sort_by', 'name')  # По умолчанию сортировка по имени
-    
+
     # Получаем всех пользователей, исключая менеджеров и непринятых
     users = CustomUser.objects.exclude(
         Q(post_user__in=['junior_manager', 'manager', 'senior_manager']) | Q(post_user='unapproved')
     )
-    
+
     # Применяем сортировку
     if sort_by == 'name':
         # Сортируем по имени от А до Я
@@ -271,7 +271,7 @@ def employee_director(request):
     elif sort_by == 'position':
         # Сортируем по должности
         users = users.order_by('post_user')
-    
+
     context = {
         'users': users,
         'current_sort': sort_by,
@@ -1188,29 +1188,23 @@ def is_director(user):
 
 def employee_shiftsdir(request, user_id):
     employee = get_object_or_404(CustomUser, id=user_id)
-
     # Получаем активную смену
     active_shift = TimeEntry.objects.filter(
         user=employee,
         end_time__isnull=True,
         timer_type='shift'
     ).first()
-
     # Рассчитываем прошедшее время для активной смены
     elapsed_time = 0
     if active_shift:
         elapsed_time = int((timezone.now() - active_shift.start_time).total_seconds())
-
     active_task = Task.objects.filter(
         submitted_by=employee,
         is_rated=False,
         is_submitted_for_review=False
     ).first()
-
     # Получаем выбранный месяц из параметров GET-запроса
     selected_month_str = request.GET.get('month')
-
-    # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
             selected_month = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d').date()
@@ -1218,14 +1212,12 @@ def employee_shiftsdir(request, user_id):
             selected_month = timezone.now().date()
     else:
         selected_month = timezone.now().date()
-
     # Определяем первый и последний день выбранного месяца
     first_day_of_month = selected_month.replace(day=1)
     if selected_month.month == 12:
         last_day_of_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
     else:
         last_day_of_month = selected_month.replace(month=selected_month.month + 1, day=1)
-
     # Получаем записи времени для сотрудника за выбранный период
     time_entries = TimeEntry.objects.filter(
         user=employee,
@@ -1235,31 +1227,35 @@ def employee_shiftsdir(request, user_id):
         end_time__isnull=False
     ).order_by('-start_time')
 
-    # Рассчитываем общее время и зарплату
+    # === ИСПРАВЛЕНИЕ: добавляем display_duration для каждой записи ===
+    time_entries_list = []
     total_duration = timezone.timedelta()
+    total_salary = 0
     for entry in time_entries:
         if entry.end_time and entry.start_time:
+            # Добавляем атрибут с длительностью в СЕКУНДАХ
+            entry.display_duration = int((entry.end_time - entry.start_time).total_seconds())
             total_duration += entry.end_time - entry.start_time
-
-    total_salary = sum(entry.salary() for entry in time_entries)
+            total_salary += entry.salary()  # предполагается, что salary() — метод модели
+            time_entries_list.append(entry)
+    # =================================================================
 
     context = {
         'employee': employee,
-        'time_entries': time_entries,
+        'time_entries': time_entries_list,  # ← передаём список с display_duration
         'selected_month': selected_month,
         'total_duration': total_duration,
         'total_salary': total_salary,
         'active_task': active_task,
         'active_shift': active_shift,
         'elapsed_time': elapsed_time,
-        'user_stavka': employee.stavka(),
+        'user_stavka': active_shift.hourly_rate if active_shift and active_shift.hourly_rate is not None else employee.stavka(),
     }
-
     return render(request, 'director/employee_shifts.html', context)
 
 def manager_shifts(request, user_id):
     manager = get_object_or_404(CustomUser, id=user_id)
-    
+
     # Получаем активную смену
     active_shift = TimeManger.objects.filter(
         manager=manager,
@@ -1272,10 +1268,10 @@ def manager_shifts(request, user_id):
     if active_shift:
         elapsed_time = int((timezone.now() - active_shift.start_time).total_seconds())
         active_shift_start_timestamp = int(active_shift.start_time.timestamp())
-    
+
     # Получаем выбранный месяц из параметров GET-запроса
     selected_month_str = request.GET.get('month')
-    
+
     # Если месяц не выбран, используем текущий месяц
     if selected_month_str:
         try:
@@ -1285,27 +1281,28 @@ def manager_shifts(request, user_id):
             selected_month = timezone.now().date()
     else:
         selected_month = timezone.now().date()
-    
+
     # Определяем первый и последний день выбранного месяца
     first_day_of_month = selected_month.replace(day=1)
     if selected_month.month == 12:
         last_day_of_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
     else:
         last_day_of_month = selected_month.replace(month=selected_month.month + 1, day=1)
-    
+
     # Получаем записи времени для менеджера за выбранный период
-    time_entries = TimeManger.objects.filter(
+    time_entries = list(TimeManger.objects.filter(
         manager=manager,
         start_time__gte=first_day_of_month,
         start_time__lt=last_day_of_month,
         end_time__isnull=False
-    ).order_by('-start_time')
-    
+    ).order_by('-start_time'))
+
     # Рассчитываем общее время и зарплату
     total_duration = timezone.timedelta()
     total_salary = 0
     for entry in time_entries:
         if entry.end_time and entry.start_time:
+            entry.display_duration = (entry.end_time - entry.start_time).total_seconds()
             total_duration += entry.end_time - entry.start_time
             total_salary += entry.salary
 
@@ -1314,7 +1311,7 @@ def manager_shifts(request, user_id):
         current_duration = timezone.timedelta(seconds=elapsed_time)
         total_duration += current_duration
         total_salary += (elapsed_time / 3600) * manager.stavka()
-    
+
     context = {
         'manager': manager,
         'time_entries': time_entries,
@@ -1326,7 +1323,7 @@ def manager_shifts(request, user_id):
         'user_stavka': manager.stavka(),
         'active_shift_start_timestamp': active_shift_start_timestamp,
     }
-    
+
     return render(request, 'director/manager_shifts.html', context)
 
 class TaskTemplateForm(forms.ModelForm):
@@ -1379,7 +1376,7 @@ def edit_template_director(request, template_id):
             return redirect('task_templates_director', photo_id=request.POST.get('photo_id'))
     else:
         form = TaskTemplateForm(instance=template)
-    
+
     return render(request, 'director/edit_template.html', {
         'form': form,
         'template': template,
@@ -1409,7 +1406,7 @@ def create_template_director(request, photo_id):
             return redirect('task_templates_director', photo_id=photo_id)
     else:
         form = TaskTemplateForm()
-    
+
     return render(request, 'director/create_template.html', {
         'form': form,
         'photo_id': photo_id
@@ -1439,7 +1436,7 @@ def task_monitoring(request):
         hours = int(elapsed_time.total_seconds() // 3600)
         minutes = int((elapsed_time.total_seconds() % 3600) // 60)
         elapsed_time_str = f"{hours:02d}:{minutes:02d}"
-        
+
         active_tasks.append({
             'task': entry.task,
             'user': entry.user,
@@ -1480,7 +1477,7 @@ def task_monitoring(request):
         hours = int(duration.total_seconds() // 3600)
         minutes = int((duration.total_seconds() % 3600) // 60)
         duration_str = f"{hours:02d}:{minutes:02d}"
-        
+
         formatted_history.append({
             'entry': entry,
             'duration': duration_str
@@ -1499,6 +1496,6 @@ def task_monitoring(request):
         'selected_photo': selected_photo,
         'selected_task': selected_task
     }
-    
+
     return render(request, 'director/task_monitoring.html', context)
 

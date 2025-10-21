@@ -84,6 +84,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         default=0,
         verbose_name=_('Премия')
     )
+    last_activity = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('Последняя активность')
+    )
 
     objects = CustomUserManager()
 
@@ -174,6 +179,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
         self.big_stavka = None
         self.save(update_fields=['big_stavka'])
+
+    def is_online(self):
+        if not self.last_activity:
+            return False
+        from django.utils import timezone
+        return (timezone.now() - self.last_activity).total_seconds() < 300  # 5 минут
 
 
 # ======================

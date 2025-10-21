@@ -30,7 +30,7 @@
                 <li class="entry-item">
                     <strong>Начало смены:</strong> {{ entry.start_time|date:"Y-m-d H:i:s" }}<br>
                     <strong>Окончание смены:</strong> {{ entry.end_time|date:"Y-m-d H:i:s" }}<br>
-                    <strong>Длительность смены:</strong> {{ entry.duration|format_time }}<br>
+                    <strong>Длительность смены:</strong> {{ entry.display_duration|format_time }}<br>
                     <strong>Зарплата:</strong> {{ entry.salary|floatformat:2 }} Р.
                 </li>
             {% endfor %}

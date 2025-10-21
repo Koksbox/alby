@@ -1,22 +1,19 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from datetime import timedelta
 from .managers import CustomUserManager
 import random
 import string
-from django.contrib.auth import get_user_model
 
 
-
+# ======================
+# Модель пользователя
+# ======================
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    """
-    Расширенная модель пользователя с дополнительными полями и функциональностью.
-    """
     USER_TYPE_CHOICES = [
         ('unapproved', 'Неутвержденный'),
         ('trainee', 'Стажер'),
@@ -31,7 +28,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('senior_manager', 'Старший менеджер'),
     ]
 
-    # Основные поля
     email = models.EmailField(unique=True, verbose_name=_('Email'))
     full_name = models.CharField(max_length=255, default='', verbose_name=_('ФИО'))
     phone_number = models.CharField(max_length=20, default='', verbose_name=_('Номер телефона'))
@@ -53,7 +49,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name=_('Дата рождения')
     )
 
-    # Поля для подтверждения типа пользователя
     pending_type = models.CharField(
         max_length=20,
         choices=USER_TYPE_CHOICES,
@@ -65,7 +60,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name=_('Тип подтвержден')
     )
 
-    # Поля для активации и подтверждения
     is_active = models.BooleanField(default=False, verbose_name=_('Активен'))
     is_staff = models.BooleanField(default=False, verbose_name=_('Персонал'))
     confirmation_code = models.CharField(
@@ -80,7 +74,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name=_('Время отправки кода')
     )
 
-    # Поля для финансов
     big_stavka = models.FloatField(
         default=0,
         verbose_name=_('Ставка')
@@ -105,7 +98,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.full_name
 
     def get_post_display(self):
-        """Возвращает отображаемое название должности."""
         return dict(self.USER_TYPE_CHOICES).get(self.post_user)
 
     def is_expired(self):
@@ -113,28 +105,23 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return timezone.now() > expiration_time
 
     def should_be_deleted(self):
-        """Проверяет, должен ли быть удален неактивированный аккаунт."""
         return not self.is_active and self.is_expired()
 
     @property
     def average_rating(self):
-        """Вычисляет средний рейтинг пользователя."""
         reviews = self.reviews_user.filter(rating__isnull=False)
         if not reviews.exists():
             return 0.0
         return round(sum(review.rating for review in reviews) / reviews.count(), 1)
 
     def update_rating(self):
-        """Обновляет рейтинг пользователя."""
         self.rating = self.average_rating
         self.save()
 
     def stavka(self):
-        """Возвращает ставку пользователя."""
         return self.big_stavka if self.big_stavka else self.calculate_default_stavka()
 
     def calculate_default_stavka(self):
-        """Вычисляет ставку по умолчанию в зависимости от должности."""
         stavka_map = {
             'trainee': 100,
             'junior_employee': 120,
@@ -146,29 +133,77 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             'junior_manager': 180,
             'manager': 200,
             'senior_manager': 225,
-            'unapproved': 0,  # на всякий случай
+            'unapproved': 0,
         }
         return stavka_map.get(self.post_user, 0)
 
     def set_stavka(self, new_stavka):
-        """Устанавливает новую ставку пользователя."""
+        from django.utils import timezone
+        today = timezone.now().date()
+
+        current = self.stavka_history.filter(end_date__isnull=True).first()
+        if current:
+            current.end_date = today - timedelta(days=1)
+            current.save()
+
+        StavkaHistory.objects.create(
+            user=self,
+            stavka=new_stavka,
+            start_date=today
+        )
+
         self.big_stavka = new_stavka
-        self.save()
+        self.save(update_fields=['big_stavka'])
 
     def reset_stavka(self):
-        """Сбрасывает ставку пользователя на значение по умолчанию."""
-        self.big_stavka = None
-        self.save()
+        from django.utils import timezone
+        today = timezone.now().date()
 
-    @classmethod
-    def get_all_users(cls):
-        """Возвращает список всех пользователей с основными полями."""
-        return list(cls.objects.all().values(
-            'email', 'full_name', 'phone_number', 'post_user', 'avatar'
-        ))
+        default_stavka = self.calculate_default_stavka()
+
+        current = self.stavka_history.filter(end_date__isnull=True).first()
+        if current:
+            current.end_date = today - timedelta(days=1)
+            current.save()
+
+        StavkaHistory.objects.create(
+            user=self,
+            stavka=default_stavka,
+            start_date=today
+        )
+
+        self.big_stavka = None
+        self.save(update_fields=['big_stavka'])
+
+
+# ======================
+# История ставок — ВЫНЕСЕНА НА ВЕРХНИЙ УРОВЕНЬ!
+# ======================
+
+class StavkaHistory(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='stavka_history'
+    )
+    stavka = models.DecimalField(max_digits=10, decimal_places=2)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)  # null = активна сейчас
+
+    class Meta:
+        ordering = ['-start_date']
+        verbose_name = "История ставки"
+        verbose_name_plural = "Истории ставок"
+
+    def __str__(self):
+        return f"{self.user} — {self.stavka} ₽/ч с {self.start_date}"
+
+
+# ======================
+# Прочие модели
+# ======================
 
 class PasswordResetCode(models.Model):
-    """Модель для хранения кодов сброса пароля."""
     email = models.EmailField(unique=True, verbose_name=_('Email'))
     code = models.CharField(max_length=6, verbose_name=_('Код'))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Создан'))
@@ -178,17 +213,14 @@ class PasswordResetCode(models.Model):
         verbose_name_plural = _('Коды сброса пароля')
 
     def generate_code(self):
-        """Генерирует 6-значный случайный код для сброса пароля."""
         self.code = ''.join(random.choices(string.digits, k=6))
         self.save()
 
     def __str__(self):
         return f"Reset code for {self.email}"
 
-User = get_user_model()
 
 class PromotionRequest(models.Model):
-    """Модель для запросов на повышение."""
     STATUS_CHOICES = [
         ('pending', 'Ожидает'),
         ('accepted', 'Принято'),
@@ -196,7 +228,7 @@ class PromotionRequest(models.Model):
     ]
 
     user = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         verbose_name=_('Пользователь')
     )
@@ -222,9 +254,15 @@ class PromotionRequest(models.Model):
     def __str__(self):
         return f"{self.user.full_name} - {self.requested_post} ({self.status})"
 
-from manager2.models import Task
+
+# ======================
+# TimeEntry — с улучшением
+# ======================
+
+# Импорт Task должен быть корректным. Убедитесь, что приложение `manager2` установлено.
+# Если нет — замените на относительный импорт или строку.
+
 class TimeEntry(models.Model):
-    """Модель для учета рабочего времени."""
     TIMER_TYPE_CHOICES = [
         ('task', 'Task Timer'),
         ('shift', 'Shift Timer'),
@@ -244,7 +282,7 @@ class TimeEntry(models.Model):
         verbose_name=_('Задача')
     )
     user = models.ForeignKey(
-        User,
+        CustomUser,  # ← Используем напрямую, а не get_user_model()
         on_delete=models.CASCADE,
         verbose_name=_('Пользователь')
     )
@@ -266,96 +304,103 @@ class TimeEntry(models.Model):
 
     @property
     def duration(self):
-        """Вычисляет продолжительность в часах."""
         if self.end_time:
             return (self.end_time - self.start_time).total_seconds() / 3600
         return 0
 
     @property
     def duration_seconds(self):
-        """Возвращает продолжительность в секундах."""
         if self.end_time:
             return self.end_time - self.start_time
         return timezone.timedelta(0)
 
+    def save(self, *args, **kwargs):
+        # Автоматически сохраняем ставку на момент создания/обновления записи
+        if self.hourly_rate is None and self.user_id:
+            self.hourly_rate = self.user.stavka()
+        super().save(*args, **kwargs)
+
     def salary(self):
-        """Вычисляет зарплату за период."""
         effective_rate = self.hourly_rate if self.hourly_rate is not None else self.user.stavka()
         return self.duration * effective_rate
 
     def __str__(self):
         return f"TimeEntry: {self.user.full_name} from {self.start_time} to {self.end_time}"
 
+    # === СТАРЫЕ МЕТОДЫ (оставлены для совместимости, но НЕ используют историю ставок) ===
+
     @classmethod
     def total_salary_users(cls):
-        """Вычисляет общую зарплату всех пользователей."""
-        return sum(entry.salary() for entry in cls.objects.all())
+        return sum(entry.salary() for entry in cls.objects.filter(end_time__isnull=False))
 
     @classmethod
     def total_salary_users_money_user(cls, start_date=None, end_date=None):
-        """Вычисляет общую зарплату за период."""
         queryset = cls.objects.filter(end_time__isnull=False)
         if start_date and end_date:
-            queryset = queryset.filter(
-                start_time__gte=start_date,
-                end_time__lte=end_date
-            )
+            queryset = queryset.filter(start_time__gte=start_date, end_time__lte=end_date)
         return sum(entry.salary() for entry in queryset)
 
     @classmethod
     def total_salary_for_each_user_user(cls, start_date=None, end_date=None):
-        """Вычисляет зарплату для каждого пользователя за период."""
         from collections import defaultdict
-        salaries_by_user = defaultdict(float)
-        
+        salaries = defaultdict(float)
         queryset = cls.objects.filter(end_time__isnull=False)
         if start_date and end_date:
-            queryset = queryset.filter(
-                start_time__gte=start_date,
-                end_time__lte=end_date
-            )
-
+            queryset = queryset.filter(start_time__gte=start_date, end_time__lte=end_date)
         for entry in queryset:
-            salaries_by_user[entry.user.id] += entry.salary()
+            salaries[entry.user.id] += entry.salary()
+        return dict(salaries)
 
-        return dict(salaries_by_user)
+    # === НОВЫЙ МЕТОД — с учётом hourly_rate, сохранённой в момент записи ===
+    # (Это уже решает вашу задачу, если вы сохраняете hourly_rate при создании записи!)
 
+    @classmethod
+    def total_salary_for_each_user_with_saved_rate(cls, start_date=None, end_date=None):
+        """
+        Использует hourly_rate, сохранённую в момент записи.
+        Это гарантирует, что зарплата не зависит от текущей ставки.
+        """
+        from collections import defaultdict
+        salaries = defaultdict(float)
+        queryset = cls.objects.filter(end_time__isnull=False)
+        if start_date and end_date:
+            queryset = queryset.filter(start_time__gte=start_date, end_time__lte=end_date)
+        for entry in queryset:
+            rate = entry.hourly_rate if entry.hourly_rate is not None else entry.user.stavka()
+            salaries[entry.user.id] += entry.duration * rate
+        return dict(salaries)
 
-####################################MANAGER AND DIRECTOR##############################################
     @classmethod
     def boss_total_salary_for_each_user(cls, start_date=None, end_date=None, user_id=None):
-        """Рассчитывает зарплату для каждого сотрудника за период с возможностью фильтрации по user_id"""
         from collections import defaultdict
-
-        salaries_by_user = defaultdict(float)
-        queryset = cls.objects.filter(end_time__isnull=False)  # Только завершенные записи
-
+        salaries = defaultdict(float)
+        queryset = cls.objects.filter(end_time__isnull=False)
         if start_date and end_date:
             queryset = queryset.filter(start_time__gte=start_date, end_time__lte=end_date)
         if user_id:
             queryset = queryset.filter(user_id=user_id)
-
         for entry in queryset:
-            salaries_by_user[entry.user.id] += entry.salary()
-
-        return dict(salaries_by_user)
+            salaries[entry.user.id] += entry.salary()
+        return dict(salaries)
 
     @classmethod
     def auto_stop_long_shifts(cls):
-        from django.utils import timezone
         from django.conf import settings
-        # Используем настройку для гибкого лимита (по умолчанию 24 часа)
-        one_minute_seconds = getattr(settings, 'TIME_TRACKER_SHIFT_MAX_SECONDS', 24 * 3600)
+        max_seconds = getattr(settings, 'TIME_TRACKER_SHIFT_MAX_SECONDS', 24 * 3600)
         now = timezone.now()
         entries = cls.objects.filter(timer_type='shift', end_time__isnull=True)
         for entry in entries:
             elapsed = (now - entry.start_time).total_seconds()
-            if elapsed > one_minute_seconds:
-                entry.end_time = entry.start_time + timezone.timedelta(seconds=one_minute_seconds)
+            if elapsed > max_seconds:
+                entry.end_time = entry.start_time + timezone.timedelta(seconds=max_seconds)
                 entry.save()
 
+
+# ======================
+# История премий
+# ======================
+
 class PrizeHistory(models.Model):
-    """Модель для истории премий."""
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,

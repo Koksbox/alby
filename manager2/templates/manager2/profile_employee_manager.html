@@ -12,9 +12,7 @@
             <p class="card-text"><strong>Дата рождения:</strong> {{ user.date_of_birth|date:"d.m.Y" }}</p>
             <p class="card-text"><strong>Должность:</strong> {{ user.get_post_display }}</p>
             <p class="card-text"><strong>Рейтинг:</strong> {{ user.average_rating }}</p>
-            {% if user.post_user == senior_manager %}
             <p class="card-text"><strong>Ставка:</strong> {{ user.stavka }}</p>
-            {% endif %}
         </div>
         <a href="/manager/employee/" class="but">Назад к списку пользователей</a>
     </div>

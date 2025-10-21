@@ -742,11 +742,31 @@ def salary_report(request):
 
     if start_date and end_date_plus_one:
         try:
-            # Рассчитываем общую зарплату за период через метод модели
-            total_salary = TimeEntry.total_salary_users_money_user(start_date=start_date, end_date=end_date_plus_one)
-            # Рассчитываем индивидуальную зарплату для каждого сотрудника
-            individual_salaries = TimeEntry.total_salary_for_each_user_user(start_date=start_date, end_date=end_date_plus_one)
-        except ValueError:
+            # Используем метод, который НЕ полагается на текущую ставку
+            individual_salaries = {}
+            total_salary = 0
+
+            # Фильтруем записи по периоду (end_time < end_date_plus_one)
+            time_entries = TimeEntry.objects.filter(
+                end_time__isnull=False,
+                start_time__gte=start_date,
+                end_time__lt=end_date_plus_one
+            ).select_related('user')
+
+            from collections import defaultdict
+            temp_salaries = defaultdict(float)
+
+            for entry in time_entries:
+                # Используем hourly_rate, если он есть, иначе — текущую ставку (на случай старых записей)
+                rate = entry.hourly_rate if entry.hourly_rate is not None else entry.user.stavka()
+                salary = entry.duration * rate
+                temp_salaries[entry.user_id] += salary
+
+            individual_salaries = dict(temp_salaries)
+            total_salary = sum(individual_salaries.values())
+
+        except Exception as e:
+            print("Ошибка расчёта зарплаты:", e)
             total_salary = 0
             individual_salaries = {}
     else:

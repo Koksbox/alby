@@ -97,7 +97,6 @@ def register(request):
     return render(request, 'users/register.html', {'form': form})
 
 
-from .models import User, PrizeHistory, TimeEntry, CustomUser  # Импортируем вашу модель пользователя
 
 def confirm_registration(request):
     if request.method == 'POST':

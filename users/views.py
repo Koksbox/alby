@@ -866,26 +866,25 @@ def upload_avatar_users(request):
 
 from django.utils.safestring import mark_safe
 
+from django.db.models import Q
+
 @login_required
 def photo_maket(request):
-    # Получаем активную задачу пользователя
     active_task = Task.objects.filter(
         submitted_by__id=request.user.id,
         is_rated=False,
         is_submitted_for_review=False
     ).first()
 
-    # Получаем все задачи, на которые назначен пользователь
+    # Учитываем ОБА способа назначения: assigned_to И assigned_user
     assigned_tasks = Task.objects.filter(
-        assigned_user=request.user,
+        Q(assigned_to=request.user) | Q(assigned_user=request.user),
         completed=False
     ).select_related('photo')
 
-    # Если у пользователя нет назначенных задач, показываем предупреждение
     if not assigned_tasks.exists() and not active_task:
         messages.warning(request, "У вас нет назначенных задач. Пожалуйста, обратитесь к руководителю.")
     else:
-        # Показываем информацию о назначенных задачах
         for task in assigned_tasks:
             status = "ожидает проверки" if task.is_submitted_for_review else "в работе"
             message = mark_safe(
@@ -894,31 +893,20 @@ def photo_maket(request):
             )
             messages.info(request, message)
 
-    # Получаем все макеты, к которым относятся назначенные задачи
     assigned_photos = Photo.objects.filter(
         tasks__in=assigned_tasks
     ).distinct().prefetch_related('tasks')
 
-    # Добавляем информацию о процентах завершения для каждого макета
     for photo in assigned_photos:
         total_tasks = Task.objects.filter(photo=photo).count()
         completed_tasks_count = Task.objects.filter(photo=photo, completed=True).count()
-
-        if total_tasks > 0:
-            photo.completion_percentage = (completed_tasks_count / total_tasks) * 100
-        else:
-            photo.completion_percentage = 0
-
-        # Проверяем, есть ли у пользователя активная задача для этого макета
+        photo.completion_percentage = (completed_tasks_count / total_tasks) * 100 if total_tasks > 0 else 0
         photo.has_active_task = active_task and active_task.photo_id == photo.id
-
-        # Добавляем информацию о назначенных задачах для этого макета
-        photo.assigned_tasks = assigned_tasks.filter(photo=photo)
+        photo.assigned_tasks = assigned_tasks.filter(photo=photo)  # ← именно это использует шаблон
 
     return render(request, 'users/photo_maket.html', {
         'photos': assigned_photos,
         'active_task': active_task,
-        'assigned_tasks': assigned_tasks
     })
 
 def maket_info(request, photo_id):
@@ -956,6 +944,73 @@ def maket_info(request, photo_id):
     }
     return render(request, 'users/maket_info.html', context)
 
+
+def maket_info_all(request, photo_id):
+    # Проверяем, авторизован ли пользователь
+    if not request.user.is_authenticated:
+        messages.error(request, "Вы не авторизованы!")
+        return redirect('login')
+
+    # Проверяем, запущен ли таймер смены
+    active_entry = TimeEntry.objects.filter(
+        user=request.user,
+        timer_type='shift',
+        end_time__isnull=True
+    ).first()
+    if not active_entry:
+        messages.warning(request, "Таймер смены не запущен. Начните смену, чтобы получить доступ к макетам.")
+        return redirect('startapp')  # Перенаправляем на страницу начала смены
+
+    # Получаем объект макета по его ID
+    photo = get_object_or_404(Photo, id=photo_id)
+
+    total_tasks = Task.objects.filter(photo=photo).count()
+    completed_tasks_count = Task.objects.filter(photo=photo, completed=True).count()
+
+    if total_tasks > 0:
+        photo.completion_percentage = (completed_tasks_count / total_tasks) * 100
+    else:
+        photo.completion_percentage = 0
+
+    tasks = Task.objects.filter(photo=photo)
+
+    context = {
+        'photo': photo,
+        'tasks': tasks,
+    }
+    return render(request, 'users/maket_info_all.html', context)
+
+@login_required
+def all_makets_and_tasks(request):
+    user = request.user
+    all_photos = Photo.objects.prefetch_related('tasks').all()
+
+    assigned_photos = []
+    unassigned_photos = []
+
+    for photo in all_photos:
+        tasks = photo.tasks.all()
+        total = tasks.count()
+        completed = tasks.filter(completed=True).count()
+        photo.completion_percentage = (completed / total * 100) if total > 0 else 0
+        photo.has_active_task = tasks.filter(is_submitted_for_review=False, completed=False).exists()
+        photo.all_tasks = tasks
+
+        # Проверяем, есть ли у пользователя задачи в этом макете
+        has_assigned_task = any(
+            user == task.assigned_to or user in task.assigned_user.all()
+            for task in tasks
+        )
+
+        if has_assigned_task:
+            assigned_photos.append(photo)
+        else:
+            unassigned_photos.append(photo)
+
+    return render(request, 'users/all_makets_and_tasks.html', {
+        'assigned_photos': assigned_photos,
+        'unassigned_photos': unassigned_photos,
+    })
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -1122,3 +1177,38 @@ def task_history(request):
 
 def trigger_500(request):
     raise Exception("Тестовая ошибка 500")
+
+from django.shortcuts import get_object_or_404
+
+def select_task_all(request, photo_id=None):
+    current_user = request.user
+
+    if request.method == 'POST':
+        task_id = request.POST.get('task_id')
+        if task_id:
+            try:
+                # Разрешаем выбор ЛЮБОЙ задачи макета, не только назначенной
+                task = Task.objects.get(id=task_id, photo_id=photo_id, completed=False)
+                # Добавляем пользователя в submitted_by при выборе
+                if current_user not in task.submitted_by.all():
+                    task.submitted_by.add(current_user)
+                    task.save()
+                return redirect('work_on_task', task_id=task.id)
+            except Task.DoesNotExist:
+                messages.error(request, 'Задача недоступна или уже завершена.')
+        else:
+            messages.error(request, 'Пожалуйста, выберите задачу.')
+
+    photo = get_object_or_404(Photo, id=photo_id) if photo_id else None
+
+    # Получаем ВСЕ задачи по макету (не только назначенные!)
+    if photo:
+        tasks = Task.objects.filter(photo=photo, completed=False)
+    else:
+        tasks = Task.objects.none()
+
+    return render(request, 'users/select_task.html', {
+        'tasks': tasks,
+        'photo': photo,
+        'current_user': request.user,  # ← важно для шаблона
+    })

@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.db import models
-from django.contrib.auth import get_user_model
+# from django.contrib.auth import get_user_model
 from users.models import CustomUser
 from django.utils.translation import gettext_lazy as _
 
-User = get_user_model()
+# User = get_user_model()
 
 class TaskTemplate(models.Model):
     """Модель для хранения шаблонов задач."""
@@ -142,7 +142,6 @@ class Task(models.Model):
         Photo,
         on_delete=models.CASCADE,
         related_name='tasks',
-        default=1,
         verbose_name=_('Фотография')
     )
     template = models.ForeignKey(
@@ -232,7 +231,7 @@ class Task(models.Model):
         verbose_name=_('Заработок')
     )
     assigned_user = models.ManyToManyField(
-        User,
+        CustomUser,  # ← ИСПРАВЛЕНО: было User
         blank=True,
         related_name='tasks_assigned',
         verbose_name=_('Назначенные пользователи')
@@ -246,7 +245,7 @@ class Task(models.Model):
         verbose_name=_('Остановлено')
     )
     submitted_by = models.ManyToManyField(
-        CustomUser,
+        CustomUser,  # ← ИСПРАВЛЕНО: было CustomUser (оставлено, но единообразно)
         related_name='submitted_reviews',
         verbose_name=_('Отправлено пользователями')
     )
@@ -261,7 +260,7 @@ class Task(models.Model):
         verbose_name=_('Завершено пользователями')
     )
     submitted_by_users_for_review = models.ManyToManyField(
-        User,
+        CustomUser,  # ← ИСПРАВЛЕНО: было User
         related_name='tasks_submitted_for_review',
         blank=True,
         verbose_name=_('Отправлено на проверку пользователями')

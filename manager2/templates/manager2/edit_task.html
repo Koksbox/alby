@@ -2,107 +2,271 @@
 {% load static %}
 {% block content %}
 <main>
-    <h2 class="page-title">Редактирование задачи: {{ task.title }}</h2>
-
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-        <a href="{% url 'photo_detail' photo.id %}">Назад к макету</a>
+    <div class="header">
+        <h1>Редактирование задачи: {{ task.title }}</h1>
+        <a href="{% url 'photo_detail' photo.id %}" class="history-button">
+            <i class="fas fa-arrow-left"></i> Назад к макету
+        </a>
     </div>
 
-    <!-- Форма редактирования -->
     <div class="form-container">
-        <form method="post" class="task-form">
+        <form method="post" class="task-form" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <!-- Поля формы -->
+
+            <!-- Заголовок -->
             <div class="form-group">
-                {{ form.title.label_tag }}
+                <label>{{ form.title.label }}</label>
                 {{ form.title }}
                 {% if form.title.errors %}
-                    <div class="error-message">{{ form.title.errors }}</div>
+                    <div class="alert alert-error">{{ form.title.errors }}</div>
                 {% endif %}
             </div>
 
+            <!-- Описание -->
             <div class="form-group">
-                {{ form.description.label_tag }}
+                <label>Описание</label>
                 {{ form.description }}
                 {% if form.description.errors %}
-                    <div class="error-message">{{ form.description.errors }}</div>
+                    <div class="alert alert-error">{{ form.description.errors }}</div>
                 {% endif %}
             </div>
 
+            <!-- Требования -->
             <div class="form-group">
-                {{ form.max_assigned_users.label_tag }}
+                <label>{{ form.requirements.label }}</label>
+                {{ form.requirements }}
+                {% if form.requirements.errors %}
+                    <div class="alert alert-error">{{ form.requirements.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Макс. количество -->
+            <div class="form-group">
+                <label>{{ form.max_assigned_users.label }}</label>
                 {{ form.max_assigned_users }}
                 {% if form.max_assigned_users.errors %}
-                    <div class="error-message">{{ form.max_assigned_users.errors }}</div>
+                    <div class="alert alert-error">{{ form.max_assigned_users.errors }}</div>
                 {% endif %}
             </div>
 
-            <!-- Кнопки управления -->
+            <!-- Срок сдачи -->
+            <div class="form-group">
+                <label>{{ form.due_date.label }}</label>
+                {{ form.due_date }}
+                {% if form.due_date.errors %}
+                    <div class="alert alert-error">{{ form.due_date.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Назначенные пользователи -->
+            <div class="form-group assigned-users-group">
+                <label>Назначить сотрудников:</label>
+                {{ form.assigned_user }}
+                {% if form.assigned_user.errors %}
+                    <div class="alert alert-error">{{ form.assigned_user.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Кнопки -->
             <div class="button-group">
-                <button type="submit" class="btn btn-success">Сохранить изменения</button>
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
                 <a href="{% url 'photo_detail' photo.id %}" class="btn btn-secondary">Отмена</a>
             </div>
         </form>
     </div>
+
+    <div class="spacer"></div>
 </main>
+
 <style>
+/* Общие стили */
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    padding: 0;
-    background-color: #f4f4f4;
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    background-color: #001f1f;
 }
-h1 {
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.header {
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.header h1 {
+    font-size: 20px;
     text-align: center;
+    margin: 0;
+    flex: 1;
+    order: 2;
 }
-.task-list {
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    margin: 20px 0;
-}
-.task-item {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-}
-.task-item:hover {
-    background-color: #f0f0f0;
-}
-.task-item.selected {
-    background-color: #007bff;
+
+.history-button {
+    background-color: #17a2b8;
     color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+    order: 1;
 }
-button, a {
+
+.history-button:hover {
+    background-color: #138496;
+}
+
+.form-container {
+    width: 90%;
+    max-width: 700px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
     display: block;
-    margin: 10px auto;
-    padding: 10px 15px;
+    margin-bottom: 8px;
+    color: #17a2b8;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.form-container input[type="text"],
+.form-container input[type="number"],
+.form-container input[type="datetime-local"],
+.form-container textarea,
+.form-container select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background-color: rgba(255, 255, 255, 0.1);
     color: white;
-    background-color: #28a745;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.form-container select[multiple] {
+    height: 120px;
+}
+
+.form-container input:focus,
+.form-container textarea:focus,
+.form-container select:focus {
+    outline: none;
+    border-color: #17a2b8;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.alert-error {
+    margin-top: 8px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: rgba(220, 53, 69, 0.2);
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    font-size: 14px;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 10px 24px;
+    font-size: 16px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    cursor: pointer;
     text-align: center;
     text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    min-width: 140px;
 }
-button:hover, a:hover {
-    opacity: 0.8;
+
+.btn-primary {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #138496;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.spacer {
+    height: 150px;
+}
+
+/* Адаптация под мобильные устройства */
+@media (max-width: 600px) {
+    .header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header h1 {
+        order: 1;
+        font-size: 18px;
+    }
+
+    .history-button {
+        order: 2;
+        justify-content: center;
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .form-container {
+        padding: 15px;
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 200px;
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: center;
+    }
 }
 </style>
-    <script>
-        document.querySelectorAll('.task-item').forEach(item => {
-            item.addEventListener('click', function() {
-                // Снять выделение со всех элементов
-                document.querySelectorAll('.task-item').forEach(i => i.classList.remove('selected'));
-                // Выделить текущий элемент
-                this.classList.add('selected');
-                // Установить его ID в скрытое поле
-                document.getElementById('selectedTaskId').value = this.getAttribute('data-id');
-            });
-        });
-    </script>
 {% endblock %}
-</body>
-</html>

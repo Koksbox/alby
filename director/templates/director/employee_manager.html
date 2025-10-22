@@ -31,15 +31,14 @@
                     {% if user.is_active %}
                     <tr>
                         <td>
-                            {% if user.is_online %}
-                                <span style="color: green; font-weight: bold;">● Онлайн</span>
+                            {% if user.timer_active %}
+                                <span style="color: green; font-weight: bold;">● Таймер запущен</span>
                             {% else %}
-                                <span style="color: red; font-weight: bold;">● Оффлайн</span>
+                                <span style="color: red; font-weight: bold;">● Таймер остановлен</span>
                             {% endif %}
                         </td>
                         <td>{{ user.full_name }}</td>
                         <td>{{ user.get_post_user_display }}</td>
-
                         <td>
                             <a href="{% url 'profile_employee' user.id %}" class="btn btn-primary">Профиль</a>
                         </td>

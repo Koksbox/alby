@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Макеты</title>
+    <title>Все макеты и задачи</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/css_zadachi.css' %}">
 </head>
@@ -12,12 +12,9 @@
 {% block content %}
 <main>
     <div class="header">
-        <h1 style="text-align: center;">Макеты</h1>
+        <h1 style="text-align: center;">Все макеты и задачи</h1>
         <a href="{% url 'task_history' %}" class="history-button">
             <i class="fas fa-history"></i> История задач
-        </a>
-        <a href="{% url 'all_makets_and_tasks' %}" class="all-button">
-            <i class="fas fa-history"></i> Все макеты
         </a>
     </div>
 
@@ -31,16 +28,18 @@
     </div>
     {% endif %}
 
+    <!-- Назначенные макеты -->
+    {% if assigned_photos %}
+    <h2 style="color: #17a2b8; margin: 30px 0 15px; text-align: center;">Назначенные макеты</h2>
     <div class="photo-display">
-        {% if photos %}
-        {% for photo in photos %}
+        {% for photo in assigned_photos %}
         <div class="photo-container {% if photo.has_active_task %}active-task{% endif %}">
             <img src="{{ photo.image.url }}" alt="Фото" class="photo">
             <div class="description-container">
                 <p><strong>Процент завершения:</strong> {{ photo.completion_percentage|floatformat:0 }}%</p>
                 <p><strong>Название макета:</strong> {{ photo.image_name }}</p>
                 <p><strong>Описание макета:</strong> {{ photo.description }}</p>
-                
+
                 {% if photo.has_active_task %}
                 <div class="active-task-indicator">
                     <span class="active-dot"></span>
@@ -48,15 +47,20 @@
                 </div>
                 {% endif %}
 
-                <div class="assigned-tasks">
-                    <h4>Ваши задачи в этом макете:</h4>
-                    {% for task in photo.assigned_tasks %}
-                        <div class="task-item {% if task == active_task %}active{% endif %}">
+                <div class="all-tasks">
+                    <h4>Все задачи в этом макете:</h4>
+                    {% for task in photo.all_tasks %}
+                        <div class="task-item">
                             <p><strong>{{ task.title }}</strong></p>
+                            <p><em>Исполнитель:</em>
+                              {% if task.assigned_to %}
+                                {{ task.assigned_to.get_full_name|default:task.assigned_to.username }}
+                              {% else %}
+                                Не назначен
+                              {% endif %}
+                            </p>
                             <p class="task-status">
-                                {% if task == active_task %}
-                                    <span class="status-active">В работе</span>
-                                {% elif task.is_submitted_for_review %}
+                                {% if task.is_submitted_for_review %}
                                     <span class="status-review">Отправлено на проверку</span>
                                 {% elif task.completed %}
                                     <span class="status-completed">Завершена</span>
@@ -64,12 +68,12 @@
                                     <span class="status-pending">Ожидает</span>
                                 {% endif %}
                             </p>
-                            {% if task == active_task %}
+                            {% if user == task.assigned_to and not task.is_submitted_for_review and not task.completed %}
                                 <a href="{% url 'select_task' photo.id %}" class="btn btn-primary btn-sm">Продолжить работу</a>
                             {% endif %}
                         </div>
                     {% empty %}
-                        <p class="no-tasks">Нет назначенных задач</p>
+                        <p class="no-tasks">Задач нет</p>
                     {% endfor %}
                 </div>
 
@@ -77,15 +81,78 @@
             </div>
         </div>
         {% endfor %}
-        {% else %}
-        <div class="no-photo-message">Актуальные макеты отсутствуют</div>
-        {% endif %}
     </div>
+    {% else %}
+    <div style="text-align: center; color: #17a2b8; margin: 30px 0;">Назначенных макетов нет</div>
+    {% endif %}
+
+    <!-- Не назначенные макеты -->
+    {% if unassigned_photos %}
+    <h2 style="color: #ffc107; margin: 50px 0 15px; text-align: center;">Не назначенные макеты</h2>
+    <div class="photo-display">
+        {% for photo in unassigned_photos %}
+        <div class="photo-container">
+            <img src="{{ photo.image.url }}" alt="Фото" class="photo">
+            <div class="description-container">
+                <p><strong>Процент завершения:</strong> {{ photo.completion_percentage|floatformat:0 }}%</p>
+                <p><strong>Название макета:</strong> {{ photo.image_name }}</p>
+                <p><strong>Описание макета:</strong> {{ photo.description }}</p>
+
+                <div class="all-tasks">
+                    <h4>Все задачи в этом макете:</h4>
+                    {% for task in photo.all_tasks %}
+                        <div class="task-item">
+                            <p><strong>{{ task.title }}</strong></p>
+                            <p><em>Исполнитель:</em>
+                              {% if task.assigned_to %}
+                                {{ task.assigned_to.get_full_name|default:task.assigned_to.username }}
+                              {% else %}
+                                Не назначен
+                              {% endif %}
+                            </p>
+                            <p class="task-status">
+                                {% if task.is_submitted_for_review %}
+                                    <span class="status-review">Отправлено на проверку</span>
+                                {% elif task.completed %}
+                                    <span class="status-completed">Завершена</span>
+                                {% else %}
+                                    <span class="status-pending">Ожидает</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% empty %}
+                        <p class="no-tasks">Задач нет</p>
+                    {% endfor %}
+                </div>
+
+                <a href="{% url 'maket_info_all' photo.id %}" class="btn btn-primary">Подробнее</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align: center; color: #ffc107; margin: 30px 0;">Нет не назначенных макетов</div>
+    {% endif %}
 
     <div style="height: 150px;"></div>
 </main>
 
 <style>
+/* Стили остаются прежними, за исключением небольшой правки в классе .all-tasks */
+.all-tasks {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.all-tasks h4 {
+    margin: 0 0 10px 0;
+    color: #17a2b8;
+    font-size: 16px;
+}
+
+/* Остальные стили без изменений — можно оставить как есть */
 body {
     font-family: 'Montserrat', sans-serif;
     height: 100vh;
@@ -136,27 +203,6 @@ main {
     font-size: 16px;
 }
 
-.all-button {
-    background-color: #17a2b8;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 20px;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-}
-
-.all-button i {
-    font-size: 16px;
-}
-
-.all-button:hover {
-    background-color: #138496;
-    transform: translateY(-2px);
-}
-
 h1 {
     font-size: 28px;
     margin: 0;
@@ -169,7 +215,7 @@ h1 {
 }
 
 .alert {
-    padding: 15 px;
+    padding: 15px;
     border-radius: 10px;
     margin-bottom: 10px;
     text-align: left;
@@ -260,19 +306,6 @@ h1 {
     border-radius: 50%;
     margin-right: 8px;
     animation: pulse 2s infinite;
-}
-
-.assigned-tasks {
-    margin: 15px 0;
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-}
-
-.assigned-tasks h4 {
-    margin: 0 0 10px 0;
-    color: #17a2b8;
-    font-size: 16px;
 }
 
 .task-item {
@@ -385,14 +418,8 @@ h1 {
         width: 60%;
         justify-content: center;
     }
-
-    .all-button {
-        width: 60%;
-        justify-content: center;
-    }
 }
 </style>
 {% endblock %}
 </body>
 </html>
-

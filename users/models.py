@@ -186,7 +186,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         from django.utils import timezone
         return (timezone.now() - self.last_activity).total_seconds() < 300  # 5 минут
 
-
+    def has_active_timer(self):
+        return self.timeentry_set.filter(end_time__isnull=True).exists()
 # ======================
 # История ставок — ВЫНЕСЕНА НА ВЕРХНИЙ УРОВЕНЬ!
 # ======================

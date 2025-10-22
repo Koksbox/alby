@@ -633,17 +633,34 @@ def task_completed(request, photo_id):
     return render(request, "manager2/task_completed.html", {"tasks": tasks, "photos": photos, 'photo': photo})
 
 
+from django.db.models import Exists, OuterRef
+from django.db.models import Q
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
 def employee(request):
     # Доступ только для ролей от младшего менеджера и выше
     if request.user.post_user not in ['junior_manager', 'manager', 'senior_manager']:
         messages.error(request, 'Недостаточно прав для просмотра списка сотрудников.')
         return redirect('profile')
-    # Для младшего менеджера показываем его собственную статистику, как у сотрудников на /statistic/
+
+    # Для младшего менеджера показываем его собственную статистику
     if request.user.post_user == 'junior_manager':
         return redirect('my_statistic')
+
+    # Подзапрос: есть ли у пользователя активный таймер?
+    active_timer = TimeEntry.objects.filter(
+        user=OuterRef('pk'),
+        end_time__isnull=True
+    )
+
+    # Получаем сотрудников (без менеджеров и unapproved)
     users = CustomUser.objects.exclude(
         post_user__in=['unapproved', 'junior_manager', 'manager', 'senior_manager']
+    ).annotate(
+        timer_active=Exists(active_timer)  # ← Аннотация активного таймера
     )
+
     return render(request, 'manager2/employee.html', {'users': users})
 
 

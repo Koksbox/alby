@@ -864,24 +864,31 @@ def upload_avatar_users(request):
 
     return render(request, 'users/upload_avatar_users.html', {'form': form})
 
+from django.contrib import messages
 from django.utils.safestring import mark_safe
-
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from manager2.models import Task, Photo
 from django.db.models import Q
 
 @login_required
 def photo_maket(request):
+    user = request.user
+
+    # === 1. Активная задача (не отправлена на проверку и не оценена) ===
     active_task = Task.objects.filter(
-        submitted_by__id=request.user.id,
+        submitted_by=user,
         is_rated=False,
         is_submitted_for_review=False
     ).first()
 
-    # Учитываем ОБА способа назначения: assigned_to И assigned_user
+    # === 2. Назначенные задачи (через assigned_to ИЛИ assigned_user) ===
     assigned_tasks = Task.objects.filter(
-        Q(assigned_to=request.user) | Q(assigned_user=request.user),
+        Q(assigned_to=user) | Q(assigned_user=user),
         completed=False
     ).select_related('photo')
 
+    # === 3. Сообщения пользователю ===
     if not assigned_tasks.exists() and not active_task:
         messages.warning(request, "У вас нет назначенных задач. Пожалуйста, обратитесь к руководителю.")
     else:
@@ -893,19 +900,34 @@ def photo_maket(request):
             )
             messages.info(request, message)
 
-    assigned_photos = Photo.objects.filter(
-        tasks__in=assigned_tasks
-    ).distinct().prefetch_related('tasks')
+    # === 4. Все макеты с задачами ===
+    all_photos = Photo.objects.prefetch_related('tasks').all()
 
-    for photo in assigned_photos:
-        total_tasks = Task.objects.filter(photo=photo).count()
-        completed_tasks_count = Task.objects.filter(photo=photo, completed=True).count()
-        photo.completion_percentage = (completed_tasks_count / total_tasks) * 100 if total_tasks > 0 else 0
+    assigned_photos = []
+    unassigned_photos = []
+
+    for photo in all_photos:
+        tasks = photo.tasks.all()
+        total = tasks.count()
+        completed = tasks.filter(completed=True).count()
+        photo.completion_percentage = (completed / total * 100) if total > 0 else 0
         photo.has_active_task = active_task and active_task.photo_id == photo.id
-        photo.assigned_tasks = assigned_tasks.filter(photo=photo)  # ← именно это использует шаблон
 
+        # Проверяем, есть ли у пользователя задачи в этом макете
+        has_assigned_task = any(
+            user == task.assigned_to or user in task.assigned_user.all()
+            for task in tasks
+        )
+
+        if has_assigned_task:
+            assigned_photos.append(photo)
+        else:
+            unassigned_photos.append(photo)
+
+    # === 5. Передача в шаблон ===
     return render(request, 'users/photo_maket.html', {
-        'photos': assigned_photos,
+        'assigned_photos': assigned_photos,
+        'unassigned_photos': unassigned_photos,
         'active_task': active_task,
     })
 
@@ -980,37 +1002,6 @@ def maket_info_all(request, photo_id):
     }
     return render(request, 'users/maket_info_all.html', context)
 
-@login_required
-def all_makets_and_tasks(request):
-    user = request.user
-    all_photos = Photo.objects.prefetch_related('tasks').all()
-
-    assigned_photos = []
-    unassigned_photos = []
-
-    for photo in all_photos:
-        tasks = photo.tasks.all()
-        total = tasks.count()
-        completed = tasks.filter(completed=True).count()
-        photo.completion_percentage = (completed / total * 100) if total > 0 else 0
-        photo.has_active_task = tasks.filter(is_submitted_for_review=False, completed=False).exists()
-        photo.all_tasks = tasks
-
-        # Проверяем, есть ли у пользователя задачи в этом макете
-        has_assigned_task = any(
-            user == task.assigned_to or user in task.assigned_user.all()
-            for task in tasks
-        )
-
-        if has_assigned_task:
-            assigned_photos.append(photo)
-        else:
-            unassigned_photos.append(photo)
-
-    return render(request, 'users/all_makets_and_tasks.html', {
-        'assigned_photos': assigned_photos,
-        'unassigned_photos': unassigned_photos,
-    })
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse

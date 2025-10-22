@@ -35,7 +35,6 @@ urlpatterns = [
     path('statistic/', views.user_statistic, name='statistic'),
     path('upload-avatar_users/', views.upload_avatar_users, name='upload_avatar_users'),
     path('photo_maket/', views.photo_maket, name='photo_maket'),
-    path('all_makets_and_tasks/', views.all_makets_and_tasks, name='all_makets_and_tasks'),
     path('maket_info/<int:photo_id>/', views.maket_info, name='maket_info'),
     path('maket_info_all/<int:photo_id>/', views.maket_info_all, name='maket_info_all'),
     path('toggle-timer/', views.toggle_timer, name='toggle_timer'),

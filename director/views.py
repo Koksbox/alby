@@ -31,6 +31,8 @@ from django import forms
 from manager2.models import TaskTemplate
 from django.http import JsonResponse
 
+from users.models import CustomUser, PrizeHistory, TimeEntry
+
 def edit_maket(request, id):
     photo = get_object_or_404(Photo, id=id)
     if request.method == 'POST':
@@ -255,21 +257,30 @@ def task_list_director(request):
     return render(request, "director/task_list_director.html", {"tasks": tasks, "photos": photos})
 
 
+from django.db.models import Exists, OuterRef
+from django.db.models import Q
+
 def employee_director(request):
+    # Подзапрос: есть ли у пользователя активный таймер (TimeEntry без end_time)
+    active_timer = TimeEntry.objects.filter(
+        user=OuterRef('pk'),
+        end_time__isnull=True
+    )
+
     # Получаем параметр сортировки из GET-запроса
     sort_by = request.GET.get('sort_by', 'name')  # По умолчанию сортировка по имени
 
     # Получаем всех пользователей, исключая менеджеров и непринятых
     users = CustomUser.objects.exclude(
         Q(post_user__in=['junior_manager', 'manager', 'senior_manager']) | Q(post_user='unapproved')
+    ).annotate(
+        timer_active=Exists(active_timer)  # ← Добавляем аннотацию
     )
 
     # Применяем сортировку
     if sort_by == 'name':
-        # Сортируем по имени от А до Я
         users = users.order_by('full_name')
     elif sort_by == 'position':
-        # Сортируем по должности
         users = users.order_by('post_user')
 
     context = {
@@ -278,9 +289,22 @@ def employee_director(request):
     }
     return render(request, 'director/employee.html', context)
 
+from django.db.models import Exists, OuterRef, Q
+from manager2.models import CustomUser, TimeManger  # ← импортируем TimeManger вместо TimeEntry
 
 def employee_manager(request):
-    users = CustomUser.objects.filter(post_user__in=['junior_manager', 'manager', 'senior_manager'])
+    # Подзапрос: есть ли у менеджера активная смена в TimeManger?
+    active_shift = TimeManger.objects.filter(
+        manager=OuterRef('pk'),  # ← важно: поле 'manager', а не 'user'
+        end_time__isnull=True
+    )
+
+    users = CustomUser.objects.filter(
+        post_user__in=['junior_manager', 'manager', 'senior_manager']
+    ).annotate(
+        timer_active=Exists(active_shift)  # ← аннотация по TimeManger
+    )
+
     return render(request, 'director/employee_manager.html', {'users': users})
 
 def profile_employee(request, user_id):

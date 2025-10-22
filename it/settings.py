@@ -32,7 +32,7 @@ def get_env_value(env_variable, default=None):
 SECRET_KEY = get_env_value('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = ['91.218.244.219', '127.0.0.1', 'localhost']

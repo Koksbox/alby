@@ -31,10 +31,7 @@
             <p><strong>Назначенный менеджер :</strong>{{ photo.assigned_manager.full_name }}</p>
 
             <!-- Кнопка "Выбрать макет" -->
-            <form action="{% url 'select_task' photo.id %}" method="GET">
-                <input type="hidden" name="photo_id" value="{{ photo.id }}">
-                <button type="submit" class="btn">Выбрать макет</button>
-            </form>
+            <a href="{% url 'select_task' photo.id %}" class="btn">Выбрать макет</a>
         </div>
     </div>
 

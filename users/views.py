@@ -425,74 +425,52 @@ def stop_timer(request, task_id):
 
 
 
+@login_required
 def select_task(request, photo_id=None):
     current_user = request.user
-    selected_task = None
-    message = None
 
-    # Обработка выбора задачи (POST)
-    if request.method == 'POST':
-        task_id = request.POST.get('task_id')
-        if task_id:
-            try:
-                task = Task.objects.get(id=task_id, assigned_user=current_user, completed=False)
-                return redirect('work_on_task', task_id=task.id)
-            except Task.DoesNotExist:
-                messages.error(request, 'Выбранная задача недоступна или не назначена вам.')
-        else:
-            messages.error(request, 'Пожалуйста, выберите задачу.')
-
-    # Получаем макет по ID (если указан)
-    if photo_id:
-        photo = get_object_or_404(Photo, id=photo_id)
-    else:
-        photo = None
-
-    # Проверяем, есть ли у пользователя активная задача, которая ещё не отправлена на проверку
+    # === Активная задача? → сразу в неё ===
     active_task = Task.objects.filter(
-        submitted_by__id=current_user.id,
+        submitted_by=current_user,
         is_rated=False,
         is_submitted_for_review=False
     ).first()
 
     if active_task:
-        # Если есть активная задача, показываем только её
         messages.warning(request, 'Вы уже работаете над задачей. Завершите её сначала.')
         return redirect('work_on_task', task_id=active_task.id)
 
-    # Получаем все задачи для выбранного макета
-    if photo:
-        tasks = Task.objects.filter(photo=photo)
-    else:
-        tasks = Task.objects.all()
+    # === Обработка выбора задачи ===
+    if request.method == 'POST':
+        task_id = request.POST.get('task_id')
+        if task_id:
+            try:
+                task = Task.objects.get(id=task_id, photo_id=photo_id, completed=False)
+                if current_user not in task.submitted_by.all():
+                    task.submitted_by.add(current_user)
+                    task.save()
+                return redirect('work_on_task', task_id=task.id)
+            except Task.DoesNotExist:
+                messages.error(request, 'Задача недоступна или уже завершена.')
+        else:
+            messages.error(request, 'Пожалуйста, выберите задачу.')
 
-    # Получаем задачи, назначенные пользователю
-    assigned_tasks = Task.objects.filter(
-        assigned_user=current_user,
-        completed=False
-    )
+    # === Получаем макет и все задачи ===
+    if not photo_id:
+        return redirect('photo_maket')
+    photo = get_object_or_404(Photo, id=photo_id)
+    tasks = Task.objects.filter(photo=photo, completed=False)
 
-    # Если у пользователя есть назначенные задачи, показываем только их
-    if assigned_tasks.exists():
-        tasks = assigned_tasks
-        messages.info(request, 'Показаны задачи, назначенные вам.')
-    else:
-        messages.warning(request, 'У вас нет назначенных задач. Пожалуйста, обратитесь к руководителю для назначения задачи.')
+    if not tasks.exists():
+        messages.warning(request, 'В этом макете нет активных задач.')
+        return redirect('photo_maket')
 
-    # Добавляем информацию о статусе задач
-    for task in tasks:
-        if task.is_submitted_for_review:
-            messages.info(request, f'Задача "{task.title}" отправлена на проверку.')
-        elif task.completed:
-            messages.info(request, f'Задача "{task.title}" завершена.')
+    messages.info(request, 'Вы можете выбрать любую задачу из списка.')
 
     return render(request, 'users/select_task.html', {
-        'tasks': tasks, 
+        'tasks': tasks,
         'photo': photo,
-        'assigned_tasks': assigned_tasks if 'assigned_tasks' in locals() else None
     })
-
-
 
 def work_on_task(request, task_id):
     user = request.user
@@ -501,12 +479,7 @@ def work_on_task(request, task_id):
         selected_task = Task.objects.get(id=task_id, completed=False)
     except Task.DoesNotExist:
         messages.error(request, 'Задача больше недоступна.')
-        return redirect('select_task', photo_id=0)  # Если задача не найдена, photo_id=0
-
-    # Проверяем, является ли пользователь назначенным на задачу
-    if user not in selected_task.assigned_user.all():
-        messages.error(request, 'Вы не назначены на эту задачу.')
-        return redirect('select_task', photo_id=selected_task.photo.id if hasattr(selected_task, 'photo') and selected_task.photo else 0)
+        return redirect('photo_maket')
 
     # Если пользователь только что выбрал задачу, добавляем его в submitted_by
     if user not in selected_task.submitted_by.all():
@@ -945,63 +918,22 @@ def maket_info(request, photo_id):
     ).first()
     if not active_entry:
         messages.warning(request, "Таймер смены не запущен. Начните смену, чтобы получить доступ к макетам.")
-        return redirect('startapp')  # Перенаправляем на страницу начала смены
+        return redirect('startapp')
 
-    # Получаем объект макета по его ID
+    # Получаем объект макета
     photo = get_object_or_404(Photo, id=photo_id)
 
     total_tasks = Task.objects.filter(photo=photo).count()
     completed_tasks_count = Task.objects.filter(photo=photo, completed=True).count()
 
-    if total_tasks > 0:
-        photo.completion_percentage = (completed_tasks_count / total_tasks) * 100
-    else:
-        photo.completion_percentage = 0
+    photo.completion_percentage = (completed_tasks_count / total_tasks * 100) if total_tasks > 0 else 0
 
     tasks = Task.objects.filter(photo=photo)
 
-    context = {
+    return render(request, 'users/maket_info.html', {
         'photo': photo,
         'tasks': tasks,
-    }
-    return render(request, 'users/maket_info.html', context)
-
-
-def maket_info_all(request, photo_id):
-    # Проверяем, авторизован ли пользователь
-    if not request.user.is_authenticated:
-        messages.error(request, "Вы не авторизованы!")
-        return redirect('login')
-
-    # Проверяем, запущен ли таймер смены
-    active_entry = TimeEntry.objects.filter(
-        user=request.user,
-        timer_type='shift',
-        end_time__isnull=True
-    ).first()
-    if not active_entry:
-        messages.warning(request, "Таймер смены не запущен. Начните смену, чтобы получить доступ к макетам.")
-        return redirect('startapp')  # Перенаправляем на страницу начала смены
-
-    # Получаем объект макета по его ID
-    photo = get_object_or_404(Photo, id=photo_id)
-
-    total_tasks = Task.objects.filter(photo=photo).count()
-    completed_tasks_count = Task.objects.filter(photo=photo, completed=True).count()
-
-    if total_tasks > 0:
-        photo.completion_percentage = (completed_tasks_count / total_tasks) * 100
-    else:
-        photo.completion_percentage = 0
-
-    tasks = Task.objects.filter(photo=photo)
-
-    context = {
-        'photo': photo,
-        'tasks': tasks,
-    }
-    return render(request, 'users/maket_info_all.html', context)
-
+    })
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -1169,37 +1101,3 @@ def task_history(request):
 def trigger_500(request):
     raise Exception("Тестовая ошибка 500")
 
-from django.shortcuts import get_object_or_404
-
-def select_task_all(request, photo_id=None):
-    current_user = request.user
-
-    if request.method == 'POST':
-        task_id = request.POST.get('task_id')
-        if task_id:
-            try:
-                # Разрешаем выбор ЛЮБОЙ задачи макета, не только назначенной
-                task = Task.objects.get(id=task_id, photo_id=photo_id, completed=False)
-                # Добавляем пользователя в submitted_by при выборе
-                if current_user not in task.submitted_by.all():
-                    task.submitted_by.add(current_user)
-                    task.save()
-                return redirect('work_on_task', task_id=task.id)
-            except Task.DoesNotExist:
-                messages.error(request, 'Задача недоступна или уже завершена.')
-        else:
-            messages.error(request, 'Пожалуйста, выберите задачу.')
-
-    photo = get_object_or_404(Photo, id=photo_id) if photo_id else None
-
-    # Получаем ВСЕ задачи по макету (не только назначенные!)
-    if photo:
-        tasks = Task.objects.filter(photo=photo, completed=False)
-    else:
-        tasks = Task.objects.none()
-
-    return render(request, 'users/select_task.html', {
-        'tasks': tasks,
-        'photo': photo,
-        'current_user': request.user,  # ← важно для шаблона
-    })

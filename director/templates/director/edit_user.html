@@ -49,6 +49,22 @@
                 <button type="submit" class="primary">Сохранить</button>
             </div>
         </form>
+            {% if user.is_active and user != request.user %}
+            <div class="text-center mt-4">
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="deactivate">
+                    <button type="submit" class="btn"
+                            style="background-color: #e74c3c; color: white; border: none; padding: 12px 24px; border-radius: 50px; cursor: pointer;"
+                            onclick="return confirm('Вы уверены? Сотрудник потеряет доступ к системе, но его данные сохранятся.');">
+                        Удалить сотрудника
+                    </button>
+                </form>
+            </div>
+            {% elif not user.is_active %}
+                <p class="text-center" style="color: #f39c12; margin-top: 15px;">Аккаунт деактивирован</p>
+            {% endif %}
+        
     </div>
     <div class="text-center mt-3 fade-in-item">
         <a href="{% url 'profile_employee' user.id %}" class="btn">Назад</a>

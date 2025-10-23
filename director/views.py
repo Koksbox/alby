@@ -323,25 +323,35 @@ def promotion_requests(request):
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import UserForm
 
-def edit_user(request, user_id):
-    user = get_object_or_404(CustomUser, id=user_id)
+user = get_object_or_404(CustomUser, id=user_id)
+
     if request.method == 'POST':
+        # Проверяем, запрошено ли удаление
+        if request.POST.get('action') == 'deactivate':
+            # Защита: нельзя деактивировать самого себя (на случай ошибки интерфейса)
+            if user == request.user:
+                messages.error(request, "Вы не можете деактивировать свой собственный аккаунт.")
+            else:
+                user.is_active = False
+                user.save()
+                messages.success(request, f'Сотрудник «{user.full_name}» успешно удалён.')
+            return redirect('/director/employee_director/')
+
+        # Иначе — сохраняем изменения
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
-            # Получаем новую должность пользователя
             post_user = form.cleaned_data.get('post_user')
-
-            # Устанавливаем значение big_stavka на основе новой должности
-            if post_user != user.post_user:  # Если должность изменилась
-                user.big_stavka = user.calculate_default_stavka()  # Устанавливаем новую ставку
+            if post_user != user.post_user:
+                user.big_stavka = user.calculate_default_stavka()
             else:
-                # Если должность не изменилась, сохраняем текущее значение
                 user.big_stavka = form.cleaned_data.get('big_stavka', user.big_stavka)
-
-            form.save()  # Сохраняем изменения в базе данных
+            form.save()
+            messages.success(request, 'Изменения сохранены.')
             return redirect('/director/employee_director/')
+
     else:
         form = UserForm(instance=user)
+
     return render(request, 'director/edit_user.html', {'form': form, 'user': user})
 
 

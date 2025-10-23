@@ -323,7 +323,9 @@ def promotion_requests(request):
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import UserForm
 
-user = get_object_or_404(CustomUser, id=user_id)
+
+def edit_user(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
 
     if request.method == 'POST':
         # Проверяем, запрошено ли удаление

@@ -339,19 +339,28 @@ def start_timer(request, task_id):
         messages.warning(request, 'Вы не назначены на эту задачу.')
         return redirect('select_task', photo_id=task.photo.id if hasattr(task, 'photo') and task.photo else 0)
 
-    active_time_entry = TimeEntry.objects.filter(user=user, task=task, end_time__isnull=True).first()
+    # Ищем активную запись ТОЛЬКО для задач (timer_type='task')
+    active_time_entry = TimeEntry.objects.filter(
+        user=user,
+        task=task,
+        end_time__isnull=True,
+        timer_type='task'
+    ).first()
+
     if active_time_entry:
         messages.warning(request, 'Таймер уже запущен для этой задачи.')
     else:
+        # Создаём запись БЕЗ влияния на зарплату: hourly_rate=0
         TimeEntry.objects.create(
             user=user,
             task=task,
-            hourly_rate=user.stavka(),
-            start_time=timezone.now()
+            hourly_rate=0,  # ← КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: не влияет на зарплату
+            start_time=timezone.now(),
+            timer_type='task'  # ← явно указываем тип
         )
         messages.success(request, 'Таймер запущен!')
-        request.session['timer_running'] = True  # Устанавливаем флаг запуска таймера
-        request.session['start_time'] = timezone.now().isoformat()  # Сохраняем время старта
+        request.session['timer_running'] = True
+        request.session['start_time'] = timezone.now().isoformat()
 
     return redirect('work_on_task', task_id)
 
@@ -364,12 +373,18 @@ def stop_timer(request, task_id):
         messages.warning(request, 'Вы не назначены на эту задачу.')
         return redirect('select_task', photo_id=task.photo.id if hasattr(task, 'photo') and task.photo else 0)
 
-    active_time_entry = TimeEntry.objects.filter(user=user, task=task, end_time__isnull=True).first()
+    active_time_entry = TimeEntry.objects.filter(
+        user=user,
+        task=task,
+        end_time__isnull=True,
+        timer_type='task'
+    ).first()
+
     if active_time_entry:
         active_time_entry.end_time = timezone.now()
         active_time_entry.save()
         messages.success(request, 'Таймер остановлен!')
-        request.session['timer_running'] = False  # Сбрасываем флаг запуска таймера
+        request.session['timer_running'] = False
     else:
         messages.warning(request, 'Таймер не был запущен для этой задачи.')
 

@@ -23,7 +23,6 @@ from django.conf import settings
 from .forms import CustomUserCreationForm
 from .models import CustomUser
 
-
 from django.core.mail import send_mail
 import traceback
 import logging
@@ -31,7 +30,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
-
 
 
 def register(request):
@@ -47,7 +45,6 @@ def register(request):
         form = CustomUserCreationForm()
 
     return render(request, 'users/register.html', {'form': form})
-
 
 
 def confirm_registration(request):
@@ -123,24 +120,26 @@ def login_view(request):
 
             if user is not None:
                 if not user.is_active:
-                    messages.error(request, 'Ваш аккаунт не активирован. Пожалуйста, проверьте email для подтверждения регистрации.')
+                    messages.error(request,
+                                   'Ваш аккаунт не активирован. Пожалуйста, проверьте email для подтверждения регистрации.')
                     return render(request, 'users/login.html')
 
                 # Проверяем, подтверждена ли роль пользователя директором
                 if user.post_user == 'unapproved':
-                    messages.error(request, 'Ваша роль еще не подтверждена директором. Пожалуйста, дождитесь подтверждения.')
+                    messages.error(request,
+                                   'Ваша роль еще не подтверждена директором. Пожалуйста, дождитесь подтверждения.')
                     return render(request, 'users/login.html')
 
                 login(request, user)
-                
+
                 # Создаем сессию только если роль подтверждена
                 request.session.set_expiry(60 * 60 * 24 * 30)  # 30 дней
                 request.session.modified = True
-                
+
                 # Сохраняем важные данные в сессии
                 request.session['user_id'] = user.id
                 request.session['email'] = user.email
-                
+
                 # Перенаправляем в зависимости от роли
                 if user.post_user in ['junior_manager', 'manager', 'senior_manager']:
                     return redirect('home_man')
@@ -286,6 +285,7 @@ def home(request):
 
 from django.contrib import messages
 
+
 def refactor_profile(request):
     if request.method == "POST":
         full_name = request.POST.get('full_name')
@@ -391,7 +391,6 @@ def stop_timer(request, task_id):
     return redirect('work_on_task', task_id)
 
 
-
 @login_required
 def select_task(request, photo_id=None):
     current_user = request.user
@@ -439,6 +438,7 @@ def select_task(request, photo_id=None):
         'photo': photo,
     })
 
+
 def work_on_task(request, task_id):
     user = request.user
 
@@ -456,12 +456,13 @@ def work_on_task(request, task_id):
     # Проверяем, отправил ли пользователь свою часть задачи на проверку
     if user in selected_task.submitted_by_users_for_review.all():
         messages.warning(request, 'Вы уже отправили свою часть задачи на проверку.')
-        return redirect('select_task', photo_id=selected_task.photo.id if hasattr(selected_task, 'photo') and selected_task.photo else 0)
+        return redirect('select_task', photo_id=selected_task.photo.id if hasattr(selected_task,
+                                                                                  'photo') and selected_task.photo else 0)
 
     # Если задача была отправлена на проверку другим пользователем, предупреждаем об этом
     if selected_task.is_submitted_for_review and not all(
-        u in selected_task.submitted_by_users_for_review.all()
-        for u in selected_task.submitted_by.all()
+            u in selected_task.submitted_by_users_for_review.all()
+            for u in selected_task.submitted_by.all()
     ):
         messages.warning(request, 'Эта задача уже отправлена на проверку другим пользователем.')
 
@@ -545,6 +546,7 @@ def start_timer1(request):
         time_entry.save()
         messages.success(request, 'Таймер начала смены запущен.')
         return redirect('startapp')
+
 
 def stop_timer1(request):
     if request.method == 'POST':
@@ -635,7 +637,6 @@ def money(request):
         user_stavka = request.user.stavka()
         current_salary_active = (elapsed_time_active / 3600) * user_stavka
 
-
     # Рассчитываем общую зарплату для задач
     total_salary_task = sum(entry.salary() for entry in time_entries_task)
 
@@ -645,7 +646,7 @@ def money(request):
     # Передаем данные в шаблон
     context = {
         'time_entries_task': time_entries_task,
-        'time_entries_shift': time_entries_shift, # Завершенные смены для списка
+        'time_entries_shift': time_entries_shift,  # Завершенные смены для списка
         'total_salary_task': total_salary_task,  # Общая зарплата для задач
         'total_salary_shift_completed': total_salary_shift_completed,  # Общая зарплата для завершенных смен
         'total_duration_shift_completed': total_duration_shift_completed,  # Общая длительность завершенных смен
@@ -654,6 +655,7 @@ def money(request):
         'user_stavka': user_stavka,  # Ставка пользователя
     }
     return render(request, 'users/money.html', context)
+
 
 def zadachi(request):
     time_entries_task = TimeEntry.objects.filter(
@@ -669,11 +671,11 @@ def zadachi(request):
     }
     return render(request, 'users/zadachi.html', context)
 
+
 def users_prize(request):
     # Получаем все записи из истории премий для текущего пользователя
     usersis = PrizeHistory.objects.filter(user=request.user).order_by('-date')
     return render(request, 'users/users_prize.html', {'usersis': usersis})
-
 
 
 from django.db.models import Sum, F, ExpressionWrapper, FloatField, fields
@@ -681,8 +683,9 @@ from django.shortcuts import render
 from users.models import TimeEntry
 from django.db import models
 from manager2.models import TaskReview
-from django.db.models import Count,Subquery, Avg
+from django.db.models import Count, Subquery, Avg
 from django.db.models.functions import Cast
+
 
 def user_statistic(request):
     # Получаем выбранный месяц из параметров GET-запроса
@@ -709,7 +712,6 @@ def user_statistic(request):
 
     # Текущий пользователь
     current_user = request.user
-
 
     # Для аутентифицированного пользователя
     total_shift_hours = TimeEntry.objects.filter(
@@ -775,6 +777,7 @@ def user_statistic(request):
     }
     return render(request, 'users/statistic.html', context)
 
+
 from .forms import AvatarUploadForm
 from users.models import CustomUser
 
@@ -804,12 +807,14 @@ def upload_avatar_users(request):
 
     return render(request, 'users/upload_avatar_users.html', {'form': form})
 
+
 from django.contrib import messages
 from django.utils.safestring import mark_safe
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from manager2.models import Task, Photo
 from django.db.models import Q
+
 
 @login_required
 def photo_maket(request):
@@ -871,6 +876,7 @@ def photo_maket(request):
         'active_task': active_task,
     })
 
+
 def maket_info(request, photo_id):
     # Проверяем, авторизован ли пользователь
     if not request.user.is_authenticated:
@@ -902,8 +908,11 @@ def maket_info(request, photo_id):
         'tasks': tasks,
     })
 
+
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+
+
 def check_active_timer(request):
     if request.user.is_authenticated:
         active_entry = TimeEntry.objects.filter(
@@ -919,6 +928,7 @@ def check_active_timer(request):
             })
     return JsonResponse({'active': False})
 
+
 @csrf_exempt
 def api_start_timer(request):
     if request.method == 'POST' and request.user.is_authenticated:
@@ -929,6 +939,7 @@ def api_start_timer(request):
         )
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'}, status=400)
+
 
 @csrf_exempt
 def api_stop_timer(request):
@@ -1014,21 +1025,23 @@ def my_maket(request):
         'start_date': first_day_of_month,
     })
 
+
 def complete_maket(request, photo_id):
     photo = get_object_or_404(Photo, id=photo_id)
-    
+
     # Рассчитываем процент завершения макета
     total_tasks = Task.objects.filter(photo=photo).count()
     completed_tasks_count = Task.objects.filter(photo=photo, completed=True).count()
-    
+
     if total_tasks > 0:
         photo.completion_percentage = (completed_tasks_count / total_tasks) * 100
         photo.is_completed = photo.completion_percentage == 100
     else:
         photo.completion_percentage = 0
         photo.is_completed = False
-    
+
     return render(request, 'users/complete_maket.html', {'photo': photo})
+
 
 @login_required
 def task_history(request):
@@ -1043,13 +1056,13 @@ def task_history(request):
         date = task.created_at.date()
         if date not in tasks_by_date:
             tasks_by_date[date] = []
-        
+
         # Добавляем информацию о времени выполнения
         if task.completed and task.completion_time:
             task.completion_time_str = task.completion_time.strftime('%H:%M:%S')
         else:
             task.completion_time_str = "Не завершена"
-            
+
         tasks_by_date[date].append(task)
 
     # Сортируем даты в обратном порядке
@@ -1064,6 +1077,7 @@ def task_history(request):
         'sorted_dates': sorted_dates,
     }
     return render(request, 'users/task_history.html', context)
+
 
 def trigger_500(request):
     raise Exception("Тестовая ошибка 500")

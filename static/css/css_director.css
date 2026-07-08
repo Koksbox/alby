@@ -1,0 +1,60 @@
+ table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 16px;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        form {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button[name="approve"][value="0"] {
+            background-color: black; /* Цвет для кнопки отклонения */
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+
+a {
+    color: black; /* Базовый цвет текста */
+    text-decoration: none; /* Убираем подчёркивание */
+    font-weight: bold; /* Делаем текст жирным */
+    transition: color 0.3s, text-shadow 0.3s; /* Плавный переход цветов */
+}
+
+a:hover {
+    color: #808080; /* Изменяем цвет при наведении */
+    text-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Добавляем тень при наведении */
+}
+
+a:active {
+    color: black; /* Цвет при нажатии */
+    text-shadow: none; /* Убираем тень, если она была */
+}
+
+a:focus {
+    outline: none; /* Убираем обводку */
+    }
+

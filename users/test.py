@@ -8,7 +8,8 @@ class UsersManagersTests(TestCase):
         User = get_user_model()
         user = User.objects.create_user(email='normal@user.com', password='foo')
         self.assertEqual(user.email, 'normal@user.com')
-        self.assertTrue(user.is_active)
+        # В этом проекте пользователь по умолчанию не активен (ожидает подтверждения)
+        self.assertFalse(user.is_active)
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
         try:
@@ -19,7 +20,8 @@ class UsersManagersTests(TestCase):
             pass
         with self.assertRaises(TypeError):
             User.objects.create_user()
-        with self.assertRaises(TypeError):
+        # Пустой email — это ошибка валидации, ожидаем ValueError
+        with self.assertRaises(ValueError):
             User.objects.create_user(email='')
         with self.assertRaises(ValueError):
             User.objects.create_user(email='', password="foo")

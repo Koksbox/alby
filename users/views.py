@@ -152,7 +152,7 @@ def login_view(request):
             messages.error(request, 'Произошла ошибка при входе. Пожалуйста, попробуйте позже.')
             return render(request, 'users/login.html')
 
-    return render(request, 'users/login.html')
+    return render(request, "users/login.html")
 
 
 def now_user(request):
@@ -280,7 +280,7 @@ def user_logout(request):
 
 
 def home(request):
-    return render(request, 'users/home.html')
+    return render(request, "users/home.html")
 
 
 from django.contrib import messages

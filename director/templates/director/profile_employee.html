@@ -14,6 +14,24 @@
             <p class="card-text"><strong>Рейтинг:</strong> {{ user.average_rating }}</p>
             <p class="card-text"><strong>Ставка:</strong> {{ user.stavka }}</p>
             <a href="{% url 'edit_user' user.id %}" class="btn">Редактировать</a>
+
+            <form method="post" style="margin-top: 12px;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="reset_password">
+                <button type="submit" class="btn" style="width: 100%; max-width: 320px;">
+                    Сбросить пароль (показать временный)
+                </button>
+            </form>
+
+            {% if temp_password %}
+                <div class="temp-password">
+                    <div class="temp-password-title">Временный пароль (показывается один раз)</div>
+                    <div class="temp-password-value" id="tempPasswordValue" role="button" tabindex="0" aria-label="Скопировать временный пароль">
+                        {{ temp_password }}
+                    </div>
+                    <div class="temp-password-hint" id="tempPasswordHint">Нажмите, чтобы скопировать</div>
+                </div>
+            {% endif %}
         </div>
         <a href="/director/employee_director/" class="but">Назад к списку пользователей</a>
     </div>
@@ -91,6 +109,48 @@ strong {
     color: white; /* Белый текст при наведении */
 }
 
+.temp-password {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.temp-password-title {
+    font-size: 12px;
+    opacity: 0.85;
+    margin-bottom: 6px;
+}
+
+.temp-password-value {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    word-break: break-all;
+    cursor: pointer;
+    user-select: all;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+}
+
+.temp-password-value:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.35);
+    outline-offset: 2px;
+}
+
+.temp-password-hint {
+    margin-top: 8px;
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.temp-password-hint.ok {
+    color: #66CDAA;
+    opacity: 1;
+}
+
 h2 {
     margin-top: -20%;
     margin-bottom: 40px;
@@ -122,4 +182,51 @@ h2 {
 .fade-in-item:nth-child(4) { animation-delay: 0.7s; }
 .fade-in-item:nth-child(5) { animation-delay: 0.9s; }
 </style>
+
+<script>
+(function () {
+  const el = document.getElementById('tempPasswordValue');
+  const hint = document.getElementById('tempPasswordHint');
+  if (!el || !hint) return;
+
+  async function copyPassword() {
+    const text = (el.textContent || '').trim();
+    if (!text) return;
+
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+
+      hint.textContent = 'Скопировано';
+      hint.classList.add('ok');
+      setTimeout(() => {
+        hint.textContent = 'Нажмите, чтобы скопировать';
+        hint.classList.remove('ok');
+      }, 1500);
+    } catch (e) {
+      hint.textContent = 'Не удалось скопировать';
+      hint.classList.remove('ok');
+    }
+  }
+
+  el.addEventListener('click', copyPassword);
+  el.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter' || ev.key === ' ') {
+      ev.preventDefault();
+      copyPassword();
+    }
+  });
+})();
+</script>
 {% endblock %}

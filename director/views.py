@@ -308,10 +308,38 @@ def employee_manager(request):
     return render(request, 'director/employee_manager.html', {'users': users})
 
 def profile_employee(request, user_id):
-    print(f"Received user_id: {user_id}")  # Временное сообщение для отладки
-    user = get_object_or_404(CustomUser, id=user_id)  # Получаем одного пользователя
-    return render(request, 'director/profile_employee.html',
-{'user': user})  # Передаем единственного пользователя в контекст
+    # Безопасный сброс пароля: исходный пароль посмотреть нельзя (хранится хеш),
+    # но директор может выдать временный пароль.
+    import secrets
+    import string
+
+    # Доступ только директору (в проекте директор определяется по email)
+    if getattr(request.user, "email", None) != "albygroup@bk.ru":
+        messages.error(request, "Недостаточно прав.")
+        return redirect("home")
+
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    temp_password = None
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "reset_password":
+            alphabet = string.ascii_letters + string.digits
+            temp_password = "".join(secrets.choice(alphabet) for _ in range(12))
+            user.set_password(temp_password)
+            user.save(update_fields=["password"])
+            messages.success(
+                request,
+                "Пароль сброшен. Временный пароль показан ниже (после обновления страницы исчезнет).",
+            )
+        else:
+            messages.error(request, "Неизвестное действие.")
+
+    return render(
+        request,
+        "director/profile_employee.html",
+        {"user": user, "temp_password": temp_password},
+    )
 
 
 def promotion_requests(request):
@@ -1305,31 +1333,45 @@ def manager_shifts(request, user_id):
         elapsed_time = int((timezone.now() - active_shift.start_time).total_seconds())
         active_shift_start_timestamp = int(active_shift.start_time.timestamp())
 
-    # Получаем выбранный месяц из параметров GET-запроса
-    selected_month_str = request.GET.get('month')
+    from django.utils.dateparse import parse_date
 
-    # Если месяц не выбран, используем текущий месяц
-    if selected_month_str:
-        try:
-            selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
-            selected_month = timezone.make_aware(selected_month_naive)
-        except (ValueError, TypeError):
-            selected_month = timezone.now().date()
-    else:
-        selected_month = timezone.now().date()
+    # Фильтр по диапазону дат: ?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD
+    date_from_str = (request.GET.get("date_from") or "").strip()
+    date_to_str = (request.GET.get("date_to") or "").strip()
 
-    # Определяем первый и последний день выбранного месяца
-    first_day_of_month = selected_month.replace(day=1)
-    if selected_month.month == 12:
-        last_day_of_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
+    date_from = parse_date(date_from_str) if date_from_str else None
+    date_to = parse_date(date_to_str) if date_to_str else None
+
+    now = timezone.now()
+    if date_from and date_to:
+        # [date_from 00:00, date_to 23:59:59...] делаем правую границу эксклюзивной
+        start_dt = timezone.make_aware(dt.datetime.combine(date_from, dt.time.min))
+        end_dt = timezone.make_aware(dt.datetime.combine(date_to + dt.timedelta(days=1), dt.time.min))
+        filter_mode = "range"
     else:
-        last_day_of_month = selected_month.replace(month=selected_month.month + 1, day=1)
+        # Backward compatible: если диапазон не задан — используем месяц (как раньше)
+        selected_month_str = request.GET.get("month")
+        if selected_month_str:
+            try:
+                selected_month_naive = dt.datetime.strptime(selected_month_str + "-01", "%Y-%m-%d")
+                selected_month = timezone.make_aware(selected_month_naive)
+            except (ValueError, TypeError):
+                selected_month = now.date()
+        else:
+            selected_month = now.date()
+
+        start_dt = selected_month.replace(day=1)
+        if selected_month.month == 12:
+            end_dt = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
+        else:
+            end_dt = selected_month.replace(month=selected_month.month + 1, day=1)
+        filter_mode = "month"
 
     # Получаем записи времени для менеджера за выбранный период
     time_entries = list(TimeManger.objects.filter(
         manager=manager,
-        start_time__gte=first_day_of_month,
-        start_time__lt=last_day_of_month,
+        start_time__gte=start_dt,
+        start_time__lt=end_dt,
         end_time__isnull=False
     ).order_by('-start_time'))
 
@@ -1342,16 +1384,27 @@ def manager_shifts(request, user_id):
             total_duration += entry.end_time - entry.start_time
             total_salary += entry.salary
 
-    # Добавляем время и зарплату текущей смены
+    # Добавляем время и зарплату текущей смены (только если пересекается с фильтром)
     if active_shift:
-        current_duration = timezone.timedelta(seconds=elapsed_time)
-        total_duration += current_duration
-        total_salary += (elapsed_time / 3600) * manager.stavka()
+        active_start = active_shift.start_time
+        active_end = now
+        if active_start < end_dt and active_end > start_dt:
+            clipped_start = max(active_start, start_dt)
+            clipped_end = min(active_end, end_dt)
+            clipped_seconds = max(0, int((clipped_end - clipped_start).total_seconds()))
+            current_duration = timezone.timedelta(seconds=clipped_seconds)
+            total_duration += current_duration
+            total_salary += (clipped_seconds / 3600) * manager.stavka()
 
     context = {
         'manager': manager,
         'time_entries': time_entries,
-        'selected_month': selected_month,
+        'filter_mode': filter_mode,
+        'selected_month': locals().get("selected_month"),
+        'date_from': date_from_str,
+        'date_to': date_to_str,
+        'start_date': start_dt,
+        'end_date': end_dt,
         'total_duration': total_duration,
         'total_salary': total_salary,
         'active_shift': active_shift,

@@ -1,12 +1,18 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 import logging
+import secrets
+import string
 from users.models import CustomUser, PromotionRequest
 from .forms import UserForm
 
 logger = logging.getLogger('director')
+
+def _is_director(user):
+    # В проекте директор определяется по email (см. director/views.py:is_director)
+    return getattr(user, "email", None) == "albygroup@bk.ru"
 
 @login_required
 def employee_director(request):
@@ -23,11 +29,36 @@ def employee_manager(request):
     return render(request, 'director/employee_manager.html', {'users': users})
 
 @login_required
+@user_passes_test(_is_director)
 def profile_employee(request, user_id):
     """Профиль сотрудника"""
     user = get_object_or_404(CustomUser, id=user_id)
     logger.info(f'Пользователь {request.user} просматривает профиль сотрудника {user.full_name}')
-    return render(request, 'director/profile_employee.html', {'user': user})
+
+    temp_password = None
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "reset_password":
+            alphabet = string.ascii_letters + string.digits
+            # Достаточно для dev/операторского сброса; не показываем/не храним дольше запроса
+            temp_password = "".join(secrets.choice(alphabet) for _ in range(12))
+            user.set_password(temp_password)
+            user.save(update_fields=["password"])
+            messages.success(
+                request,
+                "Пароль сброшен. Временный пароль показан ниже (после обновления страницы исчезнет).",
+            )
+        else:
+            messages.error(request, "Неизвестное действие.")
+
+    return render(
+        request,
+        "director/profile_employee.html",
+        {
+            "user": user,
+            "temp_password": temp_password,
+        },
+    )
 
 @login_required
 def edit_user(request, user_id):

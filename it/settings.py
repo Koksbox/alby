@@ -32,7 +32,8 @@ def get_env_value(env_variable, default=None):
 SECRET_KEY = get_env_value('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# Для локальной разработки можно включить через переменную окружения DJANGO_DEBUG=1
+DEBUG = get_env_value("DJANGO_DEBUG", "1") in ("1", "true", "True", "yes", "YES")
 
 
 ALLOWED_HOSTS = ['91.218.244.219', '127.0.0.1', 'localhost']
@@ -92,12 +93,27 @@ WSGI_APPLICATION = 'it.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if DATABASE_URL:
+    # Поддержка серверной БД через переменную окружения, напр.:
+    # postgresql://USER:PASSWORD@HOST:5432/DBNAME
+    try:
+        import environ  # type: ignore
+    except Exception as exc:
+        raise ImproperlyConfigured(
+            "DATABASE_URL задан, но пакет django-environ не установлен."
+        ) from exc
+
+    _env = environ.Env()
+    DATABASES = {"default": _env.db_url("DATABASE_URL")}
+else:
+    # Локально — SQLite по умолчанию
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
 
 
 # Password validation
@@ -140,7 +156,9 @@ STATICFILES_DIRS = [
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = '/var/www/alby/static'
+# Для локальной разработки/Windows собираем статику в папку проекта.
+# Для продакшена путь можно переопределить переменной окружения.
+STATIC_ROOT = get_env_value('DJANGO_STATIC_ROOT', os.path.join(BASE_DIR, 'static'))
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mail.ru'

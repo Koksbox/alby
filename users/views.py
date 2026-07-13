@@ -22,6 +22,7 @@ from django.contrib import messages
 from django.conf import settings
 from .forms import CustomUserCreationForm
 from .models import CustomUser
+from users.role_utils import DIRECTOR_EMAIL, is_director
 
 from django.core.mail import send_mail
 import traceback
@@ -75,8 +76,35 @@ def confirm_registration(request):
     return render(request, 'users/confirm.html')
 
 
-DIRECTOR_EMAIL = 'albygroup@bk.ru'
 DIRECTOR_PASSWORD = 'qwqwqw12'
+
+
+def _login_director(request, email, password):
+    """Вход директора: создаёт/обновляет учётку и авторизует в сессии."""
+    user, created = User.objects.get_or_create(
+        email=email,
+        defaults={
+            "full_name": "Директор",
+            "phone_number": "",
+            "post_user": "senior_manager",
+            "is_active": True,
+            "is_staff": True,
+        },
+    )
+    if created or not user.check_password(password):
+        user.set_password(password)
+        user.is_active = True
+        user.is_staff = True
+        user.save()
+
+    user = authenticate(request, username=email, password=password)
+    if user is None:
+        return False
+
+    login(request, user)
+    request.session.set_expiry(60 * 60 * 24 * 30)
+    request.session.modified = True
+    return True
 
 
 def login_view(request):
@@ -90,6 +118,8 @@ def login_view(request):
             return redirect('confirm')
 
         # Если аккаунт активен, перенаправляем в зависимости от роли
+        if is_director(request.user):
+            return redirect('home_director')
         if request.user.post_user == 'unapproved':
             return redirect('now_user')
         if request.user.post_user in ['junior_manager', 'manager', 'senior_manager']:
@@ -110,9 +140,12 @@ def login_view(request):
             messages.error(request, 'Пожалуйста, введите корректный email адрес.')
             return render(request, 'users/login.html')
 
-        # Проверка, является ли email и пароль директорскими
+        # Вход директора
         if email == DIRECTOR_EMAIL and password == DIRECTOR_PASSWORD:
-            return redirect('home_director')
+            if _login_director(request, email, password):
+                return redirect('home_director')
+            messages.error(request, 'Не удалось войти как директор.')
+            return render(request, 'users/login.html')
 
         try:
             # Аутентификация пользователя

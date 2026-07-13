@@ -50,7 +50,13 @@ def manager_maket(request, photo_id):
     return render(request, 'manager2/manager_maket.html', context)
 
 def history(request):
+    from users.role_utils import get_shift_period
+
     user = request.user
+    if not user.is_authenticated:
+        return redirect("login")
+
+    start_dt, end_dt, filter_mode, date_from, date_to, selected_month = get_shift_period(request)
 
     # Получаем активную смену
     active_shift = TimeManger.objects.filter(
@@ -60,14 +66,18 @@ def history(request):
 
     # Рассчитываем прошедшее время для активной смены
     elapsed_time = 0
+    active_shift_start_timestamp = 0
     if active_shift:
         elapsed_time = int((timezone.now() - active_shift.start_time).total_seconds())
+        active_shift_start_timestamp = int(active_shift.start_time.timestamp())
 
-    # Получаем завершенные смены
-    time_entries = TimeManger.objects.filter(
+    # Завершённые смены за период
+    time_entries = list(TimeManger.objects.filter(
         manager=user,
-        end_time__isnull=False
-    ).order_by('-start_time')
+        start_time__gte=start_dt,
+        start_time__lt=end_dt,
+        end_time__isnull=False,
+    ).order_by('-start_time'))
 
     # Рассчитываем общее время и зарплату для завершенных смен
     total_duration = timezone.timedelta()
@@ -79,11 +89,15 @@ def history(request):
             total_duration += entry.end_time - entry.start_time
             total_salary += entry.salary
 
-    # Добавляем время и зарплату текущей смены
     if active_shift:
-        current_duration = timezone.timedelta(seconds=elapsed_time)
-        total_duration += current_duration
-        total_salary += (elapsed_time / 3600) * user.stavka()
+        active_start = active_shift.start_time
+        active_end = timezone.now()
+        if active_start < end_dt and active_end > start_dt:
+            clipped_start = max(active_start, start_dt)
+            clipped_end = min(active_end, end_dt)
+            clipped_seconds = max(0, int((clipped_end - clipped_start).total_seconds()))
+            total_duration += timezone.timedelta(seconds=clipped_seconds)
+            total_salary += (clipped_seconds / 3600) * user.stavka()
 
     context = {
         'time_entries': time_entries,
@@ -92,7 +106,13 @@ def history(request):
         'active_shift': active_shift,
         'elapsed_time': elapsed_time,
         'user_stavka': user.stavka(),
-        'active_shift_start_timestamp': int(active_shift.start_time.timestamp()) if active_shift else 0,
+        'active_shift_start_timestamp': active_shift_start_timestamp,
+        'filter_mode': filter_mode,
+        'date_from': date_from,
+        'date_to': date_to,
+        'selected_month': selected_month,
+        'start_date': start_dt,
+        'end_date': end_dt,
     }
 
     return render(request, 'manager2/history.html', context)
@@ -639,14 +659,19 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 def employee(request):
-    # Доступ только для ролей от младшего менеджера и выше
-    if request.user.post_user not in ['junior_manager', 'manager', 'senior_manager']:
+    from users.role_utils import can_manage_staff, is_manager
+
+    if not is_manager(request.user):
         messages.error(request, 'Недостаточно прав для просмотра списка сотрудников.')
-        return redirect('profile')
+        return redirect('profile_manager')
 
     # Для младшего менеджера показываем его собственную статистику
     if request.user.post_user == 'junior_manager':
         return redirect('my_statistic')
+
+    if not can_manage_staff(request.user):
+        messages.error(request, 'Недостаточно прав для просмотра списка сотрудников.')
+        return redirect('profile_manager')
 
     # Подзапрос: есть ли у пользователя активный таймер?
     active_timer = TimeEntry.objects.filter(
@@ -702,10 +727,33 @@ def refactor_profile_manager(request):
 
 
 def profile_employee_manager(request, user_id):
-    print(f"Received user_id: {user_id}")  # Временное сообщение для отладки
-    user = get_object_or_404(CustomUser, id=user_id)  # Получаем одного пользователя
-    return render(request, 'manager2/profile_employee_manager.html',
-{'user': user})  # Передаем единственного пользователя в контекст
+    from users.role_utils import can_manage_staff, reset_user_password
+
+    if not request.user.is_authenticated:
+        return redirect("login")
+    if not can_manage_staff(request.user):
+        messages.error(request, "Недостаточно прав.")
+        return redirect("profile_manager")
+
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    temp_password = None
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "reset_password":
+            temp_password = reset_user_password(user)
+            messages.success(
+                request,
+                "Пароль сброшен. Временный пароль показан ниже (после обновления страницы исчезнет).",
+            )
+        else:
+            messages.error(request, "Неизвестное действие.")
+
+    return render(
+        request,
+        "manager2/profile_employee_manager.html",
+        {"user": user, "temp_password": temp_password},
+    )
 
 from django.shortcuts import render, get_object_or_404, redirect
 from director.forms import UserForm
@@ -852,10 +900,11 @@ def my_statistic(request):
 
 @login_required
 def manager_user_statistic(request, user_id):
-    # Доступ только для ролей от младшего менеджера и выше
-    if request.user.post_user not in ['junior_manager', 'manager', 'senior_manager']:
+    from users.role_utils import is_manager
+
+    if not is_manager(request.user):
         messages.error(request, 'Недостаточно прав для просмотра статистики.')
-        return redirect('profile')
+        return redirect('profile_manager')
     current_user = get_object_or_404(CustomUser, id=user_id)
 
     # Обработка выбора месяца
@@ -996,11 +1045,17 @@ def maket_info_manager(request, photo_id):
     return render(request, 'manager2/maket_info_manager.html', {'photo': photo})
 
 def employee_shifts(request, user_id):
-    # Доступ только для ролей от младшего менеджера и выше
-    if request.user.post_user not in ['junior_manager', 'manager', 'senior_manager']:
+    from users.role_utils import can_manage_staff, get_shift_period
+
+    if not request.user.is_authenticated:
+        return redirect("login")
+    if not can_manage_staff(request.user):
         messages.error(request, 'Недостаточно прав для просмотра истории смен.')
-        return redirect('profile')
+        return redirect('profile_manager')
+
     employee = get_object_or_404(CustomUser, id=user_id)
+
+    start_dt, end_dt, filter_mode, date_from, date_to, selected_month = get_shift_period(request)
 
     # Активная смена
     active_shift = TimeEntry.objects.filter(
@@ -1019,46 +1074,41 @@ def employee_shifts(request, user_id):
         is_submitted_for_review=False
     ).first()
 
-    # Получаем выбранный месяц из параметров GET-запроса
-    selected_month_str = request.GET.get('month')
-
-    # Если месяц не выбран, используем текущий месяц
-    if selected_month_str:
-        try:
-            selected_month = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d').date()
-        except (ValueError, TypeError):
-            selected_month = timezone.now().date()
-    else:
-        selected_month = timezone.now().date()
-
-    # Определяем первый и последний день выбранного месяца
-    first_day_of_month = selected_month.replace(day=1)
-    if selected_month.month == 12:
-        last_day_of_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
-    else:
-        last_day_of_month = selected_month.replace(month=selected_month.month + 1, day=1)
-
-    # Получаем записи времени для сотрудника за выбранный период
-    time_entries = TimeEntry.objects.filter(
+    time_entries = list(TimeEntry.objects.filter(
         user=employee,
         timer_type='shift',
-        start_time__gte=first_day_of_month,
-        start_time__lt=last_day_of_month,
+        start_time__gte=start_dt,
+        start_time__lt=end_dt,
         end_time__isnull=False
-    ).order_by('-start_time')
+    ).order_by('-start_time'))
 
-    # Рассчитываем общее время и зарплату
     total_duration = timezone.timedelta()
+    total_salary = 0
     for entry in time_entries:
         if entry.end_time and entry.start_time:
+            entry.display_duration = int((entry.end_time - entry.start_time).total_seconds())
             total_duration += entry.end_time - entry.start_time
+            total_salary += entry.salary()
 
-    total_salary = sum(entry.salary() for entry in time_entries)
+    if active_shift:
+        active_start = active_shift.start_time
+        active_end = timezone.now()
+        if active_start < end_dt and active_end > start_dt:
+            clipped_start = max(active_start, start_dt)
+            clipped_end = min(active_end, end_dt)
+            clipped_seconds = max(0, int((clipped_end - clipped_start).total_seconds()))
+            total_duration += timezone.timedelta(seconds=clipped_seconds)
+            total_salary += (clipped_seconds / 3600) * employee.stavka()
 
     context = {
         'employee': employee,
         'time_entries': time_entries,
-        'selected_month': selected_month,  # <-- это date, для шаблона
+        'filter_mode': filter_mode,
+        'selected_month': selected_month,
+        'date_from': date_from,
+        'date_to': date_to,
+        'start_date': start_dt,
+        'end_date': end_dt,
         'total_duration': total_duration,
         'total_salary': total_salary,
         'active_task': active_task,

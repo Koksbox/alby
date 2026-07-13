@@ -308,13 +308,12 @@ def employee_manager(request):
     return render(request, 'director/employee_manager.html', {'users': users})
 
 def profile_employee(request, user_id):
-    # Безопасный сброс пароля: исходный пароль посмотреть нельзя (хранится хеш),
-    # но директор может выдать временный пароль.
-    import secrets
-    import string
+    from django.contrib.auth.decorators import login_required
+    from users.role_utils import is_director, reset_user_password
 
-    # Доступ только директору (в проекте директор определяется по email)
-    if getattr(request.user, "email", None) != "albygroup@bk.ru":
+    if not request.user.is_authenticated:
+        return redirect("login")
+    if not is_director(request.user):
         messages.error(request, "Недостаточно прав.")
         return redirect("home")
 
@@ -324,10 +323,7 @@ def profile_employee(request, user_id):
     if request.method == "POST":
         action = request.POST.get("action")
         if action == "reset_password":
-            alphabet = string.ascii_letters + string.digits
-            temp_password = "".join(secrets.choice(alphabet) for _ in range(12))
-            user.set_password(temp_password)
-            user.save(update_fields=["password"])
+            temp_password = reset_user_password(user)
             messages.success(
                 request,
                 "Пароль сброшен. Временный пароль показан ниже (после обновления страницы исчезнет).",
@@ -1247,7 +1243,8 @@ def director_manager_statistic(request, user_id):
     return render(request, 'director/director_manager_statistic.html', context)
 
 def is_director(user):
-    return user.email == 'albygroup@bk.ru'
+    from users.role_utils import is_director as _is_director
+    return _is_director(user)
 
 
 def employee_shiftsdir(request, user_id):

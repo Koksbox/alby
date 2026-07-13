@@ -8,7 +8,8 @@
 
     <div class="filter-section">
         <form method="get" class="filter-form">
-            <input type="month" name="month" value="{{ selected_month|date:'Y-m' }}" class="month-input">
+            <input type="date" name="date_from" value="{{ date_from }}" class="month-input">
+            <input type="date" name="date_to" value="{{ date_to }}" class="month-input">
             <button type="submit" class="filter-btn">Показать</button>
         </form>
     </div>
@@ -30,7 +31,7 @@
                 <li class="entry-item">
                     <strong>Начало смены:</strong> {{ entry.start_time|date:"Y-m-d H:i:s" }}<br>
                     <strong>Окончание смены:</strong> {{ entry.end_time|date:"Y-m-d H:i:s" }}<br>
-                    <strong>Длительность смены:</strong> {{ entry.duration|format_time }}<br>
+                    <strong>Длительность смены:</strong> {{ entry.display_duration|format_time }}<br>
                     <strong>Зарплата:</strong> {{ entry.salary|floatformat:2 }} Р.
                 </li>
             {% endfor %}
@@ -41,8 +42,8 @@
 
     <div class="summary">
         <h2>Итого за период:</h2>
-        <p><strong>Общее время:</strong> {{ total_duration|format_time }}</p>
-        <p><strong>Общая зарплата:</strong> {{ total_salary|floatformat:2 }} Р.</p>
+        <p><strong>Общее время:</strong> <span id="total-time">{{ total_duration|format_time }}</span></p>
+        <p><strong>Общая зарплата:</strong> <span id="total-salary">{{ total_salary|floatformat:2 }}</span> Р.</p>
     </div>
 
     <div style="height: 100px !important;"></div>

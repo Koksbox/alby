@@ -637,55 +637,65 @@ def toggle_timer(request):
 
 def money(request):
     from users.models import TimeEntry
+    from users.role_utils import get_shift_period
+
+    if not request.user.is_authenticated:
+        return redirect("login")
+
     TimeEntry.auto_stop_long_shifts()
-    # Получаем все записи TimeEntry для текущего пользователя
-    time_entries_task = TimeEntry.objects.filter(user=request.user, end_time__isnull=False, timer_type='task')
-    # Получаем только ЗАВЕРШЕННЫЕ смены
-    time_entries_shift = TimeEntry.objects.filter(
-        user=request.user,
-        end_time__isnull=False,
-        timer_type='shift'
+
+    start_dt, end_dt, filter_mode, date_from, date_to, selected_month = get_shift_period(request)
+
+    # Задачи — без фильтра периода (как раньше, для совместимости)
+    time_entries_task = TimeEntry.objects.filter(
+        user=request.user, end_time__isnull=False, timer_type='task'
     )
 
-    # Добавляем display_duration в секундах
+    # Завершённые смены за выбранный период
+    time_entries_shift = list(TimeEntry.objects.filter(
+        user=request.user,
+        end_time__isnull=False,
+        timer_type='shift',
+        start_time__gte=start_dt,
+        start_time__lt=end_dt,
+    ).order_by('-start_time'))
+
     for entry in time_entries_shift:
         if entry.end_time and entry.start_time:
             entry.display_duration = int((entry.end_time - entry.start_time).total_seconds())
 
-    # Получаем активную смену (если есть)
-    active_shift = TimeEntry.objects.filter(user=request.user, end_time__isnull=True, timer_type='shift').first()
+    active_shift = TimeEntry.objects.filter(
+        user=request.user, end_time__isnull=True, timer_type='shift'
+    ).first()
 
-    # Рассчитываем общую зарплату и длительность только для ЗАВЕРШЕННЫХ смен
     total_salary_shift_completed = sum(entry.salary() for entry in time_entries_shift)
     total_duration_shift_completed = sum(
         int((entry.end_time - entry.start_time).total_seconds())
         for entry in time_entries_shift
     )
 
-    # Рассчитываем прошедшее время и потенциальную зарплату для активной смены (если есть)
     elapsed_time_active = 0
-    current_salary_active = 0
     if active_shift:
         elapsed_time_active = int((timezone.now() - active_shift.start_time).total_seconds())
-        user_stavka = request.user.stavka()
-        current_salary_active = (elapsed_time_active / 3600) * user_stavka
 
-    # Рассчитываем общую зарплату для задач
     total_salary_task = sum(entry.salary() for entry in time_entries_task)
-
-    # Получаем ставку пользователя для использования в JS
     user_stavka = request.user.stavka()
 
-    # Передаем данные в шаблон
     context = {
         'time_entries_task': time_entries_task,
-        'time_entries_shift': time_entries_shift,  # Завершенные смены для списка
-        'total_salary_task': total_salary_task,  # Общая зарплата для задач
-        'total_salary_shift_completed': total_salary_shift_completed,  # Общая зарплата для завершенных смен
-        'total_duration_shift_completed': total_duration_shift_completed,  # Общая длительность завершенных смен
-        'active_shift': active_shift,  # Активная смена
-        'elapsed_time': elapsed_time_active,  # Прошедшее время активной смены (начальное)
-        'user_stavka': user_stavka,  # Ставка пользователя
+        'time_entries_shift': time_entries_shift,
+        'total_salary_task': total_salary_task,
+        'total_salary_shift_completed': total_salary_shift_completed,
+        'total_duration_shift_completed': total_duration_shift_completed,
+        'active_shift': active_shift,
+        'elapsed_time': elapsed_time_active,
+        'user_stavka': user_stavka,
+        'filter_mode': filter_mode,
+        'date_from': date_from,
+        'date_to': date_to,
+        'selected_month': selected_month,
+        'start_date': start_dt,
+        'end_date': end_dt,
     }
     return render(request, 'users/money.html', context)
 

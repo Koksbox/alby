@@ -14,6 +14,14 @@
     <h1>История смен сотрудника:</h1>
     <a href="/profile/" class="btn">Назад</a>
 
+    <div class="filter-section">
+        <form method="get" class="filter-form">
+            <input type="date" name="date_from" value="{{ date_from }}" class="month-input">
+            <input type="date" name="date_to" value="{{ date_to }}" class="month-input">
+            <button type="submit" class="filter-btn">Показать</button>
+        </form>
+    </div>
+
     {% if active_shift %}
     <div class="active-shift">
         <h2>Текущая смена</h2>
@@ -36,7 +44,7 @@
                 </li>
             {% endfor %}
         {% else %}
-            <li class="placeholder">Нет записей времени.</li>
+            <li class="placeholder">Нет записей времени за выбранный период.</li>
         {% endif %}
     </ul>
 
@@ -77,6 +85,49 @@ h1 {
     opacity: 0;
     transform: translateY(20px);
     animation: fadeIn 0.5s ease forwards;
+}
+
+.filter-section {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+    animation-delay: 0.1s;
+}
+
+.filter-form {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.month-input {
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.filter-btn {
+    background-color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.filter-btn:hover {
+    background-color: #007bff;
+    color: white;
 }
 
 .entry-list {

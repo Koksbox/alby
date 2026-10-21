@@ -426,6 +426,17 @@ class TimeManger(models.Model):
         verbose_name = _('Учет времени менеджера')
         verbose_name_plural = _('Учет времени менеджеров')
         ordering = ['-start_time']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['manager'], condition=models.Q(end_time__isnull=True),
+                name='one_open_manager_shift',
+            ),
+        ]
+
+    def save(self, *args, **kwargs):
+        if self.hourly_rate is None and self.manager_id:
+            self.hourly_rate = self.manager.stavka()
+        super().save(*args, **kwargs)
 
     @property
     def duration(self):
@@ -441,7 +452,7 @@ class TimeManger(models.Model):
         return self.duration * effective_rate
 
     def __str__(self):
-        return f"TimeManager: {self.manager.get_full_name()} from {self.start_time} to {self.end_time}"
+        return f"TimeManager: {self.manager.full_name} from {self.start_time} to {self.end_time}"
 
     @classmethod
     def total_salary_users_money(cls, start_date=None, end_date=None):
@@ -450,7 +461,7 @@ class TimeManger(models.Model):
         if start_date and end_date:
             queryset = queryset.filter(
                 start_time__gte=start_date,
-                end_time__lte=end_date
+                start_time__lt=end_date
             )
         return sum(entry.salary for entry in queryset)
 
@@ -464,7 +475,7 @@ class TimeManger(models.Model):
         if start_date and end_date:
             queryset = queryset.filter(
                 start_time__gte=start_date,
-                end_time__lte=end_date
+                start_time__lt=end_date
             )
 
         for entry in queryset:
@@ -479,7 +490,7 @@ class TimeManger(models.Model):
         if start_date and end_date:
             queryset = queryset.filter(
                 start_time__gte=start_date,
-                end_time__lt=end_date
+                start_time__lt=end_date
             )
         return sum(entry.salary for entry in queryset)
 
@@ -493,11 +504,11 @@ class TimeManger(models.Model):
         if start_date and end_date:
             queryset = queryset.filter(
                 start_time__gte=start_date,
-                end_time__lt=end_date
+                start_time__lt=end_date
             )
 
         for entry in queryset:
-            hourly_rate = entry.manager.stavka()
+            hourly_rate = entry.hourly_rate if entry.hourly_rate is not None else entry.manager.stavka()
             duration = (entry.end_time - entry.start_time).total_seconds() / 3600
             salary = hourly_rate * duration
             salaries_by_user[entry.manager.id] += salary
@@ -514,7 +525,7 @@ class TimeManger(models.Model):
         if start_date and end_date:
             queryset = queryset.filter(
                 start_time__gte=start_date,
-                end_time__lte=end_date
+                start_time__lt=end_date
             )
         if manager_id:
             queryset = queryset.filter(manager_id=manager_id)

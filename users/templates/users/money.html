@@ -273,60 +273,9 @@ strong {
 </style>
 
 {% if active_shift %}
-<script>
-function formatTime(seconds) {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = seconds % 60;
-
-    return `${hours} ч ${minutes} м ${remainingSeconds} с`;
-}
-
-function updateTimer() {
-    // Убедимся, что startTime корректно парсится
-    const startTimeString = '{{ active_shift.start_time|date:"c" }}';
-    const startTime = new Date(startTimeString).getTime();
-    const now = new Date().getTime();
-    const elapsedSeconds = Math.floor((now - startTime) / 1000);
-
-    // Обновляем "Прошло времени"
-    document.getElementById('current-time').textContent = formatTime(elapsedSeconds);
-
-    // Обновляем зарплату используя ставку из контекста
-    // Убедимся, что user_stavka - число
-    const hourlyRate = parseFloat('{{ user_stavka }}');
-    if (!isNaN(hourlyRate)) {
-        const salary = (elapsedSeconds / 3600) * hourlyRate;
-        document.getElementById('current-salary').textContent = salary.toFixed(2);
-
-        // Обновляем общие итоги
-        const totalTimeElement = document.getElementById('total-time');
-        const totalSalaryElement = document.getElementById('total-salary');
-
-        // Получаем базовые значения из шаблона
-        const baseDuration = parseFloat('{{ total_duration_shift_completed }}') || 0;
-        const baseSalary = parseFloat('{{ total_salary_shift_completed }}') || 0;
-
-        // Обновляем общее время
-        const totalElapsedSeconds = baseDuration + elapsedSeconds;
-        totalTimeElement.textContent = formatTime(totalElapsedSeconds);
-
-        // Обновляем общую зарплату
-        const totalSalary = baseSalary + (elapsedSeconds / 3600 * hourlyRate);
-        totalSalaryElement.textContent = totalSalary.toFixed(2);
-    } else {
-        console.error("Не удалось получить корректную ставку пользователя.");
-        document.getElementById('current-salary').textContent = 'Ошибка';
-        document.getElementById('total-salary').textContent = 'Ошибка';
-    }
-}
-
-// Обновляем каждую секунду
-setInterval(updateTimer, 1000);
-
-// Начальное обновление при загрузке страницы
-updateTimer();
-</script>
+{% load static %}
+{{ active_shift_preview|json_script:"shift-preview-data" }}
+<script src="{% static 'js/shift_history.js' %}"></script>
 {% endif %}
 
 {% endblock %}

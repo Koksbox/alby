@@ -52,6 +52,20 @@
             <td>Общая сумма премий сотрудников</td>
             <td>{{ total_prizes|floatformat }} руб.</td>
         </tr>
+        {% if backup_status %}
+        <tr>
+            <td>Яндекс Диск</td>
+            <td>{% if backup_status.connected %}Подключён{% else %}Не подключён{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Последняя успешная копия данных</td>
+            <td>{{ backup_status.last_success_at|date:"d.m.Y H:i"|default:"Ещё не выполнялась" }}</td>
+        </tr>
+        <tr>
+            <td>Копирование данных</td>
+            <td>{% if not backup_status.enabled %}Отключено в настройках{% elif backup_status.state == 'error' %}Ошибка отправки{% elif backup_status.state == 'running' %}Выполняется{% elif backup_status.cleanup_pending %}Копия сохранена, очистка будет повторена{% else %}По расписанию{% endif %}</td>
+        </tr>
+        {% endif %}
     </table>
 
     <div class="otchet">
@@ -59,6 +73,9 @@
         <a href="{% url 'salary_report' %}" class="btn">Отчёт сотрудников</a>
         <a href="{% url 'salary_manager' %}" class="btn">Отчёт менеджеров</a>
         <a href="{% url 'director_prize' %}" class="btn big">Премии</a>
+        {% if backup_status %}
+        <a href="{% url 'backups:yandex_connect' %}" class="btn big">{% if backup_status.connected %}Переподключить Яндекс Диск{% else %}Подключить Яндекс Диск{% endif %}</a>
+        {% endif %}
         <a href="{% url 'logout' %}" class="btn big">Выход</a>
     </div>
 </main>

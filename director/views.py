@@ -349,6 +349,11 @@ from .forms import UserForm
 
 
 def edit_user(request, user_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if not is_director(request.user):
+        messages.error(request, 'Недостаточно прав.')
+        return redirect('home')
     user = get_object_or_404(CustomUser, id=user_id)
 
     if request.method == 'POST':
@@ -364,14 +369,13 @@ def edit_user(request, user_id):
             return redirect('/director/employee_director/')
 
         # Иначе — сохраняем изменения
+        previous_post = user.post_user
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
-            post_user = form.cleaned_data.get('post_user')
-            if post_user != user.post_user:
+            user = form.save(commit=False)
+            if user.post_user != previous_post:
                 user.big_stavka = user.calculate_default_stavka()
-            else:
-                user.big_stavka = form.cleaned_data.get('big_stavka', user.big_stavka)
-            form.save()
+            user.save()
             messages.success(request, 'Изменения сохранены.')
             return redirect('/director/employee_director/')
 
@@ -693,554 +697,47 @@ from django.db.models.functions import Coalesce
 from django.db.models import Value, FloatField
 
 def salary_report(request):
-    # Получаем параметры из GET-запроса
-    start_date_str = request.GET.get('start_date')
-    end_date_str = request.GET.get('end_date')
-    post_user = request.GET.get('post_user')  # Фильтр по роли
-    sort_by = request.GET.get('sort_by', 'desc')  # Сортировка (по умолчанию убывание)
-
-    # Инициализируем start_date и end_date как None
-    start_date = None
-    end_date = None
-    end_date_plus_one = None
-
-    # Преобразуем строки в объекты datetime.date
-    if start_date_str:
-        try:
-            start_date = dt.datetime.strptime(start_date_str, '%Y-%m-%d').date()
-        except ValueError:
-            start_date = None
-
-    if end_date_str:
-        try:
-            end_date = dt.datetime.strptime(end_date_str, '%Y-%m-%d').date()
-            end_date_plus_one = end_date + timedelta(days=1)
-        except ValueError:
-            end_date = None
-            end_date_plus_one = None
-    else:
-        end_date_plus_one = None
-
-    # Значения по умолчанию: с 1-го числа текущего месяца по сегодня
-    if start_date is None and end_date is None:
-        today = dt.datetime.now().date()
-        start_date = today.replace(day=1)
-        end_date = today
-    # Для корректной фильтрации по верхней границе в аннотациях используем следующий день
-    end_date_plus_one = end_date + timedelta(days=1)
-
-    # Роли без менеджеров
-    non_manager_roles = [code for code, _ in CustomUser.USER_TYPE_CHOICES if code not in ['junior_manager', 'manager', 'senior_manager']]
-
-    # Получаем базовый список всех активных сотрудников (не менеджеры)
-    users = CustomUser.objects.filter(is_active=True, post_user__in=non_manager_roles)
-
-    # Подсчитываем количество завершенных задач для каждого пользователя через Subquery
-    completed_tasks_subquery = TaskReview.objects.filter(
-        user=OuterRef('pk'),  # Связываем с внешним запросом
-        task__completed=True  # Учитываем только завершенные задачи
-    )
-
-    # Добавляем фильтрацию по датам для подзапроса, если они указаны
-    if start_date and end_date_plus_one:
-        completed_tasks_subquery = completed_tasks_subquery.filter(
-            task__created_at__gte=start_date,
-            task__created_at__lt=end_date_plus_one
-        )
-    completed_tasks_subquery = completed_tasks_subquery.values('user').annotate(
-        count=Count('task')
-    ).values('count')
-
-    # Аннотируем средний рейтинг и количество завершенных задач
-    users = users.annotate(
-        average_ratings=Avg('reviews_user__rating', filter=Q(reviews_user__rating__isnull=False)),
-        completed_tasks_count=Subquery(completed_tasks_subquery, output_field=models.IntegerField())
-    )
-
-    # Аннотируем список макетов, над которыми работал сотрудник
-    if start_date and end_date_plus_one:
-        users = users.prefetch_related(
-            Prefetch(
-                'submitted_reviews',  # Используем related_name='submitted_reviews'
-                queryset=Task.objects.filter(
-                    completed=True,  # Только завершенные задачи
-                    created_at__gte=start_date,  # Фильтр по дате начала
-                    created_at__lt=end_date_plus_one  # Фильтр по дате окончания
-                ).select_related('photo'),  # Предварительно загружаем связанные макеты
-                to_attr='completed_tasks'  # Сохраняем результат в атрибуте completed_tasks
-            )
-        )
-    else:
-        # Если даты не заданы, используем все завершенные задачи без фильтрации по датам
-        users = users.prefetch_related(
-            Prefetch(
-                'submitted_reviews',  # Используем related_name='submitted_reviews'
-                queryset=Task.objects.filter(
-                    completed=True  # Только завершенные задачи
-                ).select_related('photo'),  # Предварительно загружаем связанные макеты
-                to_attr='completed_tasks'  # Сохраняем результат в атрибуте completed_tasks
-            )
-        )
-
-    # Создаем словарь для хранения макетов, над которыми работал каждый сотрудник
-    user_worked_photos = {}
-
-    for user in users:
-        # Получаем список завершенных задач
-        completed_tasks = getattr(user, 'completed_tasks', [])
-
-        if not isinstance(completed_tasks, list):
-            # Если 'completed_tasks' является ManyRelatedManager, преобразуем его в список
-            completed_tasks = list(completed_tasks.all())
-
-        # Собираем названия макетов
-        photo_names = [
-            task.photo.image_name for task in completed_tasks
-            if task.photo and hasattr(task.photo, 'image_name')
-        ]
-        user_worked_photos[user.id] = ', '.join(set(photo_names)) if photo_names else 'Нет макетов'
-
-    if start_date and end_date_plus_one:
-        try:
-            # Используем метод, который НЕ полагается на текущую ставку
-            individual_salaries = {}
-            total_salary = 0
-
-            # Фильтруем записи по периоду (end_time < end_date_plus_one)
-            time_entries = TimeEntry.objects.filter(
-                end_time__isnull=False,
-                start_time__gte=start_date,
-                end_time__lt=end_date_plus_one
-            ).select_related('user')
-
-            from collections import defaultdict
-            temp_salaries = defaultdict(float)
-
-            for entry in time_entries:
-                # Используем hourly_rate, если он есть, иначе — текущую ставку (на случай старых записей)
-                rate = entry.hourly_rate if entry.hourly_rate is not None else entry.user.stavka()
-                salary = entry.duration * rate
-                temp_salaries[entry.user_id] += salary
-
-            individual_salaries = dict(temp_salaries)
-            total_salary = sum(individual_salaries.values())
-
-        except Exception as e:
-            print("Ошибка расчёта зарплаты:", e)
-            total_salary = 0
-            individual_salaries = {}
-    else:
-        # Если период не выбран, зарплата и индивидуальные зарплаты будут пустыми
-        total_salary = None
-        individual_salaries = {}
-
-    # Применяем фильтр по роли
-    if post_user:
-        # Игнорируем менеджерские роли в фильтре
-        if post_user in ['junior_manager', 'manager', 'senior_manager']:
-            post_user = None
-        elif post_user != 'unapproved':
-            users = users.filter(post_user=post_user)
-    else:
-        users = users.exclude(post_user__in=['unapproved', 'junior_manager', 'manager', 'senior_manager'])
-
-    # Применяем сортировку
-    if sort_by == 'asc':
-        users = users.order_by('big_stavka')  # По возрастанию ставки
-    elif sort_by == 'desc':
-        users = users.order_by('-big_stavka')  # По убыванию ставки
-    elif sort_by == 'wasc' and 'average_ratings' in users.query.annotations:
-        users = users.order_by('average_ratings')  # По возрастанию рейтинга
-    elif sort_by == 'wdesc' and 'average_ratings' in users.query.annotations:
-        users = users.order_by('-average_ratings')  # По убыванию рейтинга
-    elif sort_by == 'task' and 'completed_tasks_count' in users.query.annotations:
-        users = users.order_by('completed_tasks_count')  # По возрастанию количества завершенных задач
-    elif sort_by == 'anti_task' and 'completed_tasks_count' in users.query.annotations:
-        users = users.order_by('-completed_tasks_count')  # По убыванию количества завершенных задач
-
-    # Передаем данные в шаблон
-    filtered_roles = [choice for choice in CustomUser.USER_TYPE_CHOICES if choice[0] in non_manager_roles and choice[0] != 'unapproved']
-
-    # Согласовываем суммы с текущим набором пользователей
-    if start_date and end_date_plus_one:
-        allowed_user_ids = set(users.values_list('id', flat=True))
-        individual_salaries = {
-            uid: amount for uid, amount in individual_salaries.items() if uid in allowed_user_ids
-        }
-        total_salary = sum(individual_salaries.values())
-    else:
-        total_salary = None
-        individual_salaries = {}
-
-    # Форматируем даты для передачи в шаблон, явно проверяя их тип
-    formatted_start_date = ''
-    if isinstance(start_date, dt.date):
-        formatted_start_date = start_date.strftime('%Y-%m-%d')
-
-    formatted_end_date = ''
-    if isinstance(end_date, dt.date):
-        formatted_end_date = end_date.strftime('%Y-%m-%d')
-
-    context = {
-        'users': users,  # Список сотрудников
-        'total_salary': total_salary,  # Общая зарплата за период
-        'individual_salaries': individual_salaries,  # Зарплата для каждого сотрудника
-        'post_user_choices': filtered_roles,  # Выпадающий список ролей без неутвержденных и менеджеров
-        'selected_post_user': post_user,  # Выбранная роль
-        'sort_by': sort_by,  # Текущий порядок сортировки
-        'start_date': formatted_start_date,
-        'end_date': formatted_end_date,
-        'user_worked_photos': user_worked_photos
-    }
-    return render(request, 'director/salary_report.html', context)
+    from users.reporting import salary_report_context
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if not is_director(request.user):
+        messages.error(request, 'Недостаточно прав.')
+        return redirect('home')
+    return render(request, 'director/salary_report.html', salary_report_context(request, manager=False))
 
 
 from manager2.models import TimeManger
 
 def salary_manager(request):
-    # Получаем параметры из GET-запроса
-    start_date_str = request.GET.get('start_date')
-    end_date_str = request.GET.get('end_date')
-    manager_id = request.GET.get('manager')
-    sort_by = request.GET.get('sort_by', 'id')
-
-    # Инициализируем переменные
-    start_date = None
-    end_date = None
-    end_date_plus_one = None
-
-    if start_date_str:
-        try:
-            start_date = dt.datetime.strptime(start_date_str, '%Y-%m-%d').date()
-        except ValueError:
-            messages.error(request, "Неверный формат начальной даты.")
-            start_date = None
-
-    if end_date_str:
-        try:
-            end_date = dt.datetime.strptime(end_date_str, '%Y-%m-%d').date()
-            end_date_plus_one = end_date + timedelta(days=1)
-        except ValueError:
-            messages.error(request, "Неверный формат конечной даты.")
-            end_date = None
-            end_date_plus_one = None
-
-    # Значения по умолчанию: с 1-го числа текущего месяца по сегодня
-    if start_date is None and end_date is None:
-        today = dt.datetime.now().date()
-        start_date = today.replace(day=1)
-        end_date = today
-    if end_date_plus_one is None and end_date is not None:
-        end_date_plus_one = end_date + timedelta(days=1)
-
-    # Получаем базовый список всех активных менеджеров
-    users = CustomUser.objects.filter(
-        is_active=True,
-        post_user__in=['junior_manager', 'manager', 'senior_manager']
-    )
-
-    # Подсчитываем количество завершенных задач для каждого менеджера через Subquery
-    completed_tasks_subquery = Task.objects.filter(
-        created_by=OuterRef('pk'),  # Связываем с внешним запросом
-        completed=True  # Учитываем только завершенные задачи
-    )
-
-    if start_date and end_date:
-        completed_tasks_subquery = completed_tasks_subquery.filter(
-            created_at__gte=start_date,
-            created_at__lt=end_date_plus_one
-        )
-
-    completed_tasks_subquery = completed_tasks_subquery.values('created_by').annotate(
-        count=Count('id')
-    ).values('count')
-
-    # Аннотируем средний рейтинг, количество завершенных задач и зарплату
-    users = users.annotate(
-        completed_tasks_count=Subquery(completed_tasks_subquery, output_field=models.IntegerField())
-    )
-
-    # Аннотируем общую зарплату за период для менеджеров
-    if start_date and end_date:
-        try:
-            users = users.annotate(
-                total_salary=Coalesce(
-                    Sum(
-                        ExpressionWrapper(
-                            ((F('timemanger_set__end_time') - F('timemanger_set__start_time')) / timedelta(
-                                hours=1)) * F('big_stavka'),
-                            output_field=FloatField()
-                        ),
-                        filter=Q(timemanger_set__start_time__gte=start_date,
-                                 timemanger_set__end_time__lt=end_date_plus_one)
-                    ),
-                    Value(0.0),
-                    output_field=FloatField()
-                )
-            )
-            # Рассчитываем общую зарплату за период через метод модели
-            # Используем включающую верхнюю границу через end_date_plus_one
-            total_salary = TimeManger.total_salary_users_money(start_date=start_date, end_date=end_date_plus_one)
-            # Рассчитываем индивидуальную зарплату для каждого менеджера
-            individual_salaries = TimeManger.total_salary_for_each_user(start_date=start_date,
-                                                                        end_date=end_date_plus_one)
-        except ValueError:
-            total_salary = 0
-            individual_salaries = {}
-    else:
-        total_salary = None
-        individual_salaries = {}
-
-    # Аннотируем список макетов, созданных менеджером
-    if start_date and end_date:
-        users = users.prefetch_related(
-            Prefetch(
-                'user_muser',  # related_name для задач, созданных менеджером
-                queryset=Task.objects.filter(
-                    completed=True,  # Только завершенные задачи
-                    created_at__gte=start_date,  # Фильтр по дате начала
-                    created_at__lt=end_date_plus_one  # Фильтр по дате окончания
-                ).select_related('photo'),  # Предварительно загружаем связанные макеты
-                to_attr='published_tasks'  # Сохраняем результат в атрибуте published_tasks
-            )
-        )
-    else:
-        users = users.prefetch_related(
-            Prefetch(
-                'user_muser',  # related_name для задач, созданных менеджером
-                queryset=Task.objects.filter(
-                    completed=True  # Только завершенные задачи
-                ).select_related('photo'),  # Предварительно загружаем связанные макеты
-                to_attr='published_tasks'  # Сохраняем результат в атрибуте published_tasks
-            )
-        )
-
-    # Создаем словарь для хранения названий макетов
-    user_published_photos = {}
-    for user in users:
-        published_tasks = getattr(user, 'published_tasks', [])
-        photo_names = [
-            task.photo.image_name for task in published_tasks
-            if task.photo and hasattr(task.photo, 'image_name')
-        ]
-        user_published_photos[user.id] = ', '.join(set(photo_names)) if photo_names else 'Нет макетов'
-
-    # Применяем сортировку
-    if sort_by == 'asc':
-        users = users.order_by('big_stavka')  # По возрастанию ставки
-    elif sort_by == 'desc':
-        users = users.order_by('-big_stavka')  # По убыванию ставки
-    elif sort_by == 'wasc' and 'average_ratings' in users.query.annotations:
-        users = users.order_by('average_ratings')  # По возрастанию рейтинга
-    elif sort_by == 'wdesc' and 'average_ratings' in users.query.annotations:
-        users = users.order_by('-average_ratings')  # По убыванию рейтинга
-    elif sort_by == 'task' and 'completed_tasks_count' in users.query.annotations:
-        users = users.order_by('completed_tasks_count')  # По возрастанию количества завершенных задач
-    elif sort_by == 'anti_task' and 'completed_tasks_count' in users.query.annotations:
-        users = users.order_by('-completed_tasks_count')  # По убыванию количества завершенных задач
-
-    # Согласовываем суммы с текущим набором пользователей
-    if start_date and end_date:
-        allowed_user_ids = set(users.values_list('id', flat=True))
-        individual_salaries = {uid: amt for uid, amt in individual_salaries.items() if uid in allowed_user_ids}
-        total_salary = sum(individual_salaries.values())
-
-    formatted_start_date = ''
-    if isinstance(start_date, dt.date):
-        formatted_start_date = start_date.strftime('%Y-%m-%d')
-
-    formatted_end_date = ''
-    if isinstance(end_date, dt.date):
-        formatted_end_date = end_date.strftime('%Y-%m-%d')
-
-    context = {
-        'users': users,  # Список менеджеров
-        'total_salary': total_salary,  # Общая зарплата за период
-        'individual_salaries': individual_salaries,  # Зарплата для каждого менеджера
-        'sort_by': sort_by,  # Текущий порядок сортировки
-        'start_date': formatted_start_date,
-        'end_date': formatted_end_date,
-        'user_published_photos': user_published_photos  # Словарь с макетами, созданными менеджером
-    }
-
-    return render(request, 'director/salary_manager.html', context)
+    from users.reporting import salary_report_context
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if not is_director(request.user):
+        messages.error(request, 'Недостаточно прав.')
+        return redirect('home')
+    return render(request, 'director/salary_manager.html', salary_report_context(request, manager=True))
 
 
 
 def director_user_statistic(request, user_id):
-    current_user = get_object_or_404(CustomUser, id=user_id)
-
-    # Обработка выбора месяца
-    selected_month = timezone.now().date()
-    if 'month' in request.GET:
-        try:
-            selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
-            selected_month = timezone.make_aware(selected_month_naive)
-        except ValueError:
-            pass
-
-    # Определение границ месяца
-    first_day = selected_month.replace(day=1)
-    if selected_month.month == 12:
-        last_day = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
-    else:
-        last_day = selected_month.replace(month=selected_month.month + 1, day=1)
-
-    # Расчет зарплаты
-    try:
-        salary_data = TimeEntry.boss_total_salary_for_each_user(
-            start_date=first_day,
-            end_date=last_day,
-            user_id=current_user.id
-        )
-        total_salary = salary_data.get(current_user.id, 0)
-    except Exception:
-        total_salary = 0
-
-    # Подзапрос для подсчета задач
-    completed_tasks_subquery = Task.objects.filter(
-        submitted_by=OuterRef('pk'),
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).values('submitted_by').annotate(
-        count=Count('id')
-    ).values('count')
-
-    # Аннотация данных пользователя
-    user_data = CustomUser.objects.filter(id=current_user.id).annotate(
-        avg_rating_annotation=Avg('reviews_user__rating'),
-        completed_tasks_count=Subquery(completed_tasks_subquery, output_field=models.IntegerField()) or 0
-    ).first()
-
-    # Отдельный запрос для макетов
-    completed_tasks_with_photos = Task.objects.filter(
-        submitted_by=current_user,
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).select_related('photo')
-
-    worked_photos = Task.objects.filter(
-        submitted_by=current_user,
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).distinct().count()
-
-    context = {
-        'user': current_user,
-        'user_data': user_data,
-        'total_salary': total_salary,
-        'worked_photos': worked_photos,
-        'selected_month': selected_month,
-        'current_year': timezone.now().year,
-        'current_month': timezone.now().month,
-        'start_date': first_day,
-        'end_date': last_day,
-    }
-
-    return render(request, 'director/director_user_statistic.html', context)
+    from users.reporting import employee_statistics
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if not is_director(request.user):
+        messages.error(request, 'Недостаточно прав.')
+        return redirect('home')
+    employee = get_object_or_404(CustomUser, id=user_id)
+    return render(request, 'director/director_user_statistic.html', employee_statistics(request, employee))
 
 def director_manager_statistic(request, user_id):
-    current_user = get_object_or_404(CustomUser, id=user_id)
-
-    # Обработка выбора месяца
-    selected_month_str = request.GET.get('month')
-    selected_month = timezone.now().date()
-    if selected_month_str:
-        try:
-            selected_month_naive = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d')
-            selected_month = timezone.make_aware(selected_month_naive)
-        except ValueError:
-            pass
-
-    # Определение границ месяца
-    first_day = selected_month.replace(day=1)
-    if selected_month.month == 12:
-        last_day = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
-    else:
-        last_day = selected_month.replace(month=selected_month.month + 1, day=1)
-
-    # Подсчет созданных задач
-    created_tasks_subquery = Task.objects.filter(
-        created_by=current_user,
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).values('created_by').annotate(
-        count=Count('id')
-    ).values('count')[:1]
-
-    # Подсчет проверенных задач через TaskReview
-    reviewed_tasks_subquery = TaskReview.objects.filter(
-        manager=current_user,
-        task__completed=True,
-        reviewed_at__range=(first_day, last_day)
-    ).values('manager').annotate(
-        count=Count('id')
-    ).values('count')[:1]
-
-    total_shift_hours = TimeManger.objects.filter(
-        manager=current_user,
-        start_time__gte=first_day,  # Заменено на first_day
-        start_time__lt=last_day,  # Заменено на last_day
-        end_time__isnull=False
-    ).aggregate(
-        total_hours=Sum(
-            (F('end_time') - F('start_time')),
-            output_field=fields.DurationField()
-        )
-    )['total_hours']
-
-    total_shift_hours = total_shift_hours.total_seconds() / 3600 if total_shift_hours else 0
-
-    # Аннотация данных пользователя
-    user_data = CustomUser.objects.filter(id=current_user.id).annotate(
-        created_tasks=Coalesce(
-            Subquery(created_tasks_subquery, output_field=IntegerField()),
-            0
-        ),
-        reviewed_tasks=Coalesce(
-            Subquery(reviewed_tasks_subquery, output_field=IntegerField()),
-            0
-        )
-    ).first()
-
-    # Расчет зарплаты
-    try:
-        salary_data = TimeManger.boss_total_salary_for_each_user(
-            start_date=first_day,
-            end_date=last_day,
-            manager_id=current_user.id  # Передаем manager_id
-        )
-        total_salary = salary_data.get(current_user.id, 0)
-    except Exception as e:
-        print(f"Ошибка расчета зарплаты: {str(e)}")  # Для отладки
-        total_salary = 0
-
-    # Получение макетов созданных задач
-    created_tasks = Task.objects.filter(
-        created_by=current_user,
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).select_related('photo')
-
-    worked_photos = Task.objects.filter(
-        created_by=current_user,
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).distinct().count()
-
-    context = {
-        'user_data': user_data,
-        'total_salary': total_salary,
-        'worked_photos': worked_photos,
-        'selected_month': selected_month,
-        'current_year': timezone.now().year,
-        'current_month': timezone.now().month,
-        'start_date': first_day,
-        'end_date': last_day,
-        'total_shift_hours': total_shift_hours,
-    }
-
-    return render(request, 'director/director_manager_statistic.html', context)
+    from users.reporting import manager_statistics
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if not is_director(request.user):
+        messages.error(request, 'Недостаточно прав.')
+        return redirect('home')
+    employee = get_object_or_404(CustomUser, id=user_id)
+    return render(request, 'director/director_manager_statistic.html', manager_statistics(request, employee, director=True))
 
 def is_director(user):
     from users.role_utils import is_director as _is_director
@@ -1248,169 +745,25 @@ def is_director(user):
 
 
 def employee_shiftsdir(request, user_id):
+    from users.reporting import shift_history_context
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if not is_director(request.user):
+        messages.error(request, 'Недостаточно прав.')
+        return redirect('home')
     employee = get_object_or_404(CustomUser, id=user_id)
-    # Получаем активную смену
-    active_shift = TimeEntry.objects.filter(
-        user=employee,
-        end_time__isnull=True,
-        timer_type='shift'
-    ).first()
-    # Рассчитываем прошедшее время для активной смены
-    elapsed_time = 0
-    if active_shift:
-        elapsed_time = int((timezone.now() - active_shift.start_time).total_seconds())
-    active_task = Task.objects.filter(
-        submitted_by=employee,
-        is_rated=False,
-        is_submitted_for_review=False
-    ).first()
-    # Получаем выбранный месяц из параметров GET-запроса
-    selected_month_str = request.GET.get('month')
-    if selected_month_str:
-        try:
-            selected_month = dt.datetime.strptime(selected_month_str + '-01', '%Y-%m-%d').date()
-        except (ValueError, TypeError):
-            selected_month = timezone.now().date()
-    else:
-        selected_month = timezone.now().date()
-    # Определяем первый и последний день выбранного месяца
-    first_day_of_month = selected_month.replace(day=1)
-    if selected_month.month == 12:
-        last_day_of_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
-    else:
-        last_day_of_month = selected_month.replace(month=selected_month.month + 1, day=1)
-    # Получаем записи времени для сотрудника за выбранный период
-    time_entries = TimeEntry.objects.filter(
-        user=employee,
-        timer_type='shift',
-        start_time__gte=first_day_of_month,
-        start_time__lt=last_day_of_month,
-        end_time__isnull=False
-    ).order_by('-start_time')
-
-    # === ИСПРАВЛЕНИЕ: добавляем display_duration для каждой записи ===
-    time_entries_list = []
-    total_duration = timezone.timedelta()
-    total_salary = 0
-    for entry in time_entries:
-        if entry.end_time and entry.start_time:
-            # Добавляем атрибут с длительностью в СЕКУНДАХ
-            entry.display_duration = int((entry.end_time - entry.start_time).total_seconds())
-            total_duration += entry.end_time - entry.start_time
-            total_salary += entry.salary()  # предполагается, что salary() — метод модели
-            time_entries_list.append(entry)
-    # =================================================================
-
-    context = {
-        'employee': employee,
-        'time_entries': time_entries_list,  # ← передаём список с display_duration
-        'selected_month': selected_month,
-        'total_duration': total_duration,
-        'total_salary': total_salary,
-        'active_task': active_task,
-        'active_shift': active_shift,
-        'elapsed_time': elapsed_time,
-        'user_stavka': active_shift.hourly_rate if active_shift and active_shift.hourly_rate is not None else employee.stavka(),
-    }
-    return render(request, 'director/employee_shifts.html', context)
+    return render(request, 'director/employee_shifts.html',
+                  shift_history_context(request, employee, include_active=False))
 
 def manager_shifts(request, user_id):
-    manager = get_object_or_404(CustomUser, id=user_id)
-
-    # Получаем активную смену
-    active_shift = TimeManger.objects.filter(
-        manager=manager,
-        end_time__isnull=True
-    ).first()
-
-    # Рассчитываем прошедшее время для активной смены
-    elapsed_time = 0
-    active_shift_start_timestamp = 0
-    if active_shift:
-        elapsed_time = int((timezone.now() - active_shift.start_time).total_seconds())
-        active_shift_start_timestamp = int(active_shift.start_time.timestamp())
-
-    from django.utils.dateparse import parse_date
-
-    # Фильтр по диапазону дат: ?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD
-    date_from_str = (request.GET.get("date_from") or "").strip()
-    date_to_str = (request.GET.get("date_to") or "").strip()
-
-    date_from = parse_date(date_from_str) if date_from_str else None
-    date_to = parse_date(date_to_str) if date_to_str else None
-
-    now = timezone.now()
-    if date_from and date_to:
-        # [date_from 00:00, date_to 23:59:59...] делаем правую границу эксклюзивной
-        start_dt = timezone.make_aware(dt.datetime.combine(date_from, dt.time.min))
-        end_dt = timezone.make_aware(dt.datetime.combine(date_to + dt.timedelta(days=1), dt.time.min))
-        filter_mode = "range"
-    else:
-        # Backward compatible: если диапазон не задан — используем месяц (как раньше)
-        selected_month_str = request.GET.get("month")
-        if selected_month_str:
-            try:
-                selected_month_naive = dt.datetime.strptime(selected_month_str + "-01", "%Y-%m-%d")
-                selected_month = timezone.make_aware(selected_month_naive)
-            except (ValueError, TypeError):
-                selected_month = now.date()
-        else:
-            selected_month = now.date()
-
-        start_dt = selected_month.replace(day=1)
-        if selected_month.month == 12:
-            end_dt = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
-        else:
-            end_dt = selected_month.replace(month=selected_month.month + 1, day=1)
-        filter_mode = "month"
-
-    # Получаем записи времени для менеджера за выбранный период
-    time_entries = list(TimeManger.objects.filter(
-        manager=manager,
-        start_time__gte=start_dt,
-        start_time__lt=end_dt,
-        end_time__isnull=False
-    ).order_by('-start_time'))
-
-    # Рассчитываем общее время и зарплату
-    total_duration = timezone.timedelta()
-    total_salary = 0
-    for entry in time_entries:
-        if entry.end_time and entry.start_time:
-            entry.display_duration = (entry.end_time - entry.start_time).total_seconds()
-            total_duration += entry.end_time - entry.start_time
-            total_salary += entry.salary
-
-    # Добавляем время и зарплату текущей смены (только если пересекается с фильтром)
-    if active_shift:
-        active_start = active_shift.start_time
-        active_end = now
-        if active_start < end_dt and active_end > start_dt:
-            clipped_start = max(active_start, start_dt)
-            clipped_end = min(active_end, end_dt)
-            clipped_seconds = max(0, int((clipped_end - clipped_start).total_seconds()))
-            current_duration = timezone.timedelta(seconds=clipped_seconds)
-            total_duration += current_duration
-            total_salary += (clipped_seconds / 3600) * manager.stavka()
-
-    context = {
-        'manager': manager,
-        'time_entries': time_entries,
-        'filter_mode': filter_mode,
-        'selected_month': locals().get("selected_month"),
-        'date_from': date_from_str,
-        'date_to': date_to_str,
-        'start_date': start_dt,
-        'end_date': end_dt,
-        'total_duration': total_duration,
-        'total_salary': total_salary,
-        'active_shift': active_shift,
-        'elapsed_time': elapsed_time,
-        'user_stavka': manager.stavka(),
-        'active_shift_start_timestamp': active_shift_start_timestamp,
-    }
-
-    return render(request, 'director/manager_shifts.html', context)
+    from users.reporting import shift_history_context
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if not is_director(request.user):
+        messages.error(request, 'Недостаточно прав.')
+        return redirect('home')
+    employee = get_object_or_404(CustomUser, id=user_id)
+    return render(request, 'director/manager_shifts.html', shift_history_context(request, employee, manager=True))
 
 class TaskTemplateForm(forms.ModelForm):
     class Meta:

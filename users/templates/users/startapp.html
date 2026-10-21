@@ -58,11 +58,13 @@
     {% if request.session.timer_shift_started %}
         <form action="{% url 'toggle_timer' %}" method="post" class="mt-3">
             {% csrf_token %}
+            <input type="hidden" name="timer_action" value="stop">
             <button type="submit" class="btn btn-danger">Завершить смену</button>
         </form>
     {% else %}
         <form action="{% url 'toggle_timer' %}" method="post" class="mt-3">
             {% csrf_token %}
+            <input type="hidden" name="timer_action" value="start">
             <button type="submit" class="btn btn-success">Начать смену</button>
         </form>
     {% endif %}
@@ -369,152 +371,86 @@ button {
 document.addEventListener('DOMContentLoaded', function() {
     const timerDisplay = document.getElementById('timerDisplay');
     const salaryDisplay = document.getElementById('salaryDisplay');
-    const startButton = document.querySelector('.start-button button');
-
+    const form = document.querySelector('.start-button form');
+    const startButton = form.querySelector('button');
     let timerInterval = null;
-    let startTime = null;
-    const stavka = parseFloat('{{ user.stavka|default:0 }}'); // Получаем ставку из Django безопасно
-    const MAX_SHIFT_MS = 24 * 60 * 60 * 1000; // 24 часа в миллисекундах
-    const MAX_SHIFT_HOURS = 24; // Продолжительность смены в часах
+    let startedAt = null;
+    let entryId = null;
+    let busy = true;
+    let rate = 0;
+    let maxSeconds = {{ request.timer_shift_max_seconds|default:86400 }};
+    let warned = false;
 
-    // Функция обновления таймера
-    function updateTimer() {
-        if (!startTime) return;
-
-        const elapsedTime = Date.now() - startTime;
-        
-        // Проверяем, не превысили ли мы лимит
-        if (elapsedTime >= MAX_SHIFT_MS) {
-            // Автоматически останавливаем таймер при достижении лимита
-            autoStopTimer();
-            return;
-        }
-
-        // Показываем предупреждение за 1 час до достижения лимита
-        const warningTime = MAX_SHIFT_MS - (60 * 60 * 1000);
-        if (elapsedTime >= warningTime && elapsedTime < warningTime + 1000) {
-            showNotification('Внимание! До окончания смены остался 1 час', 'warning');
-        }
-
-        const hours = Math.floor(elapsedTime / 3600000);
-        const minutes = Math.floor((elapsedTime % 3600000) / 60000);
-        const seconds = Math.floor((elapsedTime % 60000) / 1000);
-
-        // Добавляем предупреждающий стиль при приближении к лимиту
-        if (elapsedTime >= warningTime) {
-            timerDisplay.classList.add('timer-warning');
-        } else {
-            timerDisplay.classList.remove('timer-warning');
-        }
-
-        timerDisplay.textContent =
-            `${String(hours).padStart(2, '0')}:` +
-            `${String(minutes).padStart(2, '0')}:` +
-            `${String(seconds).padStart(2, '0')}`;
-
-        const salary = (elapsedTime / 3600000) * stavka;
-        salaryDisplay.textContent = `${Math.round(salary)} ₽`;
-    }
-
-    // Функция автоматической остановки таймера
-    function autoStopTimer() {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        startTime = null;
-        timerDisplay.textContent = '24:00:00';
-        salaryDisplay.textContent = `${Math.round(stavka * MAX_SHIFT_HOURS)} ₽`;
-        startButton.textContent = 'Начать смену';
-        
-        // Убираем предупреждающий стиль
-        timerDisplay.classList.remove('timer-warning');
-        
-        // Отправляем запрос на остановку таймера на сервере
-        fetch('/api/stop-timer/', { method: 'POST' })
-            .then(response => {
-                if (response.ok) {
-                    // Показываем уведомление о достижении лимита
-                    showNotification('Смена автоматически завершена по истечении 24 часов', 'info');
-                }
-            });
-    }
-
-    // Функция сброса таймера
-    function resetTimer() {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        startTime = null;
-        timerDisplay.textContent = '00:00:00';
-        salaryDisplay.textContent = '0 ₽';
-        
-        // Убираем предупреждающий стиль
-        timerDisplay.classList.remove('timer-warning');
-    }
-
-    // Функция показа уведомлений
     function showNotification(message, type = 'info') {
-        // Создаем элемент уведомления
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
         notification.textContent = message;
-
-        // Добавляем уведомление на страницу
         document.body.appendChild(notification);
-
-        // Удаляем уведомление через 5 секунд
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 5000);
+        setTimeout(() => notification.remove(), 5000);
     }
-
-    // Проверка активного таймера при загрузке
-    fetch('/api/check-active-timer/')
-        .then(response => response.json())
-        .then(data => {
-            if (data.active) {
-                startTime = Date.now() - data.elapsed_time * 1000;
-                
-                // Проверяем, не превысили ли уже лимит
-                const elapsedTime = Date.now() - startTime;
-                if (elapsedTime >= MAX_SHIFT_MS) {
-                    // Если лимит превышен, автоматически останавливаем
-                    autoStopTimer();
-                } else {
-                    // Запускаем таймер
-                    timerInterval = setInterval(updateTimer, 1000);
-                    startButton.textContent = 'Завершить смену';
-                    updateTimer(); // Немедленное обновление при загрузке
-                }
-            }
-        });
-
-    // Обработчик кнопки
-    document.querySelector('.start-button form').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        if (timerInterval) { // Остановка таймера
-            fetch('/api/stop-timer/', { method: 'POST' })
-                .then(response => {
-                    if (response.ok) {
-                        resetTimer();
-                        startButton.textContent = 'Начать смену';
-                        showNotification('Смена завершена', 'success');
-                    }
-                });
-        } else { // Запуск таймера
-            startTime = Date.now();
-            timerInterval = setInterval(updateTimer, 1000);
-            startButton.textContent = 'Завершить смену';
-            updateTimer(); // Немедленное обновление при старте
-            fetch('/api/start-timer/', { method: 'POST' })
-                .then(response => {
-                    if (response.ok) {
-                        showNotification('Смена начата', 'success');
-                    }
-                });
+    function applyState(data) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        entryId = data.entry_id;
+        rate = Number(data.hourly_rate) || 0;
+        maxSeconds = Number(data.max_seconds) || maxSeconds;
+        startedAt = data.active ? Date.now() - data.elapsed_time * 1000 : null;
+        startButton.textContent = data.active ? 'Завершить смену' : 'Начать смену';
+        const action = form.querySelector('[name="timer_action"]');
+        if (action) action.value = data.active ? 'stop' : 'start';
+        warned = false;
+        updateTimer();
+        if (data.active) timerInterval = setInterval(updateTimer, 1000);
+    }
+    function updateTimer() {
+        const elapsed = startedAt === null ? 0 : Math.min(maxSeconds, Math.max(0, Math.floor((Date.now() - startedAt) / 1000)));
+        timerDisplay.textContent = [Math.floor(elapsed / 3600), Math.floor(elapsed % 3600 / 60), elapsed % 60]
+            .map(value => String(value).padStart(2, '0')).join(':');
+        salaryDisplay.textContent = `${Math.round(elapsed / 3600 * rate)} ₽`;
+        const nearLimit = startedAt !== null && elapsed >= maxSeconds - 3600;
+        timerDisplay.classList.toggle('timer-warning', nearLimit);
+        if (nearLimit && !warned) { warned = true; showNotification('Внимание! До окончания смены остался 1 час', 'warning'); }
+        if (startedAt !== null && elapsed >= maxSeconds && !busy) changeTimer('stop', true);
+    }
+    async function readState() {
+        const response = await fetch('/api/check-active-timer/', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Не удалось получить состояние смены.');
+        return response.json();
+    }
+    async function changeTimer(action, automatic = false) {
+        if (busy) return;
+        busy = true;
+        startButton.disabled = true;
+        try {
+            const body = new URLSearchParams();
+            if (entryId !== null) body.set('entry_id', entryId);
+            const response = await fetch(action === 'start' ? '/api/start-timer/' : '/api/stop-timer/', {
+                method: 'POST', body,
+                headers: { 'X-CSRFToken': form.querySelector('[name="csrfmiddlewaretoken"]').value }
+            });
+            if (!response.ok) throw new Error('Не удалось изменить состояние смены. Повторите попытку.');
+            const data = await response.json();
+            if (data.status !== 'success') throw new Error('Не удалось изменить состояние смены.');
+            applyState(data);
+            showNotification(automatic ? 'Смена автоматически завершена по истечении лимита времени' : (data.active ? 'Смена начата' : 'Смена завершена'), automatic ? 'info' : 'success');
+        } catch (error) {
+            showNotification(error.message, 'warning');
+            try { applyState(await readState()); } catch (_) { /* Keep the last confirmed state. */ }
+        } finally {
+            busy = false;
+            startButton.disabled = false;
         }
+    }
+    startButton.disabled = true;
+    readState().then(applyState).catch(error => showNotification(error.message, 'warning')).finally(() => {
+        busy = false;
+        startButton.disabled = false;
     });
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        changeTimer(startedAt === null ? 'start' : 'stop');
+    });
+    window.addEventListener('pageshow', event => { if (event.persisted && !busy) readState().then(applyState).catch(() => {}); });
 });
 </script>
 

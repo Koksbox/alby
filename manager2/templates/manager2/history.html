@@ -254,95 +254,9 @@ strong {
 </style>
 
 {% if active_shift %}
-<script>
-function formatTime(seconds) {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = seconds % 60;
-
-    return `${hours} ч ${minutes} м ${remainingSeconds} с`;
-}
-
-function updateTimer() {
-    // Получаем метку времени Unix начала смены (в секундах)
-    const startTimeStamp = parseInt('{{ active_shift_start_timestamp }}', 10);
-    
-    // Если метка времени некорректна, останавливаем функцию
-    if (isNaN(startTimeStamp) || startTimeStamp <= 0) {
-        console.error("Некорректная метка времени начала смены:", '{{ active_shift_start_timestamp }}');
-        return;
-    }
-
-    // Получаем текущую метку времени Unix (в миллисекундах) и преобразуем в секунды
-    const nowTimeStamp = Math.floor(Date.now() / 1000);
-
-    // Расчитываем прошедшее время с начала смены
-    const elapsedSeconds = nowTimeStamp - startTimeStamp;
-
-    // Обновляем время текущей смены в блоке "Текущая смена"
-    const currentTimeElement = document.getElementById('current-time');
-    if (currentTimeElement) {
-        currentTimeElement.textContent = formatTime(elapsedSeconds);
-    }
-
-    // Получаем часовую ставку
-    const hourlyRate = parseFloat('{{ user_stavka }}');
-
-    if (!isNaN(hourlyRate)) {
-        // Расчитываем текущую зарплату за активную смену
-        const currentSalary = (elapsedSeconds / 3600) * hourlyRate;
-        
-        // Обновляем текущую зарплату в блоке "Текущая смена"
-        const currentSalaryElement = document.getElementById('current-salary');
-        if (currentSalaryElement) {
-            currentSalaryElement.textContent = currentSalary.toFixed(2);
-        }
-
-        // Обновляем общую зарплату в блоке "Итого"
-        // Базовая зарплата - это общая зарплата без учета текущей смены на момент загрузки страницы
-        const initialTotalSalary = parseFloat('{{ total_salary }}');
-        const initialElapsedSecondsAtLoad = parseInt('{{ elapsed_time }}', 10);
-        
-        let baseSalaryForTotal = initialTotalSalary;
-        // Вычитаем зарплату за initialElapsedSeconds, если initialTotalSalary ее включает
-        if (!isNaN(initialTotalSalary) && !isNaN(initialElapsedSecondsAtLoad) && initialElapsedSecondsAtLoad > 0) {
-             baseSalaryForTotal = initialTotalSalary - (initialElapsedSecondsAtLoad / 3600) * hourlyRate;
-        }
-
-        const totalSalary = baseSalaryForTotal + currentSalary;
-
-        const totalSalaryElement = document.getElementById('total-salary');
-        if (totalSalaryElement) {
-            totalSalaryElement.textContent = totalSalary.toFixed(2);
-        }
-    }
-
-    // Обновляем общее время в блоке "Итого"
-    // Базовое время - это общее время без учета текущей смены на момент загрузки страницы
-    const initialTotalDurationSeconds = parseInt('{{ total_duration.total_seconds }}', 10);
-    const initialElapsedSecondsDurationAtLoad = parseInt('{{ elapsed_time }}', 10);
-
-    let baseDurationSecondsForTotal = initialTotalDurationSeconds;
-    // Вычитаем initialElapsedSecondsDurationAtLoad, если initialTotalDurationSeconds ее включает
-     if (!isNaN(initialTotalDurationSeconds) && !isNaN(initialElapsedSecondsDurationAtLoad) && initialElapsedSecondsDurationAtLoad > 0) {
-        baseDurationSecondsForTotal = initialTotalDurationSeconds - initialElapsedSecondsDurationAtLoad;
-     }
-
-    const totalDuration = baseDurationSecondsForTotal + elapsedSeconds;
-    
-    const totalTimeElement = document.getElementById('total-time');
-    if (totalTimeElement) {
-         totalTimeElement.textContent = formatTime(totalDuration);
-    }
-
-
-}
-
-// Запускаем обновление каждую секунду
-setInterval(updateTimer, 1000);
-// Запускаем сразу при загрузке страницы
-updateTimer();
-</script>
+{% load static %}
+{{ active_shift_preview|json_script:"shift-preview-data" }}
+<script src="{% static 'js/shift_history.js' %}"></script>
 {% endif %}
 
 {% endblock %}

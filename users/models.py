@@ -313,6 +313,17 @@ class TimeEntry(models.Model):
     class Meta:
         verbose_name = _('Запись времени')
         verbose_name_plural = _('Записи времени')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user'], condition=models.Q(timer_type='shift', end_time__isnull=True),
+                name='one_open_employee_shift',
+            ),
+            models.UniqueConstraint(
+                fields=['user', 'task'],
+                condition=models.Q(timer_type='task', end_time__isnull=True, task__isnull=False),
+                name='one_open_user_task_timer',
+            ),
+        ]
 
     @property
     def duration(self):
@@ -349,7 +360,7 @@ class TimeEntry(models.Model):
     def total_salary_users_money_user(cls, start_date=None, end_date=None):
         queryset = cls.objects.filter(end_time__isnull=False)
         if start_date and end_date:
-            queryset = queryset.filter(start_time__gte=start_date, end_time__lte=end_date)
+            queryset = queryset.filter(start_time__gte=start_date, start_time__lt=end_date)
         return sum(entry.salary() for entry in queryset)
 
     @classmethod
@@ -358,7 +369,7 @@ class TimeEntry(models.Model):
         salaries = defaultdict(float)
         queryset = cls.objects.filter(end_time__isnull=False)
         if start_date and end_date:
-            queryset = queryset.filter(start_time__gte=start_date, end_time__lte=end_date)
+            queryset = queryset.filter(start_time__gte=start_date, start_time__lt=end_date)
         for entry in queryset:
             salaries[entry.user.id] += entry.salary()
         return dict(salaries)
@@ -376,7 +387,7 @@ class TimeEntry(models.Model):
         salaries = defaultdict(float)
         queryset = cls.objects.filter(end_time__isnull=False)
         if start_date and end_date:
-            queryset = queryset.filter(start_time__gte=start_date, end_time__lte=end_date)
+            queryset = queryset.filter(start_time__gte=start_date, start_time__lt=end_date)
         for entry in queryset:
             rate = entry.hourly_rate if entry.hourly_rate is not None else entry.user.stavka()
             salaries[entry.user.id] += entry.duration * rate
@@ -388,7 +399,7 @@ class TimeEntry(models.Model):
         salaries = defaultdict(float)
         queryset = cls.objects.filter(end_time__isnull=False)
         if start_date and end_date:
-            queryset = queryset.filter(start_time__gte=start_date, end_time__lte=end_date)
+            queryset = queryset.filter(start_time__gte=start_date, start_time__lt=end_date)
         if user_id:
             queryset = queryset.filter(user_id=user_id)
         for entry in queryset:
@@ -397,15 +408,8 @@ class TimeEntry(models.Model):
 
     @classmethod
     def auto_stop_long_shifts(cls):
-        from django.conf import settings
-        max_seconds = getattr(settings, 'TIME_TRACKER_SHIFT_MAX_SECONDS', 24 * 3600)
-        now = timezone.now()
-        entries = cls.objects.filter(timer_type='shift', end_time__isnull=True)
-        for entry in entries:
-            elapsed = (now - entry.start_time).total_seconds()
-            if elapsed > max_seconds:
-                entry.end_time = entry.start_time + timezone.timedelta(seconds=max_seconds)
-                entry.save()
+        from users.timers import expire_employee_shifts
+        return expire_employee_shifts()
 
 
 # ======================

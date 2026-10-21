@@ -57,7 +57,7 @@
         <div class="stats">
             <div class="stat-item">
                 <div class="stat-label">Потрачено времени</div>
-                <div class="stat-value">{{ time_spent|format_time }}</div>
+                <div class="stat-value">{{ time_spent_seconds|format_time }}</div>
             </div>
         </div>
 
@@ -356,70 +356,28 @@
     </style>
 
     <script>
-        let timerInterval;
-        let secondsElapsed = 0;
-
+    document.addEventListener('DOMContentLoaded', () => {
+        const display = document.getElementById('timerDisplay');
+        const running = "{{ request.session.timer_running }}" === "True";
+        const startedAt = Date.parse("{{ request.session.start_time|default:''|escapejs }}");
         function updateTimerDisplay() {
-            const hours = Math.floor(secondsElapsed / 3600);
-            const minutes = Math.floor((secondsElapsed % 3600) / 60);
-            const seconds = secondsElapsed % 60;
-            document.getElementById('timerDisplay').textContent =
-                String(hours).padStart(2, '0') + ':' +
-                String(minutes).padStart(2, '0') + ':' +
-                String(seconds).padStart(2, '0');
+            const elapsed = running && Number.isFinite(startedAt)
+                ? Math.max(0, Math.floor((Date.now() - startedAt) / 1000)) : 0;
+            display.textContent = [Math.floor(elapsed / 3600), Math.floor(elapsed % 3600 / 60), elapsed % 60]
+                .map(value => String(value).padStart(2, '0')).join(':');
         }
-
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                secondsElapsed++;
-                updateTimerDisplay();
-            }, 1000);
-
-            document.getElementById('startTimerForm').classList.add('hidden');
-            document.getElementById('stopTimerForm').classList.remove('hidden');
-            document.getElementById('submitTaskForm').classList.add('hidden');
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-
-            document.getElementById('startTimerForm').classList.remove('hidden');
-            document.getElementById('stopTimerForm').classList.add('hidden');
-            document.getElementById('submitTaskForm').classList.remove('hidden');
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if ("{{ request.session.timer_running }}" === "True") {
-                const startTime = new Date("{{ request.session.start_time }}");
-                const now = new Date();
-                secondsElapsed = Math.floor((now - startTime) / 1000);
-                startTimer();
-            } else {
-                document.getElementById('startTimerForm').classList.remove('hidden');
-                document.getElementById('stopTimerForm').classList.add('hidden');
-                if ("{{ task.is_selected }}" === "True") {
-                    document.getElementById('submitTaskForm').classList.remove('hidden');
-                }
-            }
-
-            const startButton = document.getElementById('startButton');
-            if (startButton) {
-                startButton.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    startTimer();
-                    document.getElementById('startTimerForm').submit();
-                });
-            }
-
-            const stopButton = document.getElementById('stopButton');
-            if (stopButton) {
-                stopButton.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    stopTimer();
-                    document.getElementById('stopTimerForm').submit();
-                });
-            }
+        updateTimerDisplay();
+        if (running) setInterval(updateTimerDisplay, 1000);
+        ['startTimerForm', 'stopTimerForm'].forEach(id => {
+            const form = document.getElementById(id);
+            if (form) form.addEventListener('submit', event => {
+                if (form.dataset.submitting) { event.preventDefault(); return; }
+                form.dataset.submitting = 'true';
+                const button = form.querySelector('button');
+                if (button) button.disabled = true;
+            });
         });
+    });
     </script>
 {% endblock %}
 </body>

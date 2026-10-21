@@ -1,0 +1,35 @@
+services:
+  web:
+    build: .
+    env_file: .env
+    environment:
+      DJANGO_SQLITE_PATH: /app/data/db.sqlite3
+      DJANGO_MEDIA_ROOT: /app/media
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./media:/app/media
+      - ./var:/app/var
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/login/', timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 12
+      start_period: 30s
+  worker:
+    build: .
+    command: worker
+    env_file: .env
+    environment:
+      DJANGO_SQLITE_PATH: /app/data/db.sqlite3
+      DJANGO_MEDIA_ROOT: /app/media
+    volumes:
+      - ./data:/app/data
+      - ./media:/app/media:ro
+      - ./var:/app/var
+    depends_on:
+      web:
+        condition: service_healthy
+    restart: unless-stopped

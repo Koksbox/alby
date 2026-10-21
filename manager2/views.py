@@ -50,72 +50,11 @@ def manager_maket(request, photo_id):
     return render(request, 'manager2/manager_maket.html', context)
 
 def history(request):
-    from users.role_utils import get_shift_period
-
-    user = request.user
-    if not user.is_authenticated:
-        return redirect("login")
-
-    start_dt, end_dt, filter_mode, date_from, date_to, selected_month = get_shift_period(request)
-
-    # Получаем активную смену
-    active_shift = TimeManger.objects.filter(
-        manager=user,
-        end_time__isnull=True
-    ).first()
-
-    # Рассчитываем прошедшее время для активной смены
-    elapsed_time = 0
-    active_shift_start_timestamp = 0
-    if active_shift:
-        elapsed_time = int((timezone.now() - active_shift.start_time).total_seconds())
-        active_shift_start_timestamp = int(active_shift.start_time.timestamp())
-
-    # Завершённые смены за период
-    time_entries = list(TimeManger.objects.filter(
-        manager=user,
-        start_time__gte=start_dt,
-        start_time__lt=end_dt,
-        end_time__isnull=False,
-    ).order_by('-start_time'))
-
-    # Рассчитываем общее время и зарплату для завершенных смен
-    total_duration = timezone.timedelta()
-    total_salary = 0
-
-    for entry in time_entries:
-        if entry.end_time and entry.start_time:
-            entry.display_duration = int((entry.end_time - entry.start_time).total_seconds())
-            total_duration += entry.end_time - entry.start_time
-            total_salary += entry.salary
-
-    if active_shift:
-        active_start = active_shift.start_time
-        active_end = timezone.now()
-        if active_start < end_dt and active_end > start_dt:
-            clipped_start = max(active_start, start_dt)
-            clipped_end = min(active_end, end_dt)
-            clipped_seconds = max(0, int((clipped_end - clipped_start).total_seconds()))
-            total_duration += timezone.timedelta(seconds=clipped_seconds)
-            total_salary += (clipped_seconds / 3600) * user.stavka()
-
-    context = {
-        'time_entries': time_entries,
-        'total_salary': total_salary,
-        'total_duration': total_duration,
-        'active_shift': active_shift,
-        'elapsed_time': elapsed_time,
-        'user_stavka': user.stavka(),
-        'active_shift_start_timestamp': active_shift_start_timestamp,
-        'filter_mode': filter_mode,
-        'date_from': date_from,
-        'date_to': date_to,
-        'selected_month': selected_month,
-        'start_date': start_dt,
-        'end_date': end_dt,
-    }
-
-    return render(request, 'manager2/history.html', context)
+    from users.reporting import shift_history_context
+    if not request.user.is_authenticated:
+        return redirect('login')
+    return render(request, 'manager2/history.html',
+                  shift_history_context(request, request.user, manager=True))
 
 def upload_photo(request):
     elapsed_time = 0  # Initialize the variable with a default value
@@ -558,77 +497,42 @@ def delete_avatar(request):
     return redirect('profile_manager')
 
 
+@login_required
 def start_timer_manager(request):
+    from users.timers import change_shift
     if request.method == 'POST':
-        user = request.user
-        if not user.is_authenticated:
-            messages.error(request, "Вы не авторизованы!")
-            return redirect('login')  # Перенаправьте на страницу входа
-
-        # Проверяем, запущен ли уже таймер
-        active_time_entries = TimeManger.objects.filter(manager=user, end_time__isnull=True)
-        if active_time_entries.exists():
-            messages.error(request, "Таймер уже запущен!")
-            return redirect('profile_man')
-
-        # Создаем новую запись времени
-        time_entry = TimeManger(manager=user, start_time=timezone.now(), hourly_rate=user.stavka())
-        time_entry.save()
+        entry, created = change_shift(request.user, 'start', manager=True)
         request.session['timer_started'] = True
-        messages.success(request, "Таймер успешно запущен.")
-        return redirect('upload_photo')  # Замените на актуальный URL
+        if created:
+            messages.success(request, 'Таймер успешно запущен.')
+    return redirect('upload_photo')
 
 
+@login_required
 def stop_timer_manager(request):
+    from users.timers import change_shift
     if request.method == 'POST':
-        user = request.user
-        if not user.is_authenticated:
-            messages.error(request, "Вы не авторизованы!")
-            return redirect('login')  # Перенаправьте на страницу входа
-
-        # Находим активную запись времени
-        active_time_entries = TimeManger.objects.filter(manager=user, end_time__isnull=True)
-        if active_time_entries.exists():
-            time_entry = active_time_entries.last()  # Берем последнюю активную запись
-            time_entry.end_time = timezone.now()
-            time_entry.save()
-            request.session['timer_started'] = False
-            messages.success(request, "Таймер успешно остановлен.")
-        else:
-            messages.error(request, "Таймер не был запущен!")
-
-        return redirect('upload_photo')  # Замените на актуальный URL
-    return redirect('profile_man')
+        change_shift(request.user, 'stop', manager=True, expected_entry_id=request.POST.get('entry_id'))
+        request.session['timer_started'] = TimeManger.objects.filter(manager=request.user, end_time__isnull=True).exists()
+    return redirect('upload_photo')
 
 
+@login_required
 def toggle_timer_manager(request):
+    from users.timers import change_shift
     if request.method == 'POST':
-        user = request.user
-        if not user.is_authenticated:
-            messages.error(request, "Вы не авторизованы!")
-            return redirect('login')  # Перенаправьте на страницу входа
-
-        # Проверяем, есть ли активные записи времени
-        active_time_entries = TimeManger.objects.filter(manager=user, end_time__isnull=True)
-
-        if active_time_entries.exists():
-            # Если таймер уже запущен, останавливаем его
-            for entry in active_time_entries:
-                entry.end_time = timezone.now()
-                entry.save()
-            request.session['timer_started'] = False
-            messages.success(request, "Таймер успешно остановлен.")
-        else:
-            # Если таймер не запущен, начинаем новый
-            time_entry = TimeManger(manager=user, start_time=timezone.now(), hourly_rate=user.stavka())
-            time_entry.save()
-            request.session['timer_started'] = True
-            messages.success(request, "Таймер успешно запущен.")
-
-        return redirect('upload_photo')  # Замените на нужный URL
-
-    return redirect('profile_man')
-
+        action = request.POST.get('timer_action', 'toggle')
+        if action not in ('start', 'stop', 'toggle'):
+            return redirect('upload_photo')
+        entry, changed = change_shift(
+            request.user, action, manager=True, expected_entry_id=request.POST.get('entry_id'),
+        )
+        active = TimeManger.objects.filter(manager=request.user, end_time__isnull=True).exists()
+        request.session['timer_started'] = active
+        if changed:
+            messages.success(request, 'Таймер успешно запущен.' if active else 'Таймер успешно остановлен.')
+        return redirect('upload_photo')
+    return redirect('profile_manager')
 
 
 def task_completed(request, photo_id):
@@ -728,6 +632,7 @@ def refactor_profile_manager(request):
 
 def profile_employee_manager(request, user_id):
     from users.role_utils import can_manage_staff, reset_user_password
+    from users.reporting import staff_queryset
 
     if not request.user.is_authenticated:
         return redirect("login")
@@ -735,7 +640,7 @@ def profile_employee_manager(request, user_id):
         messages.error(request, "Недостаточно прав.")
         return redirect("profile_manager")
 
-    user = get_object_or_404(CustomUser, id=user_id)
+    user = get_object_or_404(staff_queryset(), id=user_id)
 
     temp_password = None
     if request.method == "POST":
@@ -759,15 +664,28 @@ from django.shortcuts import render, get_object_or_404, redirect
 from director.forms import UserForm
 
 def edit_user_manager(request, user_id):
-    user = get_object_or_404(CustomUser, id=user_id)
+    # There is no manager editor in the existing UI; keep the existing profile.
+    from users.reporting import staff_queryset
+    from users.role_utils import can_manage_staff
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if not can_manage_staff(request.user):
+        messages.error(request, 'Недостаточно прав.')
+        return redirect('profile_manager')
+    employee = get_object_or_404(staff_queryset(), id=user_id)
     if request.method == 'POST':
-        form = UserForm(request.POST, instance=user)
+        from django.forms import modelform_factory
+        contact_form = modelform_factory(CustomUser, fields=('full_name', 'phone_number', 'date_of_birth'))
+        data = {field: request.POST.get(field, getattr(employee, field))
+                for field in ('full_name', 'phone_number', 'date_of_birth')}
+        form = contact_form(data, instance=employee)
+        for field in form.fields.values():
+            field.required = False
         if form.is_valid():
             form.save()
-            return redirect('/manager/employee/', user_id=user.id)
-    else:
-        form = UserForm(instance=user)
-    return render(request, 'manager2/edit_user_manager.html', {'user': user})
+        else:
+            messages.error(request, 'Ошибка в данных профиля.')
+    return redirect('profile_employee_manager', user_id=employee.pk)
 
 
 
@@ -784,198 +702,20 @@ from django.db.models.functions import Coalesce
 
 @login_required
 def my_statistic(request):
-    current_user = request.user
-
-    # Обработка выбора месяца
-    selected_month_str = request.GET.get('month')
-    selected_month = timezone.now().date()  # Это date
-    if selected_month_str:
-        try:
-            # Парсим как datetime, делаем aware, но оставляем дату месяца
-            dt = datetime.strptime(selected_month_str, '%Y-%m')
-            selected_month = timezone.make_aware(dt)  # Теперь это datetime
-        except (ValueError, TypeError):
-            pass
-
-    # Определение границ месяца
-    first_day = selected_month.replace(day=1)
-    if selected_month.month == 12:
-        last_day = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
-    else:
-        last_day = selected_month.replace(month=selected_month.month + 1, day=1)
-
-    # Подсчет созданных задач
-    created_tasks_subquery = Task.objects.filter(
-        created_by=current_user,
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).values('created_by').annotate(
-        count=Count('id')
-    ).values('count')[:1]
-
-    # Подсчет проверенных задач через TaskReview
-    reviewed_tasks_subquery = TaskReview.objects.filter(
-        manager=current_user,
-        reviewed_at__range=(first_day, last_day)
-    ).values('manager').annotate(
-        count=Count('id')
-    ).values('count')[:1]
-
-    total_shift_hours = TimeManger.objects.filter(
-        manager=current_user,
-        start_time__gte=first_day,  # Заменено на first_day
-        start_time__lt=last_day,  # Заменено на last_day
-        end_time__isnull=False
-    ).aggregate(
-        total_hours=Sum(
-            (F('end_time') - F('start_time')),
-            output_field=fields.DurationField()
-        )
-    )['total_hours']
-
-    total_shift_hours = total_shift_hours.total_seconds() / 3600 if total_shift_hours else 0
-
-    # Аннотация данных пользователя
-    user_data = CustomUser.objects.filter(id=current_user.id).annotate(
-        created_tasks=Coalesce(
-            Subquery(created_tasks_subquery, output_field=IntegerField()),
-            0
-        ),
-        reviewed_tasks=Coalesce(
-            Subquery(reviewed_tasks_subquery, output_field=IntegerField()),
-            0
-        )
-    ).first()
-
-    # Расчет зарплаты
-    try:
-        salary_data = TimeManger.boss_total_salary_for_each_user(
-            start_date=first_day,
-            end_date=last_day,
-            manager_id=current_user.id  # Передаем manager_id
-        )
-        total_salary = salary_data.get(current_user.id, 0)
-    except Exception as e:
-        print(f"Ошибка расчета зарплаты: {str(e)}")  # Для отладки
-        total_salary = 0
-
-    # Получение макетов созданных задач
-    created_tasks = Task.objects.filter(
-        created_by=current_user,
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).select_related('photo')
-
-    worked_photos_manager = Task.objects.filter(
-        created_by=current_user,
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).distinct().count()
-
-
-    photo_names = [
-        task.photo.image_name
-        for task in created_tasks
-        if task.photo and hasattr(task.photo, 'image_name')
-    ]
-    worked_photos = ', '.join(set(photo_names)) if photo_names else 'Нет макетов'
-
-
-    context = {
-        'user_data': user_data,
-        'total_salary': total_salary,
-        'worked_photos': worked_photos,
-        'worked_photos_manager': worked_photos_manager,
-        'selected_month': selected_month,
-        'current_year': timezone.now().year,
-        'current_month': timezone.now().month,
-        'start_date': first_day,
-        'end_date': last_day,
-        'total_shift_hours': total_shift_hours,
-    }
-
-    return render(request, 'manager2/my_statistic.html', context)
+    from users.reporting import manager_statistics
+    return render(request, 'manager2/my_statistic.html', manager_statistics(request, request.user))
 
 
 
 @login_required
 def manager_user_statistic(request, user_id):
-    from users.role_utils import is_manager
-
-    if not is_manager(request.user):
+    from users.reporting import employee_statistics, staff_queryset
+    from users.role_utils import can_manage_staff
+    if not can_manage_staff(request.user):
         messages.error(request, 'Недостаточно прав для просмотра статистики.')
         return redirect('profile_manager')
-    current_user = get_object_or_404(CustomUser, id=user_id)
-
-    # Обработка выбора месяца
-    selected_month = timezone.now().date()
-    if 'month' in request.GET:
-        try:
-            dt = datetime.strptime(request.GET['month'], '%Y-%m')
-            selected_month = timezone.make_aware(dt)  # Теперь это datetime
-        except ValueError:
-            pass
-
-    # Определение границ месяца
-    first_day = selected_month.replace(day=1)
-    if selected_month.month == 12:
-        last_day = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
-    else:
-        last_day = selected_month.replace(month=selected_month.month + 1, day=1)
-
-    # Расчет зарплаты
-    try:
-        salary_data = TimeEntry.boss_total_salary_for_each_user(
-            start_date=first_day,
-            end_date=last_day,
-            user_id=current_user.id
-        )
-        total_salary = salary_data.get(current_user.id, 0)
-    except Exception:
-        total_salary = 0
-
-    # Подзапрос для подсчета задач
-    completed_tasks_subquery = Task.objects.filter(
-        submitted_by=OuterRef('pk'),
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).values('submitted_by').annotate(
-        count=Count('id')
-    ).values('count')
-
-    # Аннотация данных пользователя
-    user_data = CustomUser.objects.filter(id=current_user.id).annotate(
-        avg_rating_annotation=Avg('reviews_user__rating'),
-        completed_tasks_count=Subquery(completed_tasks_subquery, output_field=models.IntegerField()) or 0
-    ).first()
-
-    # Отдельный запрос для макетов
-    completed_tasks_with_photos = Task.objects.filter(
-        submitted_by=current_user,
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).select_related('photo')
-
-    worked_photos = Task.objects.filter(
-        submitted_by=current_user,
-        completed=True,
-        created_at__range=(first_day, last_day)
-    ).distinct().count()
-
-
-    context = {
-        'user': current_user,
-        'user_data': user_data,
-        'total_salary': total_salary,
-        'worked_photos': worked_photos,
-        'selected_month': selected_month,
-        'current_year': timezone.now().year,
-        'current_month': timezone.now().month,
-        'start_date': first_day,
-        'end_date': last_day,
-    }
-
-    return render(request, 'manager2/manager_statistic_users.html', context)
+    employee = get_object_or_404(staff_queryset(), id=user_id)
+    return render(request, 'manager2/manager_statistic_users.html', employee_statistics(request, employee))
 
 
 def my_maket_manager(request):
@@ -1045,79 +785,15 @@ def maket_info_manager(request, photo_id):
     return render(request, 'manager2/maket_info_manager.html', {'photo': photo})
 
 def employee_shifts(request, user_id):
-    from users.role_utils import can_manage_staff, get_shift_period
-
+    from users.reporting import shift_history_context, staff_queryset
+    from users.role_utils import can_manage_staff
     if not request.user.is_authenticated:
-        return redirect("login")
+        return redirect('login')
     if not can_manage_staff(request.user):
         messages.error(request, 'Недостаточно прав для просмотра истории смен.')
         return redirect('profile_manager')
-
-    employee = get_object_or_404(CustomUser, id=user_id)
-
-    start_dt, end_dt, filter_mode, date_from, date_to, selected_month = get_shift_period(request)
-
-    # Активная смена
-    active_shift = TimeEntry.objects.filter(
-        user=employee,
-        end_time__isnull=True,
-        timer_type='shift'
-    ).first()
-
-    elapsed_time = 0
-    if active_shift:
-        elapsed_time = int((timezone.now() - active_shift.start_time).total_seconds())
-
-    active_task = Task.objects.filter(
-        submitted_by=employee,
-        is_rated=False,
-        is_submitted_for_review=False
-    ).first()
-
-    time_entries = list(TimeEntry.objects.filter(
-        user=employee,
-        timer_type='shift',
-        start_time__gte=start_dt,
-        start_time__lt=end_dt,
-        end_time__isnull=False
-    ).order_by('-start_time'))
-
-    total_duration = timezone.timedelta()
-    total_salary = 0
-    for entry in time_entries:
-        if entry.end_time and entry.start_time:
-            entry.display_duration = int((entry.end_time - entry.start_time).total_seconds())
-            total_duration += entry.end_time - entry.start_time
-            total_salary += entry.salary()
-
-    if active_shift:
-        active_start = active_shift.start_time
-        active_end = timezone.now()
-        if active_start < end_dt and active_end > start_dt:
-            clipped_start = max(active_start, start_dt)
-            clipped_end = min(active_end, end_dt)
-            clipped_seconds = max(0, int((clipped_end - clipped_start).total_seconds()))
-            total_duration += timezone.timedelta(seconds=clipped_seconds)
-            total_salary += (clipped_seconds / 3600) * employee.stavka()
-
-    context = {
-        'employee': employee,
-        'time_entries': time_entries,
-        'filter_mode': filter_mode,
-        'selected_month': selected_month,
-        'date_from': date_from,
-        'date_to': date_to,
-        'start_date': start_dt,
-        'end_date': end_dt,
-        'total_duration': total_duration,
-        'total_salary': total_salary,
-        'active_task': active_task,
-        'active_shift': active_shift,
-        'elapsed_time': elapsed_time,
-        'user_stavka': employee.stavka(),
-    }
-
-    return render(request, 'manager2/employee_shifts.html', context)
+    employee = get_object_or_404(staff_queryset(), id=user_id)
+    return render(request, 'manager2/employee_shifts.html', shift_history_context(request, employee))
 
 
 def upload_photo_manager(request):

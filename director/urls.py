@@ -3,6 +3,7 @@ from . import views
 from .views import upload_photo_director
 
 urlpatterns = [
+    path('backups/', include('backups.urls')),
     path('', views.home_director, name='home_director'),
     path('employee_director/',views.employee_director, name='employee_director'),
     path('employee_manager/', views.employee_manager, name='employee_manager'),

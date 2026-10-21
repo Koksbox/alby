@@ -24,44 +24,56 @@ def can_manage_staff(user) -> bool:
     return bool(user.is_authenticated and getattr(user, "post_user", None) in SENIOR_MANAGER_ROLES)
 
 
-def get_shift_period(request):
-  """
-  Возвращает (start_dt, end_dt, filter_mode, date_from_str, date_to_str, selected_month).
-  filter_mode: 'range' | 'month'
-  """
-  date_from_str = (request.GET.get("date_from") or "").strip()
-  date_to_str = (request.GET.get("date_to") or "").strip()
-  date_from = parse_date(date_from_str) if date_from_str else None
-  date_to = parse_date(date_to_str) if date_to_str else None
-  now = timezone.now()
-
-  if date_from and date_to:
-    start_dt = timezone.make_aware(dt.datetime.combine(date_from, dt.time.min))
-    end_dt = timezone.make_aware(
-      dt.datetime.combine(date_to + dt.timedelta(days=1), dt.time.min)
-    )
-    return start_dt, end_dt, "range", date_from_str, date_to_str, None
-
-  selected_month_str = request.GET.get("month")
-  if selected_month_str:
+def _parse_date(value):
     try:
-      selected_month_naive = dt.datetime.strptime(selected_month_str + "-01", "%Y-%m-%d")
-      selected_month = timezone.make_aware(selected_month_naive)
+        return parse_date(value) if value else None
     except (ValueError, TypeError):
-      selected_month = now
-  else:
-    selected_month = now
+        return None
 
-  start_dt = selected_month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-  if selected_month.month == 12:
-    end_dt = selected_month.replace(
-      year=selected_month.year + 1, month=1, day=1, hour=0, minute=0, second=0, microsecond=0
-    )
-  else:
-    end_dt = selected_month.replace(
-      month=selected_month.month + 1, day=1, hour=0, minute=0, second=0, microsecond=0
-    )
-  return start_dt, end_dt, "month", "", "", selected_month
+
+def _local_midnight(value):
+    return timezone.make_aware(dt.datetime.combine(value, dt.time.min))
+
+
+def get_month_period(request):
+    """Local calendar month, with an exclusive right boundary on every screen."""
+    today = timezone.localdate()
+    try:
+        first = dt.datetime.strptime(request.GET.get("month", ""), "%Y-%m").date()
+        following = (first.replace(year=first.year + 1, month=1)
+                     if first.month == 12 else first.replace(month=first.month + 1))
+    except (ValueError, TypeError, OverflowError):
+        first = today.replace(day=1)
+        following = (first.replace(year=first.year + 1, month=1)
+                     if first.month == 12 else first.replace(month=first.month + 1))
+    return _local_midnight(first), _local_midnight(following)
+
+
+def get_shift_period(request):
+    """Return the existing shift-filter context, using local calendar boundaries."""
+    date_from = _parse_date((request.GET.get("date_from") or "").strip())
+    date_to = _parse_date((request.GET.get("date_to") or "").strip())
+    if date_from and date_to and date_from <= date_to and date_to < dt.date.max:
+        return (_local_midnight(date_from),
+                _local_midnight(date_to + dt.timedelta(days=1)),
+                "range", date_from.isoformat(), date_to.isoformat(), None)
+    start, end = get_month_period(request)
+    return start, end, "month", "", "", start
+
+
+def get_salary_period(request):
+    """Existing director date fields; fill omitted bounds without date/time mixing."""
+    today = timezone.localdate()
+    start = _parse_date(request.GET.get("start_date")) or today.replace(day=1)
+    end = _parse_date(request.GET.get("end_date")) or today
+    if start == dt.date.max:
+        start = today.replace(day=1)
+    if end == dt.date.max:
+        end = today
+    if start > end:
+        start, end = end, start
+    return (_local_midnight(start), _local_midnight(end + dt.timedelta(days=1)),
+            start.isoformat(), end.isoformat())
 
 
 def reset_user_password(user):

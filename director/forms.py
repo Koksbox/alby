@@ -115,11 +115,26 @@ class UserForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._original_values = {
+            name: getattr(self.instance, name) for name in self.Meta.fields
+        }
         # Делаем все поля необязательными
         for field in self.fields.values():
             field.required = False
         if self.instance and self.instance.pk:
             self.initial['big_stavka'] = self.instance.big_stavka
+
+    def clean_post_user(self):
+        return self.cleaned_data.get('post_user') or self._original_values['post_user']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # ModelForm mutates its instance during validation. Preserve omitted
+        # optional fields here, before that mutation, rather than in save().
+        for name, original in self._original_values.items():
+            if name in cleaned_data and cleaned_data[name] in (None, ''):
+                cleaned_data[name] = original
+        return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -136,6 +151,9 @@ class UserForm(forms.ModelForm):
     def clean_big_stavka(self):
         big_stavka = self.cleaned_data.get('big_stavka')
         post_user = self.cleaned_data.get('post_user')
+
+        if big_stavka is None:
+            return self._original_values['big_stavka']
 
         if post_user != 'trainee' and big_stavka == 0:
             raise forms.ValidationError("Ставка не может быть нулевой для должностей кроме практиканта.")

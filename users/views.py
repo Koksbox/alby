@@ -342,6 +342,7 @@ def refactor_profile(request):
     return render(request, 'users/refactor_profile.html')
 
 
+@login_required
 def startapp(request):
     from users.models import TimeEntry
     TimeEntry.auto_stop_long_shifts()
@@ -349,8 +350,9 @@ def startapp(request):
     active_task = Task.objects.filter(
         submitted_by__id=request.user.id,
         is_rated=False,
-        is_submitted_for_review=False
-    ).first()
+        is_submitted_for_review=False,
+        completed=False,
+    ).exclude(submitted_by_users_for_review=request.user).first()
 
     # Если есть активная задача, получаем связанный с ней макет
     if active_task:
@@ -364,64 +366,43 @@ def startapp(request):
     })
 
 
+@login_required
 def start_timer(request, task_id):
+    from users.timers import change_task_timer, sync_task_session
     task = get_object_or_404(Task, id=task_id)
-    user = request.user
-
-    if user not in task.submitted_by.all():
+    if request.method != 'POST':
+        return redirect('work_on_task', task_id=task_id)
+    if not task.submitted_by.filter(pk=request.user.pk).exists():
         messages.warning(request, 'Вы не назначены на эту задачу.')
-        return redirect('select_task', photo_id=task.photo.id if hasattr(task, 'photo') and task.photo else 0)
-
-    # Ищем активную запись ТОЛЬКО для задач (timer_type='task')
-    active_time_entry = TimeEntry.objects.filter(
-        user=user,
-        task=task,
-        end_time__isnull=True,
-        timer_type='task'
-    ).first()
-
-    if active_time_entry:
-        messages.warning(request, 'Таймер уже запущен для этой задачи.')
-    else:
-        # Создаём запись БЕЗ влияния на зарплату: hourly_rate=0
-        TimeEntry.objects.create(
-            user=user,
-            task=task,
-            hourly_rate=0,  # ← КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: не влияет на зарплату
-            start_time=timezone.now(),
-            timer_type='task'  # ← явно указываем тип
-        )
+        return redirect('select_task', photo_id=task.photo_id)
+    if task.completed or task.submitted_by_users_for_review.filter(pk=request.user.pk).exists():
+        messages.warning(request, 'Задача уже отправлена на проверку или завершена.')
+        return redirect('photo_maket')
+    entry, created = change_task_timer(request.user, task, 'start')
+    sync_task_session(request, task)
+    if created:
         messages.success(request, 'Таймер запущен!')
-        request.session['timer_running'] = True
-        request.session['start_time'] = timezone.now().isoformat()
+    else:
+        messages.warning(request, 'Таймер уже запущен для этой задачи.')
+    return redirect('work_on_task', task_id=task_id)
 
-    return redirect('work_on_task', task_id)
 
-
+@login_required
 def stop_timer(request, task_id):
+    from users.timers import change_task_timer, sync_task_session
     task = get_object_or_404(Task, id=task_id)
-    user = request.user
-
-    if user not in task.submitted_by.all():
+    if request.method != 'POST':
+        return redirect('work_on_task', task_id=task_id)
+    if not task.submitted_by.filter(pk=request.user.pk).exists():
         messages.warning(request, 'Вы не назначены на эту задачу.')
-        return redirect('select_task', photo_id=task.photo.id if hasattr(task, 'photo') and task.photo else 0)
-
-    active_time_entry = TimeEntry.objects.filter(
-        user=user,
-        task=task,
-        end_time__isnull=True,
-        timer_type='task'
-    ).first()
-
-    if active_time_entry:
-        active_time_entry.end_time = timezone.now()
-        active_time_entry.save()
+        return redirect('select_task', photo_id=task.photo_id)
+    entry, stopped = change_task_timer(request.user, task, 'stop')
+    sync_task_session(request, task)
+    if stopped:
         messages.success(request, 'Таймер остановлен!')
-        request.session['timer_running'] = False
     else:
         messages.warning(request, 'Таймер не был запущен для этой задачи.')
-
-    return redirect('work_on_task', task_id)
+    return redirect('work_on_task', task_id=task_id)
 
 
 @login_required
@@ -432,8 +413,9 @@ def select_task(request, photo_id=None):
     active_task = Task.objects.filter(
         submitted_by=current_user,
         is_rated=False,
-        is_submitted_for_review=False
-    ).first()
+        is_submitted_for_review=False,
+        completed=False,
+    ).exclude(submitted_by_users_for_review=current_user).first()
 
     if active_task:
         messages.warning(request, 'Вы уже работаете над задачей. Завершите её сначала.')
@@ -444,7 +426,9 @@ def select_task(request, photo_id=None):
         task_id = request.POST.get('task_id')
         if task_id:
             try:
-                task = Task.objects.get(id=task_id, photo_id=photo_id, completed=False)
+                task = Task.objects.exclude(submitted_by_users_for_review=current_user).get(
+                    id=task_id, photo_id=photo_id, completed=False,
+                )
                 if current_user not in task.submitted_by.all():
                     task.submitted_by.add(current_user)
                     task.save()
@@ -458,7 +442,9 @@ def select_task(request, photo_id=None):
     if not photo_id:
         return redirect('photo_maket')
     photo = get_object_or_404(Photo, id=photo_id)
-    tasks = Task.objects.filter(photo=photo, completed=False)
+    tasks = Task.objects.filter(photo=photo, completed=False).exclude(
+        submitted_by_users_for_review=current_user,
+    )
 
     if not tasks.exists():
         messages.warning(request, 'В этом макете нет активных задач.')
@@ -472,6 +458,7 @@ def select_task(request, photo_id=None):
     })
 
 
+@login_required
 def work_on_task(request, task_id):
     user = request.user
 
@@ -499,6 +486,9 @@ def work_on_task(request, task_id):
     ):
         messages.warning(request, 'Эта задача уже отправлена на проверку другим пользователем.')
 
+    from users.timers import sync_task_session
+    sync_task_session(request, selected_task)
+
     # Получаем историю времени для этой задачи
     time_entries = TimeEntry.objects.filter(
         user=user,
@@ -513,6 +503,9 @@ def work_on_task(request, task_id):
     if request.method == 'POST':
         zadaha = request.POST.get('zadaha')
         if zadaha == 'complete':
+            from users.timers import change_task_timer
+            change_task_timer(user, selected_task, 'stop')
+            sync_task_session(request, selected_task)
             # Добавляем пользователя в список завершивших задачу
             selected_task.completed_by_users.add(user)
 
@@ -538,6 +531,7 @@ def work_on_task(request, task_id):
     return render(request, 'users/work_on_task.html', {
         'task': selected_task,
         'time_spent': total_time_spent,
+        'time_spent_seconds': total_time_spent * 3600,
         'earnings': total_earnings,
         'task_id': selected_task.id,
         'time_entries': time_entries,  # Добавляем историю времени
@@ -572,131 +566,58 @@ def completed_task_user(request):
     })
 
 
+@login_required
 def start_timer1(request):
+    from users.timers import change_shift
     if request.method == 'POST':
-        user = request.user
-        time_entry = TimeEntry(user=user, start_time=timezone.now(), timer_type='shift', hourly_rate=user.stavka())
-        time_entry.save()
-        messages.success(request, 'Таймер начала смены запущен.')
-        return redirect('startapp')
+        entry, created = change_shift(request.user, 'start')
+        request.session['timer_shift_started'] = True
+        if created:
+            messages.success(request, 'Таймер начала смены запущен.')
+    return redirect('startapp')
 
 
+@login_required
 def stop_timer1(request):
+    from users.timers import change_shift
     if request.method == 'POST':
-        user = request.user
-        active_time_entries = TimeEntry.objects.filter(user=user, end_time__isnull=True, timer_type='shift')
-        if active_time_entries.exists():
-            time_entry = active_time_entries.last()
-            time_entry.end_time = timezone.now()
-            time_entry.save()
-            messages.success(request, 'Таймер окончания смены остановлен.')
-        else:
-            messages.warning(request, 'Таймер начала смены не был запущен.')
-        return redirect('startapp')
+        change_shift(request.user, 'stop', expected_entry_id=request.POST.get('entry_id'))
+        request.session['timer_shift_started'] = TimeEntry.objects.filter(
+            user=request.user, timer_type='shift', end_time__isnull=True,
+        ).exists()
+    return redirect('startapp')
 
 
+@login_required
 def toggle_timer(request):
-    from users.models import TimeEntry
-    TimeEntry.auto_stop_long_shifts()
+    from users.timers import change_shift
     if request.method == 'POST':
-        user = request.user
-        if not user.is_authenticated:
-            messages.error(request, "Вы не авторизованы!")
-            return redirect('login')
-
-        # Определяем тип таймера (смена)
-        timer_type = 'shift'
-
-        # Проверяем активную смену
-        active_entry = TimeEntry.objects.filter(
-            user=user,
-            timer_type=timer_type,
-            end_time__isnull=True
-        ).first()
-
-        if active_entry:
-            # Останавливаем смену
-            active_entry.end_time = timezone.now()
-            active_entry.save()
-            request.session[f'timer_{timer_type}_started'] = False
-            messages.success(request, "Смена завершена.")
-        else:
-            # Начинаем новую смену
-            TimeEntry.objects.create(
-                user=user,
-                timer_type=timer_type,
-                hourly_rate=user.stavka(),
-                start_time=timezone.now()
-            )
-            request.session[f'timer_{timer_type}_started'] = True
-            messages.success(request, "Смена начата.")
-
+        action = request.POST.get('timer_action', 'toggle')
+        if action not in ('start', 'stop', 'toggle'):
+            return redirect('startapp')
+        entry, changed = change_shift(request.user, action, expected_entry_id=request.POST.get('entry_id'))
+        active = TimeEntry.objects.filter(user=request.user, timer_type='shift', end_time__isnull=True).exists()
+        request.session['timer_shift_started'] = active
+        if changed:
+            messages.success(request, 'Смена начата.' if active else 'Смена завершена.')
         return redirect('startapp')
     return redirect('profile')
 
 
 def money(request):
-    from users.models import TimeEntry
-    from users.role_utils import get_shift_period
-
+    from users.reporting import shift_history_context
     if not request.user.is_authenticated:
         return redirect("login")
-
     TimeEntry.auto_stop_long_shifts()
-
-    start_dt, end_dt, filter_mode, date_from, date_to, selected_month = get_shift_period(request)
-
-    # Задачи — без фильтра периода (как раньше, для совместимости)
-    time_entries_task = TimeEntry.objects.filter(
-        user=request.user, end_time__isnull=False, timer_type='task'
-    )
-
-    # Завершённые смены за выбранный период
-    time_entries_shift = list(TimeEntry.objects.filter(
-        user=request.user,
-        end_time__isnull=False,
-        timer_type='shift',
-        start_time__gte=start_dt,
-        start_time__lt=end_dt,
-    ).order_by('-start_time'))
-
-    for entry in time_entries_shift:
-        if entry.end_time and entry.start_time:
-            entry.display_duration = int((entry.end_time - entry.start_time).total_seconds())
-
-    active_shift = TimeEntry.objects.filter(
-        user=request.user, end_time__isnull=True, timer_type='shift'
-    ).first()
-
-    total_salary_shift_completed = sum(entry.salary() for entry in time_entries_shift)
-    total_duration_shift_completed = sum(
-        int((entry.end_time - entry.start_time).total_seconds())
-        for entry in time_entries_shift
-    )
-
-    elapsed_time_active = 0
-    if active_shift:
-        elapsed_time_active = int((timezone.now() - active_shift.start_time).total_seconds())
-
-    total_salary_task = sum(entry.salary() for entry in time_entries_task)
-    user_stavka = request.user.stavka()
-
-    context = {
-        'time_entries_task': time_entries_task,
-        'time_entries_shift': time_entries_shift,
-        'total_salary_task': total_salary_task,
-        'total_salary_shift_completed': total_salary_shift_completed,
-        'total_duration_shift_completed': total_duration_shift_completed,
-        'active_shift': active_shift,
-        'elapsed_time': elapsed_time_active,
-        'user_stavka': user_stavka,
-        'filter_mode': filter_mode,
-        'date_from': date_from,
-        'date_to': date_to,
-        'selected_month': selected_month,
-        'start_date': start_dt,
-        'end_date': end_dt,
-    }
+    context = shift_history_context(request, request.user, include_active=False)
+    task_entries = TimeEntry.objects.filter(user=request.user, end_time__isnull=False, timer_type='task')
+    context.update({
+        'time_entries_task': task_entries,
+        'time_entries_shift': context['time_entries'],
+        'total_salary_task': sum(entry.salary() for entry in task_entries),
+        'total_salary_shift_completed': context['total_salary'],
+        'total_duration_shift_completed': int(context['total_duration'].total_seconds()),
+    })
     return render(request, 'users/money.html', context)
 
 
@@ -731,94 +652,10 @@ from django.db.models.functions import Cast
 
 
 def user_statistic(request):
-    # Получаем выбранный месяц из параметров GET-запроса
-    selected_month_str = request.GET.get('month')
-
-    # Если месяц не выбран, используем текущий месяц
-    if selected_month_str:
-        try:
-            # Преобразуем строку в дату (формат 'YYYY-MM')
-            selected_month = datetime.strptime(selected_month_str, '%Y-%m')
-            selected_month = timezone.make_aware(selected_month)  # Теперь это datetime
-        except (ValueError, TypeError):
-            # Если данные некорректны, используем текущий месяц
-            selected_month = timezone.now().date()
-    else:
-        selected_month = timezone.now().date()
-
-    # Определяем первый и последний день выбранного месяца
-    first_day_of_month = selected_month.replace(day=1)
-    if selected_month.month == 12:
-        last_day_of_month = selected_month.replace(year=selected_month.year + 1, month=1, day=1)
-    else:
-        last_day_of_month = selected_month.replace(month=selected_month.month + 1, day=1)
-
-    # Текущий пользователь
-    current_user = request.user
-
-    # Для аутентифицированного пользователя
-    total_shift_hours = TimeEntry.objects.filter(
-        user=current_user,
-        timer_type='shift',
-        start_time__gte=first_day_of_month,
-        start_time__lt=last_day_of_month,
-        end_time__isnull=False
-    ).aggregate(
-        total_hours=Sum(
-            (F('end_time') - F('start_time')),
-            output_field=models.DurationField()
-        )
-    )['total_hours']
-    total_shift_hours = total_shift_hours.total_seconds() / 3600 if total_shift_hours else 0
-
-    # Аннотируем средний рейтинг и количество завершенных задач
-    completed_tasks_subquery = TaskReview.objects.filter(
-        user=current_user,
-        task__completed=True,
-        task__created_at__gte=first_day_of_month,
-        task__created_at__lt=last_day_of_month
-    ).values('user').annotate(
-        count=Count('task')
-    ).values('count')
-
-    user = CustomUser.objects.filter(id=current_user.id).annotate(
-        average_ratings=Avg('reviews_user__rating', filter=models.Q(reviews_user__rating__isnull=False)),
-        completed_tasks_count=Subquery(completed_tasks_subquery, output_field=models.IntegerField())
-    ).first()
-
-    worked_photos = Task.objects.filter(
-        submitted_by=current_user,
-        completed=True,
-        created_at__gte=first_day_of_month,
-        created_at__lt=last_day_of_month
-    ).distinct().count()
-
-    # Рассчитываем общую зарплату сотрудника за выбранный период
-    if first_day_of_month and last_day_of_month:
-        try:
-            # Используем метод total_salary_for_each_user для расчета зарплаты
-            individual_salaries = TimeEntry.total_salary_for_each_user_user(
-                start_date=first_day_of_month,
-                end_date=last_day_of_month
-            )
-            total_salary = individual_salaries.get(current_user.id, 0)  # Берем зарплату текущего пользователя
-        except Exception as e:
-            total_salary = 0
-    else:
-        total_salary = None  # Если период не выбран
-
-    # Передаем данные в шаблон
-    context = {
-        'user': user,
-        'total_salary': total_salary,
-        'worked_photos': worked_photos,
-        'selected_month': selected_month,
-        'current_year': timezone.now().year,
-        'current_month': timezone.now().month,
-        'start_date': first_day_of_month,
-        'total_shift_hours': total_shift_hours,
-    }
-    return render(request, 'users/statistic.html', context)
+    from users.reporting import employee_statistics
+    if not request.user.is_authenticated:
+        return redirect('login')
+    return render(request, 'users/statistic.html', employee_statistics(request, request.user))
 
 
 from .forms import AvatarUploadForm
@@ -867,8 +704,9 @@ def photo_maket(request):
     active_task = Task.objects.filter(
         submitted_by=user,
         is_rated=False,
-        is_submitted_for_review=False
-    ).first()
+        is_submitted_for_review=False,
+        completed=False,
+    ).exclude(submitted_by_users_for_review=user).first()
 
     # === 2. Назначенные задачи (через assigned_to ИЛИ assigned_user) ===
     assigned_tasks = Task.objects.filter(
@@ -957,45 +795,31 @@ from django.http import JsonResponse
 
 
 def check_active_timer(request):
+    from users.timers import expire_employee_shifts, shift_payload
     if request.user.is_authenticated:
-        active_entry = TimeEntry.objects.filter(
-            user=request.user,
-            timer_type='shift',
-            end_time__isnull=True
-        ).first()
-        if active_entry:
-            elapsed_time = (timezone.now() - active_entry.start_time).total_seconds()
-            return JsonResponse({
-                'active': True,
-                'elapsed_time': elapsed_time
-            })
+        expire_employee_shifts(request.user)
+        return JsonResponse(shift_payload(request.user))
     return JsonResponse({'active': False})
 
 
 @csrf_exempt
 def api_start_timer(request):
+    from users.timers import change_shift, shift_payload
     if request.method == 'POST' and request.user.is_authenticated:
-        TimeEntry.objects.create(
-            user=request.user,
-            timer_type='shift',
-            start_time=timezone.now()
-        )
-        return JsonResponse({'status': 'success'})
+        entry, created = change_shift(request.user, 'start')
+        request.session['timer_shift_started'] = True
+        return JsonResponse({'status': 'success', 'created': created, **shift_payload(request.user)})
     return JsonResponse({'status': 'error'}, status=400)
 
 
 @csrf_exempt
 def api_stop_timer(request):
+    from users.timers import change_shift, shift_payload
     if request.method == 'POST' and request.user.is_authenticated:
-        active_entry = TimeEntry.objects.filter(
-            user=request.user,
-            timer_type='shift',
-            end_time__isnull=True
-        ).first()
-        if active_entry:
-            active_entry.end_time = timezone.now()
-            active_entry.save()
-            return JsonResponse({'status': 'success'})
+        entry, stopped = change_shift(request.user, 'stop', expected_entry_id=request.POST.get('entry_id'))
+        payload = shift_payload(request.user)
+        request.session['timer_shift_started'] = payload['active']
+        return JsonResponse({'status': 'success', 'stopped': stopped, **payload})
     return JsonResponse({'status': 'error'}, status=400)
 
 

@@ -12,9 +12,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env', override=False)
 
 def get_env_value(env_variable, default=None):
     try:
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
     'director',
     'manager2',
     'rest_framework',
+    'backups.apps.BackupsConfig',
 
 ]
 
@@ -59,6 +62,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -67,6 +71,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'users.middleware.AutoShiftStopMiddleware',
     'users.middleware.LastActivityMiddleware',
+    'backups.middleware.FileMutationLockMiddleware',
 ]
 
 ROOT_URLCONF = 'it.urls'
@@ -82,6 +87,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'backups.context_processors.backup_status',
             ],
         },
     },
@@ -111,7 +117,8 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "NAME": os.environ.get('DJANGO_SQLITE_PATH', BASE_DIR / "db.sqlite3"),
+            "OPTIONS": {"timeout": 30},
         }
     }
 
@@ -152,7 +159,7 @@ USE_TZ = True
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'staticfiles'),
-]
+] if (BASE_DIR / 'staticfiles').is_dir() else []
 
 STATIC_URL = '/static/'
 
@@ -194,7 +201,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = get_env_value('DJANGO_MEDIA_ROOT', os.path.join(BASE_DIR, 'media'))
 
 # Session settings
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
@@ -292,3 +299,35 @@ TIME_TRACKER_SHIFT_MAX_SECONDS = 24 * 3600
 
 # Максимальная длительность смены менеджера (в секундах). Возвращаем 24 часа.
 TIME_TRACKER_MANAGER_MAX_SECONDS = 24 * 3600
+
+
+# Backup scheduling is handled exclusively by run_backup_worker, never web requests.
+def _backup_bool(name, default='0'):
+    return os.environ.get(name, default).lower() in ('1', 'true', 'yes', 'on')
+
+
+BACKUP_ENABLED = _backup_bool('BACKUP_ENABLED')
+BACKUP_YANDEX_ENABLED = _backup_bool('BACKUP_YANDEX_ENABLED', '1')
+try:
+    BACKUP_INTERVAL_SECONDS = int(
+        float(os.environ.get('BACKUP_INTERVAL_DAYS', '3')) * 86400
+        + float(os.environ.get('BACKUP_INTERVAL_HOURS', '0')) * 3600
+    )
+    BACKUP_RETRY_SECONDS = int(os.environ.get('BACKUP_RETRY_SECONDS', '300'))
+    BACKUP_POLL_SECONDS = int(os.environ.get('BACKUP_POLL_SECONDS', '30'))
+except (ValueError, OverflowError) as exc:
+    raise ImproperlyConfigured('Backup interval must contain valid days/hours and seconds.') from exc
+if min(BACKUP_INTERVAL_SECONDS, BACKUP_RETRY_SECONDS, BACKUP_POLL_SECONDS) <= 0:
+    raise ImproperlyConfigured('Backup interval, retry and poll intervals must be positive.')
+
+BACKUP_STAGING_ROOT = Path(os.environ.get('BACKUP_STAGING_ROOT', BASE_DIR / 'var/backup-staging'))
+BACKUP_LOCAL_ROOT = Path(os.environ.get('BACKUP_LOCAL_ROOT', BASE_DIR / 'var/backup-store'))
+BACKUP_ENCRYPTION_KEY = os.environ.get('BACKUP_ENCRYPTION_KEY', '')
+BACKUP_PG_DUMP_BINARY = os.environ.get('BACKUP_PG_DUMP_BINARY', 'pg_dump')
+YANDEX_ACCESS_TOKEN = os.environ.get('YANDEX_ACCESS_TOKEN', '')
+YANDEX_REFRESH_TOKEN = os.environ.get('YANDEX_REFRESH_TOKEN', '')
+YANDEX_CLIENT_ID = os.environ.get('YANDEX_CLIENT_ID', '')
+YANDEX_CLIENT_SECRET = os.environ.get('YANDEX_CLIENT_SECRET', '')
+YANDEX_REDIRECT_URI = os.environ.get('YANDEX_REDIRECT_URI', '')
+YANDEX_BACKUP_ROOT = os.environ.get('YANDEX_BACKUP_ROOT', 'app:/AlbyBackups')
+YANDEX_OAUTH_SCOPE = os.environ.get('YANDEX_OAUTH_SCOPE', 'cloud_api:disk.app_folder')

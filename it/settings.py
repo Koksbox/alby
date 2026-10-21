@@ -38,7 +38,13 @@ SECRET_KEY = get_env_value('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key
 DEBUG = get_env_value("DJANGO_DEBUG", "1") in ("1", "true", "True", "yes", "YES")
 
 
-ALLOWED_HOSTS = ['91.218.244.219', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in get_env_value(
+        'DJANGO_ALLOWED_HOSTS', '91.218.115.139,127.0.0.1,localhost'
+    ).split(',')
+    if host.strip()
+]
 
 # Application definition
 

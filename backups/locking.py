@@ -1,10 +1,18 @@
-"""Shared POSIX locks: both web and worker must mount the same staging volume."""
+"""Shared file locks: both web and worker must mount the same staging volume.
+
+POSIX uses fcntl.flock; Windows uses msvcrt.locking for local test/dev runs.
+"""
 from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
-import fcntl
+import sys
 
 from django.conf import settings
+
+if sys.platform == 'win32':
+    import msvcrt
+else:
+    import fcntl
 
 
 @contextmanager
@@ -15,12 +23,25 @@ def backup_lock(name='worker.lock', blocking=True):
     if path.is_symlink():
         raise RuntimeError('Backup lock cannot be a symbolic link.')
     with path.open('a+b') as handle:
-        flags = fcntl.LOCK_EX | (0 if blocking else fcntl.LOCK_NB)
-        fcntl.flock(handle.fileno(), flags)
-        try:
-            yield
-        finally:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+        if handle.tell() == 0:
+            handle.write(b'\0')
+            handle.flush()
+        handle.seek(0)
+        if sys.platform == 'win32':
+            flag = msvcrt.LK_LOCK if blocking else msvcrt.LK_NBLCK
+            msvcrt.locking(handle.fileno(), flag, 1)
+            try:
+                yield
+            finally:
+                handle.seek(0)
+                msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            flags = fcntl.LOCK_EX | (0 if blocking else fcntl.LOCK_NB)
+            fcntl.flock(handle.fileno(), flags)
+            try:
+                yield
+            finally:
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
 def media_write_lock():

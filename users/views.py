@@ -21,7 +21,7 @@ from django.views.generic import TemplateView
 from django.contrib import messages
 from django.conf import settings
 from .forms import CustomUserCreationForm
-from .models import CustomUser
+from .models import CustomUser, PrizeHistory
 from users.role_utils import DIRECTOR_EMAIL, is_director
 
 from django.core.mail import send_mail
@@ -303,6 +303,7 @@ def select_user_type(request):
     return render(request, 'users/post.html')
 
 
+@login_required
 def profile(request):
     return render(request, 'users/profile.html')
 
@@ -636,6 +637,7 @@ def zadachi(request):
     return render(request, 'users/zadachi.html', context)
 
 
+@login_required
 def users_prize(request):
     # Получаем все записи из истории премий для текущего пользователя
     usersis = PrizeHistory.objects.filter(user=request.user).order_by('-date')

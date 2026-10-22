@@ -1,7 +1,11 @@
 """Общие проверки ролей и фильтры периода для views."""
 
 import datetime as dt
+from functools import wraps
 
+from django.contrib import messages
+from django.contrib.auth.views import redirect_to_login
+from django.shortcuts import redirect
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 
@@ -22,6 +26,19 @@ def is_manager(user) -> bool:
 def can_manage_staff(user) -> bool:
     """Менеджер/старший менеджер — доступ к сотрудникам и сбросу пароля."""
     return bool(user.is_authenticated and getattr(user, "post_user", None) in SENIOR_MANAGER_ROLES)
+
+
+def director_required(view):
+    """Только директор: аноним → login, остальные роли → home."""
+    @wraps(view)
+    def wrapped(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect_to_login(request.get_full_path())
+        if not is_director(request.user):
+            messages.error(request, "Недостаточно прав.")
+            return redirect("home")
+        return view(request, *args, **kwargs)
+    return wrapped
 
 
 def _parse_date(value):

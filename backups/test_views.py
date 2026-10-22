@@ -38,7 +38,10 @@ class BackupConnectionViewsTests(TestCase):
         )
         manager.user_permissions.add(Permission.objects.get(codename='manage_backups'))
         self.client.force_login(manager)
-        self.assertEqual(self.client.get(reverse('backups:status')).status_code, 403)
+        response = self.client.get(reverse('backups:status'))
+        # DirectorCabinetMiddleware отсекает не-директоров до view (302 → /)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/')
 
     def test_explicit_permission_is_required_and_not_regranted_by_activity(self):
         self.director.user_permissions.clear()

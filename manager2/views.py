@@ -20,10 +20,20 @@ from django.http import JsonResponse
 from .models import TaskTemplate
 
 
+@login_required
 def profile_manager(request):
+    from users.role_utils import is_manager
+    if not is_manager(request.user):
+        messages.error(request, 'Недостаточно прав.')
+        return redirect('profile')
     return render(request, 'manager2/profile_manager.html')
 
+@login_required
 def home_man(request):
+    from users.role_utils import is_manager
+    if not is_manager(request.user):
+        messages.error(request, 'Недостаточно прав.')
+        return redirect('profile')
     photos = Photo.objects.all()
     return render(request, 'manager2/home_man.html', {'photos': photos})
 

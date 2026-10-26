@@ -135,6 +135,8 @@ class YandexStorage:
         if not self.root.startswith(('app:/', 'disk:/')) or '..' in self.root.split('/'):
             raise BackupError('Invalid YANDEX_BACKUP_ROOT.')
         self.connection = BackupConnection.objects.filter(pk=1).first()
+        if self.connection and self.connection.disconnected_at is not None:
+            raise BackupError('Yandex Disk is detached. Authorize a new connection in the director cabinet.')
         if not self.connection or not self.connection.is_connected:
             token = getattr(settings, 'YANDEX_ACCESS_TOKEN', '')
             if not token:

@@ -16,7 +16,7 @@ from django.db import connection
 from django.utils import timezone
 
 from .locking import backup_lock, media_write_lock
-from .models import BackupRun, BackupSchedule
+from .models import BackupConnection, BackupRun, BackupSchedule
 from .providers import BackupError, LocalStorage, YandexStorage, archive_name, file_hashes, safe_directory
 
 logger = logging.getLogger(__name__)
@@ -312,6 +312,9 @@ def run_due_backup():
     configured_roots()
     try:
         with backup_lock(blocking=False):
+            if (getattr(settings, 'BACKUP_YANDEX_ENABLED', True)
+                    and BackupConnection.objects.filter(pk=1, disconnected_at__isnull=False).exists()):
+                return None
             now = timezone.now()
             # A running status left by a stopped worker is resumed under the lock.
             run = BackupRun.objects.filter(status__in=[BackupRun.Status.PENDING, BackupRun.Status.RUNNING, BackupRun.Status.FAILED]).order_by('created_at').first()

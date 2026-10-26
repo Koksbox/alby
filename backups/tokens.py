@@ -32,6 +32,7 @@ def decrypt_token(value):
 
 
 def save_connection_tokens(payload, account_name='', connection=None):
+    reconnecting = connection is None
     connection = connection or BackupConnection.objects.get_or_create(pk=1)[0]
     connection.access_token_encrypted = encrypt_token(payload['access_token'])
     if payload.get('refresh_token'):
@@ -39,6 +40,8 @@ def save_connection_tokens(payload, account_name='', connection=None):
     expires_in = payload.get('expires_in')
     connection.expires_at = timezone.now() + timedelta(seconds=int(expires_in)) if expires_in else None
     connection.connected_at = connection.connected_at or timezone.now()
+    if reconnecting:
+        connection.disconnected_at = None
     if account_name:
         connection.account_name = account_name
     connection.save()

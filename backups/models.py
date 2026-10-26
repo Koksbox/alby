@@ -10,11 +10,12 @@ class BackupConnection(models.Model):
     refresh_token_encrypted = models.TextField(blank=True)
     expires_at = models.DateTimeField(null=True, blank=True)
     connected_at = models.DateTimeField(null=True, blank=True)
+    disconnected_at = models.DateTimeField(null=True, blank=True)
     account_name = models.CharField(max_length=255, blank=True)
 
     @property
     def is_connected(self):
-        return bool(self.access_token_encrypted)
+        return bool(self.access_token_encrypted) and self.disconnected_at is None
 
 
 class BackupSchedule(models.Model):

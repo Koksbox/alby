@@ -23,7 +23,8 @@ def connection_status():
     connection = BackupConnection.objects.filter(pk=1).first()
     schedule = BackupSchedule.objects.filter(pk=1).first()
     last_run = BackupRun.objects.order_by('-created_at').first()
-    connected = bool((connection and connection.is_connected) or settings.YANDEX_ACCESS_TOKEN)
+    detached = bool(connection and connection.disconnected_at is not None)
+    connected = not detached and bool((connection and connection.is_connected) or settings.YANDEX_ACCESS_TOKEN)
     state = 'connected' if connected else 'disconnected'
     if last_run and last_run.status == BackupRun.Status.FAILED:
         state = 'error'
@@ -60,7 +61,7 @@ def yandex_connect(request):
     params = {
         'response_type': 'code', 'client_id': settings.YANDEX_CLIENT_ID,
         'redirect_uri': settings.YANDEX_REDIRECT_URI,
-        'scope': settings.YANDEX_OAUTH_SCOPE, 'state': state,
+        'scope': settings.YANDEX_OAUTH_SCOPE, 'state': state, 'force_confirm': 'yes',
         'code_challenge': challenge, 'code_challenge_method': 'S256',
     }
     return redirect('https://oauth.yandex.ru/authorize?' + urlencode(params))
